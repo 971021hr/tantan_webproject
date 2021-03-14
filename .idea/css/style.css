@@ -1,0 +1,38 @@
+body {
+    padding: 10px;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    background: antiquewhite;
+    margin:10px;
+}
+
+#container{
+    display: flex;
+}
+#boxLeft{
+    background: #ffc3c3;
+    flex: 1;
+}
+#boxCenter{
+    background: #ffefd2;
+    flex: 3;
+    text-align: center;
+}
+#boxRight{
+    background: #ffffce;
+    flex: 1;
+    text-align: right;
+}
+#boxApp{
+    background: black;
+    margin: 10px;
+    padding: 4px;
+    border-radius: 10px 10px 10px 10px;
+}
+
+
+/* 왼쪽 버튼 스타일 */
+.btn_left{
+    border-radius: 5px;
+    padding: 5px;
+    margin: 2px;
+}
