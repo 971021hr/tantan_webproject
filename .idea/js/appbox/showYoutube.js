@@ -1,3 +1,3 @@
 function showYoutube(){
-    alert("버스 확인 함수 실행!");
+    alert("유튜브 확인 함수 실행!");
 }

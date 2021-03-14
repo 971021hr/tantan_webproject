@@ -26,7 +26,7 @@ function success(position) {
         return response.json();
     }).then(function(json){
         // 출력
-        weatherIcon.innerHTML = `<img src="img/icon-${json.weather[0].icon}.svg"/>`;
+        /*weatherIcon.innerHTML = `<img src="img/icon-${json.weather[0].icon}.svg"/>`;*/
         weatherTemp.innerHTML = Math.round(json.main.temp) + '℃'; //반올림
         weatherLocation.innerHTML = `${json.sys.country}, ${json.name}`;
         weatherMain.innerHTML = json.weather[0].main;
