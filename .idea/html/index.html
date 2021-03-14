@@ -5,6 +5,7 @@
     <title>smartmirror</title>
     <link rel='stylesheet' href='/css/style.css' />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script defer src="weather.js"></script>
 <!--    <script type="text/javascript" src="/js/appbox/showBus.js"/>
     <script type="text/javascript" src="/js/appbox/showSubway.js"/>
     <script type="text/javascript" src="/js/appbox/showYoutube.js"/>-->
@@ -14,10 +15,33 @@
 
     <div id="container">
         <div id="boxLeft">
-            <div> 세미 </div>
-            <div> 시간</div>
-            <div> 날짜 </div>
-            <div> 날씨 </div>
+            <p class="dateview1"></p>
+            <p class="dateview2"></p>
+            <script type="text/javascript" src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+            <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/locale/ko.js"></script>-->
+            <script>
+                var date = new Date();
+                $('.dateview1').html(moment(date).format('LT'));
+                $('.dateview2').html(moment().format('LL'));
+            </script>
+            <main class="site-main" role="main">
+
+                <div class="container">
+                    <!-- 화면 -->
+                    <div class="center">
+                        <div class="weather" id="awesomeWeather">
+                            <div class="notification"></div>
+                            <div id="weatherIcon"><img src="../img/icon-normal.svg"></div>
+                            <h1 id="weatherTemp">- ℃</h1>
+                            <h2 id="weatherMain">Weather</h2>
+                            <p id="weatherDesc">Detail info</p>
+                            <p id="weatherLocation">City, Country</p>
+                        </div>
+
+                    </div>
+                </div>
+            </main>
             <div> 미세먼지 </div>
             <div id="boxApp">
                 <input type="button" onclick="showSubway()" id="btn_subway" class="btn_left" value="지하철"/>
