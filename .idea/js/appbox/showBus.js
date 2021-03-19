@@ -29,6 +29,7 @@ var options = {
 */
 
 
+/*
 fetch(bus_url,{
         mode : 'no-cors',
     headers:{
@@ -46,6 +47,7 @@ fetch(bus_url,{
     .catch(err => {
         console.log('Fetch Error',err);
     });
+*/
 
 
 
