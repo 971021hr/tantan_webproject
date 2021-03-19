@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <title>smartmirror</title>
     <link rel='stylesheet' href='/css/style.css' />
+    <script type="text/javascript" src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script defer src="/js/dust.js"></script>
     <script defer src="/js/weather.js"></script>
     <script type="text/javascript" src="js/appbox/showBus.js"></script>
     <script type="text/javascript" src="js/appbox/showSubway.js"></script>
@@ -18,7 +20,7 @@
         <div id="boxLeft">
             <p class="dateview1"></p>
             <p class="dateview2"></p>
-            <script type="text/javascript" src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+
             <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
             <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/locale/ko.js"></script>-->
             <script>
@@ -43,7 +45,11 @@
                     </div>
                 </div>
             </main>
-            <div> 미세먼지 </div>
+
+            <div>
+                <p id="dust_dobong">...</p>
+            </div>
+
             <div id="boxApp">
                 <input type="button" onclick="showSubway()" id="btn_subway" class="btn_left" value="지하철"/>
                 <input type="button" onclick="showBus()" id="btn_bus" class="btn_left" value="버스"/>
@@ -51,7 +57,23 @@
             </div>
         </div>
 
-        <div id="boxCenter"> 그냥 보여지는 영역</div>
+        <div id="boxCenter">
+            <div id="div_main">보여지는 영역</div>
+            <div id="div_subway" style="display: none" class="div_subway">
+                <h2 id="subway_name">지하철 정류소 이름</h2>
+                <p id="arr00_div">첫번째 도착 예정 시간</p>
+                <p id="arr01_div">두번째 도착 예정 시간</p>
+                <p id="arr02_div">세번째 도착 예정 시간</p>
+                <p id="arr03_div">네번째 도착 예정 시간</p>
+            </div>
+
+            <div id="div_bus" style="display: none">
+                <h2 id="bus_station_name">정류소명</h2>
+                <p id="bus_info">도착 예정 버스 정보</p>
+            </div>
+
+            <div id="div_youtube" style="display: none">유튜브 정보 뜨기</div>
+        </div>
 
         <div id="boxRight"> 오늘의 할일(구글캘린더) </div>
 
