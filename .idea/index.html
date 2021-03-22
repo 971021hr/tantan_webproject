@@ -13,38 +13,41 @@
     <script type="text/javascript" src="js/appbox/showYoutube.js"></script>
     <script type="text/javascript" src="js/appbox/showCalendar.js"></script>
 
+    <script>
+        setTimeout(function(){
+            location.reload();
+        },60000);
+    </script>
 </head>
 <body>
 
     <div id="container">
         <div id="boxLeft">
-            <p class="dateview1"></p>
-            <p class="dateview2"></p>
+            <div id="clock">
+                <p class="dateview1" id="dataview1"></p>
+                <p class="dateview2" id="dataview2"></p>
 
-            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
-            <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/locale/ko.js"></script>-->
-            <script>
-                var date = new Date();
-                $('.dateview1').html(moment(date).format('LT'));
-                $('.dateview2').html(moment().format('LL'));
-            </script>
+                <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+             <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/locale/ko.js"></script>-->
+                <script>
+                    var date = new Date();
+                    $('.dateview1').html(moment(date).format('LT'));
+                    $('.dateview2').html(moment().format('LL'));
+
+                </script>
+            </div>
+
             <main class="site-main" role="main">
 
-                <div class="container">
-                    <!-- 화면 -->
-                    <div class="center">
-                        <div class="weather" id="awesomeWeather">
-                            <div class="notification"></div>
-                            <!--<div id="weatherIcon"><img src="../img/icon-normal.svg"></div>-->
-                            <h1 id="weatherTemp">- ℃</h1>
-                            <p id="weatherLocation">City, Country</p>
-                        </div>
+                <div class="weather" id="awesomeWeather">
+                    <!--<div id="weatherIcon"><img src="../img/icon-normal.svg"></div>-->
+                    <div id="weatherLocation">City, Country </div>
+                    <div id="weatherTemp">- ℃</div>
 
-                    </div>
                 </div>
             </main>
 
-            <div>
+            <div id="dust">
                 <p id="dust_dobong">...</p>
             </div>
 
@@ -76,17 +79,19 @@
             <div id="div_calendar" style="display: none">달력 뜨기</div>
         </div>
 
-        <div id="boxRight"> 오늘의 할일(구글캘린더)
-        <button id="authorize_button" style="display: none;">Authorize</button>
-        <button id="signout_button" style="display: none;">Sign Out</button>
+        <div id="boxRight"> 오늘의 일정
+            <div id="todolist">
+                <button id="authorize_button" style="display: none;">Authorize</button>
+                <button id="signout_button" style="display: none;">Sign Out</button>
 
-        <pre id="content" style="white-space: pre-wrap;"></pre>
+                <pre id="content" style="white-space: pre-wrap;"></pre>
 
-        <script type="text/javascript" src="js/google.js"></script>
-        <script async defer src="https://apis.google.com/js/api.js"
-                onload="this.onload=function(){};handleClientLoad()"
-                onreadystatechange="if (this.readyState === 'complete') this.onload()">
-        </script>
+                <script type="text/javascript" src="js/google.js"></script>
+                <script async defer src="https://apis.google.com/js/api.js"
+                        onload="this.onload=function(){};handleClientLoad()"
+                        onreadystatechange="if (this.readyState === 'complete') this.onload()">
+                </script>
+            </div>
         </div>
 
     </div>

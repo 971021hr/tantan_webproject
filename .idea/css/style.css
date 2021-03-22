@@ -1,34 +1,59 @@
+/* 전체적 화면 설정 */
 body {
     padding: 10px;
-    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-    background: antiquewhite;
-    margin:10px;
+    font: 20px "Lucida Grande", Helvetica, Arial, sans-serif;
+    color: white;
+    background: #000000;
+    margin:20px;
 }
 
 #container{
     display: flex;
+
 }
+
 #boxLeft{
-    background: #ffc3c3;
     flex: 1;
 }
+
+#clock{
+    font-size: 30px;
+}
+
+#dataview1 {
+    font-size: 50px;
+    margin-bottom: -30px;
+}
+
+#awesomeWeather {
+    display: inline-block;
+}
+
+.weatherLocation{
+    display:inline-block;
+}
+
+.weatherTemp {
+    display: inline-block;
+}
+
 #boxCenter{
-    background: #ffefd2;
+
     flex: 3;
     text-align: center;
 }
+
 #boxRight{
-    background: #ffffce;
+
     flex: 1;
     text-align: right;
 }
+
 #boxApp{
-    background: black;
     margin: 10px;
     padding: 4px;
     border-radius: 10px 10px 10px 10px;
 }
-
 
 /* 왼쪽 버튼 스타일 */
 .btn_left{
