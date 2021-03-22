@@ -73,7 +73,18 @@
             <div id="div_youtube" style="display: none">유튜브 정보 뜨기</div>
         </div>
 
-        <div id="boxRight"> 오늘의 할일(구글캘린더) </div>
+        <div id="boxRight"> 오늘의 할일(구글캘린더)
+        <button id="authorize_button" style="display: none;">Authorize</button>
+        <button id="signout_button" style="display: none;">Sign Out</button>
+
+        <pre id="content" style="white-space: pre-wrap;"></pre>
+
+        <script type="text/javascript" src="js/google.js"></script>
+        <script async defer src="https://apis.google.com/js/api.js"
+                onload="this.onload=function(){};handleClientLoad()"
+                onreadystatechange="if (this.readyState === 'complete') this.onload()">
+        </script>
+        </div>
 
     </div>
 </body>
