@@ -10,7 +10,7 @@ const bus_url = 'http://ws.bus.go.kr/api/rest/arrive/getLowArrInfoByStId?Service
 var bus_array = '';
 
 /*http://ws.bus.go.kr/api/rest/arrive/getLowArrInfoByStId?ServiceKey=${API_KEY}&stId=112000001
-http://ws.bus.go.kr/api/rest/arrive/getLowArrInfoByStId?ServiceKey=t%2FeadELVB156TD%2BnnFn1v2%2BUipLI%2FkOC%2BmZ3Bdt5jmWmdbtmOeUHizTI6Ijnlczgb8AOADE7zPP4ImfVv%2BbgJw%3D%3D&stId=112000001*/
+http://ws.bus.go.kr/api/rest/arrive/getLowArrInfoByStId?ServiceKey=t/eadELVB156TD+nnFn1v2+UipLI/kOC+mZ3Bdt5jmWmdbtmOeUHizTI6Ijnlczgb8AOADE7zPP4ImfVv+bgJw==&stId=112000001*/
 
 /*stId 정류소id
 stNm 정류소명 bus_station_name
@@ -29,10 +29,13 @@ var options = {
 */
 
 
+
 /*
-fetch(bus_url,{
-        mode : 'no-cors',
+fetch(bus_url,{credentials: 'include',
+    mode : 'no-cors',
     headers:{
+/!*        /!*Origin: 'http://localhost:3000',*!/!*!/
+        'Access-Control-Allow-Origin': 'http://localhost:3000',
         'Accept': 'application/json','Content-Type': 'application/json'
     }
 })
@@ -47,6 +50,7 @@ fetch(bus_url,{
     .catch(err => {
         console.log('Fetch Error',err);
     });
+
 */
 
 

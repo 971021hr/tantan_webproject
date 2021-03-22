@@ -1,5 +1,5 @@
 // 전역 변수 - api키 발급받아서 사용하기
-const API_KEY = '2b158b5fc703abf1e0b455e7d5100f13';
+const WEATHER_KEY = '2b158b5fc703abf1e0b455e7d5100f13';
 // 변수
 const weatherIcon = document.querySelector('#weatherIcon'),
     weatherTemp = document.querySelector('#weatherTemp'),
@@ -10,7 +10,7 @@ const weatherIcon = document.querySelector('#weatherIcon'),
 // 옵션
 var options = {
     enableHighAccuracy: true,
-    timeout: 8000,
+    timeout: 3000,
     maximumAge: 0
 };
 
@@ -20,7 +20,7 @@ function success(position) {
     let longitude = position.coords.longitude;
     // 패치 사용
     fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&units=metric`
+        `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${WEATHER_KEY}&units=metric`
     ).then(function(response){
         //network 정보 => json으로 변경
         return response.json();

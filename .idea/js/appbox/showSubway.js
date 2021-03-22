@@ -21,6 +21,7 @@ fetch(subway_url,{
     }
 })
     .then(function (res) {
+        console.log(location.origin);
         return res.json();
     })
     .then(function (data){
