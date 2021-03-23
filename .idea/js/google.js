@@ -97,7 +97,7 @@ function listUpcomingEvents() {
         'orderBy': 'startTime'
     }).then(function(response) {
         var events = response.result.items;
-        appendPre('Upcoming events:');
+        //appendPre('Upcoming events:');
 
         if (events.length > 0) {
             for (i = 0; i < events.length; i++) {
@@ -106,10 +106,13 @@ function listUpcomingEvents() {
                 if (!when) {
                     when = event.start.date;
                 }
-                appendPre(when + ' ' + event.summary);
+                var when_date = when.split('T');
+                var when_time = when_date[1].split('+');
+                var when_final = when_time[0].split(':');
+                appendPre(when_final[0] + ':' + when_final[1] + ' ' + event.summary);
             }
         } else {
-            appendPre('No upcoming events found.');
+            appendPre('일정이 없습니다.');
         }
     });
 }

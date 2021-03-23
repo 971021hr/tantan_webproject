@@ -13,10 +13,12 @@ body {
 }
 
 #boxLeft{
+    background: #000000;
     flex: 1;
 }
 
 #clock{
+    margin-top: -50px;
     font-size: 30px;
 }
 
@@ -38,15 +40,41 @@ body {
 }
 
 #boxCenter{
-
-    flex: 3;
+    background: #000000;
+    flex: 4;
     text-align: center;
 }
 
 #boxRight{
-
+    background: #000000;
     flex: 1;
     text-align: right;
+}
+
+#signbutton {
+    margin-top: -20px;
+}
+
+#authorize_button {
+    outline: none;
+    background: #000000;
+    border: none;
+    color: white;
+    font-size: 20px;
+    float: right;
+}
+
+#signout_button {
+    outline: none;
+    background: #000000;
+    border: none;
+    color: white;
+    font-size: 20px;
+    float: right;
+}
+
+#content{
+    padding-top: 40px;
 }
 
 #boxApp{

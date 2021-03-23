@@ -15,20 +15,21 @@ $.ajax({
         let guMise = dobong['PM10'];
 
         if(guMise < 50) {
-            DUST_INFO0 =  guName + " " + guMise + ' 좋음' + '<i className="fa fa-camera"></i>';
+            //DUST_INFO0 =  guName + " 미세먼지 : " + guMise + ' 좋음' + '<i className="fa fa-camera"></i>';
+            DUST_INFO0 =  "미세먼지 : 좋음(" + guMise + ')';
             $('#dust_dobong').text(DUST_INFO0);
 
         }else if(50 < guMise < 75) {
-            DUST_INFO1 =  guName + " " + guMise + ' 나쁨';
+            DUST_INFO1 =  "미세먼지 : 나쁨(" + guMise + ')';
             $('#dust_dobong').text(DUST_INFO1);
 
         }else if(75 < guMise < 100) {
-            DUST_INFO2 =  guName + " " + guMise + ' 상당히 나쁨';
+            DUST_INFO2 =  "미세먼지 : 상당히 나쁨(" + guMise + ')';
             $('#dust_dobong').text(DUST_INFO2);
 
         }else if(guMise > 100) {
 
-            DUST_INFO3 =  guName + " " + guMise + ' 최악';
+            DUST_INFO3 =  "미세먼지 : 최악(" + guMise + ')';
             $('#dust_dobong').text(DUST_INFO3);
 
         }

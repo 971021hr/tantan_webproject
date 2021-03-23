@@ -18,7 +18,13 @@
             border:0px solid #000000;
             text-align:center;
             width:50%;
-            height: 300px;
+
+        }
+        .td_weather{
+            height: 40px;
+        }
+        .td_weather2{
+            height: 70px;
         }
     </style>
     <script>
@@ -46,25 +52,52 @@
             </div>
 
             <main class="site-main" role="main">
-
                 <div class="container">
                     <!-- 화면 -->
-                    <div class="center">
+                    <div class="center" >
                         <div class="weather" id="awesomeWeather" >
-                            <!--<div id="weatherIcon"><img src="../img/icon-normal.svg"></div>-->
+                            <!--<div id="weatherIcon"></div>
                             <span id="weatherLocation">City, Country</span>
-                            <span id="weatherTemp">- ℃</span>
+                            <span id="weatherTemp">- ℃</span>-->
 
+                            <!--<h5>체감 온도 : <span id="feels-like"> </span></h5>-->
+
+                            <table id="tb_weather" align="center" style="width: 100%">
+                                <tr >
+                                    <td colspan="2">
+                                        <div id="weatherLocation" class="td_weather">City, Country</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="td_weather2" id="weatherIcon"></div>
+                                    </td>
+                                    <td>
+                                        <div class="td_weather2" id="weatherTemp">- ℃</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <div class="td_weather">체감 온도 : <span id="feels-like"> </span></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <div class="td_weather" id="dust_dobong">...</div>
+                                    </td>
+                                </tr>
+
+
+                            </table>
                         </div>
-
                     </div>
                 </div>
             </main>
 
-            <div id="dust">
+            <!--<div id="dust">
                 <p id="dust_dobong">...</p>
             </div>
-
+-->
             <div id="boxApp">
                 <input type="button" onclick="showSubway()" id="btn_subway" class="btn_left" value="지하철"/>
                 <input type="button" onclick="showCalendar()" id="btn_calendar" class="btn_left" value="달력"/>
@@ -72,9 +105,10 @@
         </div>
 
         <div id="boxCenter">
-            <div id="div_main">보여지는 영역
-                <i class="fas fa-cloud"></i>
+            <div id="div_main">
+                보여지는 영역
             </div>
+
             <div id="div_subway" style="display: none" class="div_subway">
                 <h2 id="subway_name">지하철 정류소 이름</h2>
                 <p id="arr00_div">첫번째 도착 예정 시간</p>
@@ -84,7 +118,7 @@
             </div>
 
             <div id="div_calendar" style="display: none">
-                <table align="center" id="calendar">
+                <table align="center" id="calendar" style="height: 300px;">
                     <tr>
                         <td><font size=1%; color="#B3B6B3"><label onclick="beforem()" id="before" ></label></font></td>
                         <td colspan="5" align="center" id="yearmonth"></td>
@@ -103,10 +137,12 @@
             </div>
         </div>
 
-        <div id="boxRight"> 오늘의 일정
+        <div id="boxRight">
             <div id="todolist">
-                <button id="authorize_button" style="display: none;">Authorize</button>
-                <button id="signout_button" style="display: none;">Sign Out</button>
+                <div id="signbutton">
+                    <button id="authorize_button" style="display: none;">오늘의 일정</button>
+                    <button id="signout_button" style="display: none;">오늘의 일정</button>
+                </div>
 
                 <pre id="content" style="white-space: pre-wrap;"></pre>
 
@@ -115,6 +151,7 @@
                         onload="this.onload=function(){};handleClientLoad()"
                         onreadystatechange="if (this.readyState === 'complete') this.onload()">
                 </script>
+
             </div>
         </div>
 
