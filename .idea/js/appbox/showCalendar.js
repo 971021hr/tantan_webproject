@@ -71,7 +71,7 @@ function build()
     for (i = 1; i <= lastDate.getDate(); i++) // 1일부터 마지막 일까지
     {
         cell = row.insertCell();
-        cell.innerHTML = "<font color=#FFFF55>" + i; //평일 색
+        cell.innerHTML = "<font color=#FFFFFF>" + i; //평일 색
         cnt = cnt + 1;
         if (cnt % 7 == 1) {//일요일 계산
             cell.innerHTML = "<font color=#FF9090>" + i//일요일에 색
@@ -82,7 +82,7 @@ function build()
         }
         if(today.getFullYear()==date.getFullYear()&&today.getMonth()==date.getMonth()&&i==date.getDate())
         {
-            cell.bgColor = "#BCF1B1"; //오늘날짜배경색
+            cell.bgColor = "#767676"; //오늘날짜배경색
         }
     }
 

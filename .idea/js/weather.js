@@ -27,8 +27,9 @@ function success(position) {
     }).then(function(json){
         // 출력
         /*weatherIcon.innerHTML = `<img src="img/icon-${json.weather[0].icon}.svg"/>`;*/
-        weatherTemp.innerHTML = Math.round(json.main.temp) + '℃'; //반올림
-        weatherLocation.innerHTML = `${json.sys.country}, ${json.name}`;
+        weatherTemp.innerHTML = Math.round(json.main.temp) + '℃'; //반올림/
+       // weatherLocation.innerHTML = `${json.sys.country}, ${json.name}`;
+        weatherLocation.innerHTML = `${json.name}`;
     });
 };
 
