@@ -4,15 +4,22 @@
     <meta charset="UTF-8">
     <title>smartmirror</title>
     <link rel='stylesheet' href='/css/style.css' />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <script type="text/javascript" src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script defer src="/js/dust.js"></script>
     <script defer src="/js/weather.js"></script>
-    <script type="text/javascript" src="js/appbox/showBus.js"></script>
     <script type="text/javascript" src="js/appbox/showSubway.js"></script>
-    <script type="text/javascript" src="js/appbox/showYoutube.js"></script>
     <script type="text/javascript" src="js/appbox/showCalendar.js"></script>
 
+    <style>
+        table {
+            border:0px solid #000000;
+            text-align:center;
+            width:50%;
+            height: 300px;
+        }
+    </style>
     <script>
         setTimeout(function(){
             location.reload();
@@ -39,11 +46,17 @@
 
             <main class="site-main" role="main">
 
-                <div class="weather" id="awesomeWeather">
-                    <!--<div id="weatherIcon"><img src="../img/icon-normal.svg"></div>-->
-                    <div id="weatherLocation">City, Country </div>
-                    <div id="weatherTemp">- ℃</div>
+                <div class="container">
+                    <!-- 화면 -->
+                    <div class="center">
+                        <div class="weather" id="awesomeWeather">
+                            <div class="notification"></div>
+                            <!--<div id="weatherIcon"><img src="../img/icon-normal.svg"></div>-->
+                            <h1 id="weatherTemp">- ℃</h1>
+                            <p id="weatherLocation">City, Country</p>
+                        </div>
 
+                    </div>
                 </div>
             </main>
 
@@ -53,9 +66,7 @@
 
             <div id="boxApp">
                 <input type="button" onclick="showSubway()" id="btn_subway" class="btn_left" value="지하철"/>
-                <input type="button" onclick="showBus()" id="btn_bus" class="btn_left" value="버스"/>
-                <input type="button" onclick="showYoutube()" id="btn_youtube" class="btn_left" value="유튜브"/>
-                <input type="button" onclick="showCalender()" id="btn_calendar" class="btn_left" value="달력"/>
+                <input type="button" onclick="showCalendar()" id="btn_calendar" class="btn_left" value="달력"/>
             </div>
         </div>
 
@@ -69,14 +80,24 @@
                 <p id="arr03_div">네번째 도착 예정 시간</p>
             </div>
 
-            <div id="div_bus" style="display: none">
-                <h2 id="bus_station_name">정류소명</h2>
-                <p id="bus_info">도착 예정 버스 정보</p>
+            <div id="div_calendar" style="display: none">
+                <table align="center" id="calendar">
+                    <tr>
+                        <td><font size=1%; color="#B3B6B3"><label onclick="beforem()" id="before" ></label></font></td>
+                        <td colspan="5" align="center" id="yearmonth"></td>
+                        <td><font size=1%; color="#B3B6B3"><label onclick="nextm()" id="next"></label></font></td>
+                    </tr>
+                    <tr>
+                        <td align="center"> <font color="#FF9090">일</font></td>
+                        <td align="center"> 월 </td>
+                        <td align="center"> 화 </td>
+                        <td align="center"> 수 </td>
+                        <td align="center"> 목 </td>
+                        <td align="center"> 금 </td>
+                        <td align="center"><font color=#7ED5E4>토</font></td>
+                    </tr>
+                </table>
             </div>
-
-            <div id="div_youtube" style="display: none">유튜브 정보 뜨기</div>
-
-            <div id="div_calendar" style="display: none">달력 뜨기</div>
         </div>
 
         <div id="boxRight"> 오늘의 일정

@@ -48,11 +48,11 @@ fetch(subway_url,{
 
 
 function showSubway(){
-    alert("지하철 확인 함수 실행!");
 
     $("#div_main").hide();
 
     $("#div_subway").show();
     $("#div_bus").hide();
     $("#div_youtube").hide();
+    $("#div_calendar").hide();
 }

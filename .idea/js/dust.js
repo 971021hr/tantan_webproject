@@ -15,7 +15,7 @@ $.ajax({
         let guMise = dobong['PM10'];
 
         if(guMise < 50) {
-            DUST_INFO0 =  guName + " " + guMise + ' 좋음';
+            DUST_INFO0 =  guName + " " + guMise + ' 좋음' + '<i className="fa fa-camera"></i>';
             $('#dust_dobong').text(DUST_INFO0);
 
         }else if(50 < guMise < 75) {
