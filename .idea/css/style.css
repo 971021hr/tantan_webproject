@@ -56,25 +56,32 @@ body {
 }
 
 #authorize_button {
+    padding-top: 20px;
     outline: none;
     background: #000000;
     border: none;
     color: white;
-    font-size: 20px;
+    font-size: 30px;
     float: right;
+    font-weight: bold;
 }
 
 #signout_button {
+    padding-top: 20px;
     outline: none;
     background: #000000;
     border: none;
     color: white;
-    font-size: 20px;
+    font-size: 30px;
     float: right;
+    font-weight: bold;
 }
 
 #content{
-    padding-top: 40px;
+    margin-top: 6px;
+    padding-top: -50px;
+    font: 20px "Lucida Grande", Helvetica, Arial, sans-serif;
+    float: right;
 }
 
 #boxApp{
