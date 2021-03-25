@@ -121,3 +121,23 @@ table {
 #weatherTemp{
     font-size: xx-large;
 }
+
+#subway_name {
+    font-size: 30px;
+}
+
+.sub_arrive {
+    font-size: 20px;
+}
+
+#div_subway{
+    margin-top: -20px;
+}
+
+#yearmonth {
+    font-size: 30px;
+}
+
+#cal_date{
+    font-size: 20px;
+}
