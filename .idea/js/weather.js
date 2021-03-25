@@ -47,7 +47,7 @@ function success(position) {
             icon.innerHTML = `<img src='http://openweathermap.org/img/wn/${wIcon}.png'>`;
 
             //FeelsLike.append(`${json.main.feels_like}℃`);
-            $('#icon').append('<i class="' + wIcon[$Icon] + '"></i>');
+            //$('#icon').append('<i class="' + wIcon[$Icon] + '"></i>');
             ///$('#weatherIcon').append('<i class="' + wIcon[$Icon] + '"></i>');
 
         });

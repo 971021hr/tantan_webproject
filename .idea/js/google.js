@@ -109,7 +109,17 @@ function listUpcomingEvents() {
                 var when_date = when.split('T');
                 var when_time = when_date[1].split('+');
                 var when_final = when_time[0].split(':');
-                appendPre(when_final[0] + ':' + when_final[1] + ' ' + event.summary);
+
+                function getToday(){
+                    var date = new Date();
+                    var year = date.getFullYear();
+                    var month = ("0" + (1 + date.getMonth())).slice(-2);
+                    var day = ("0" + date.getDate()).slice(-2);
+                    return year + "-" + month + "-" + day;
+                }
+
+                if (when_date[0] == getToday())
+                    appendPre(when_final[0] + ':' + when_final[1] + ' ' + event.summary);
             }
         } else {
             appendPre('일정이 없습니다.');
