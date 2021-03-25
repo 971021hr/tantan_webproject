@@ -29,6 +29,7 @@ body {
 
 #awesomeWeather {
     display: inline-block;
+    margin-top: -10px;
 }
 
 .weatherLocation{
@@ -88,6 +89,7 @@ body {
     background-color: rgba( 255, 255, 255, 0.3 );
     margin: 5px;
     padding: 8px;
+    width: 135px;
     border-radius: 5px 5px 5px 5px;
 }
 
@@ -104,11 +106,13 @@ table {
     width:50%;
 
 }
+
 .td_weather{
     height: 40px;
 }
 #td_weather{
-    font-size:x-small;
+    height: 40px;
+    margin-bottom: -10px;
 }
 #weatherTemp{
     font-size: xx-large;

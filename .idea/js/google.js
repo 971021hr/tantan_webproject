@@ -10,6 +10,7 @@ var SCOPES = "https://www.googleapis.com/auth/calendar.readonly";
 
 var authorizeButton = document.getElementById('authorize_button');
 var signoutButton = document.getElementById('signout_button');
+//var content = document.querySelector('#content');
 
 /**
  *  On load, called to load the auth2 library and API client library.
@@ -97,6 +98,7 @@ function listUpcomingEvents() {
         'orderBy': 'startTime'
     }).then(function(response) {
         var events = response.result.items;
+
         //appendPre('Upcoming events:');
 
         if (events.length > 0) {
@@ -118,8 +120,13 @@ function listUpcomingEvents() {
                     return year + "-" + month + "-" + day;
                 }
 
-                if (when_date[0] == getToday())
+                if (when_date[0] == getToday()) {
                     appendPre(when_final[0] + ':' + when_final[1] + ' ' + event.summary);
+                    //var all_list = when_final[0] + ':' + when_final[1] + ' ' + event.summary;
+                    //content.innerHTML = `${events.all_list}`;
+                    //content.innerHTML = all_list;
+                }
+
             }
         } else {
             appendPre('일정이 없습니다.');

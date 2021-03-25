@@ -13,10 +13,6 @@
     <script type="text/javascript" src="js/appbox/showSubway.js"></script>
     <script type="text/javascript" src="js/appbox/showCalendar.js"></script>
 
-    <style>
-
-    </style>
-
 </head>
 <body>
 
@@ -62,12 +58,12 @@
 
                                 <tr>
                                     <td colspan="2">
-                                        <div class="td_weather" style="margin-top: 15px; text-align: left">체감 온도 : <span id="feels-like"> </span></div>
+                                        <div id="td_weather" style="margin-top: 15px; text-align: left">체감온도 : <span id="feels-like"> </span></div>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td colspan="2">
-                                        <div class="td_weather" id="dust_dobong" style="text-align: left">...</div>
+                                        <div class="td_weather" id="dust_dobong" style="text-align: left">미세먼지 : </div>
                                     </td>
                                 </tr>
 
@@ -136,6 +132,15 @@
                         onload="this.onload=function(){};handleClientLoad()"
                         onreadystatechange="if (this.readyState === 'complete') this.onload()">
                 </script>
+
+                <script>
+                    setInterval(function (){
+                        const element = document.getElementById('content');
+                        element.innerText = '';
+                        element.text = listUpcomingEvents();
+                    },360000);
+                </script>
+
 
             </div>
         </div>
