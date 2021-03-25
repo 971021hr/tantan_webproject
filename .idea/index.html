@@ -14,23 +14,12 @@
     <script type="text/javascript" src="js/appbox/showCalendar.js"></script>
 
     <style>
-        table {
-            border:0px solid #000000;
-            text-align:center;
-            width:50%;
 
-        }
-        .td_weather{
-            height: 40px;
-        }
-        .td_weather2{
-            height: 70px;
-        }
     </style>
     <script>
         setTimeout(function(){
             location.reload();
-        },60000);
+        },6000000);
     </script>
 </head>
 <body>
@@ -44,9 +33,11 @@
                 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
              <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/locale/ko.js"></script>-->
                 <script>
-                    var date = new Date();
-                    $('.dateview1').html(moment(date).format('LT'));
-                    $('.dateview2').html(moment().format('LL'));
+                    setInterval(function(){
+                        var date = new Date();
+                        $('.dateview1').html(moment(date).format('LT'));
+                        $('.dateview2').html(moment().format('LL'));
+                    },5000);
 
                 </script>
             </div>
@@ -56,34 +47,31 @@
                     <!-- 화면 -->
                     <div class="center" >
                         <div class="weather" id="awesomeWeather" >
-                            <!--<div id="weatherIcon"></div>
-                            <span id="weatherLocation">City, Country</span>
-                            <span id="weatherTemp">- ℃</span>-->
-
-                            <!--<h5>체감 온도 : <span id="feels-like"> </span></h5>-->
 
                             <table id="tb_weather" align="center" style="width: 100%">
-                                <tr >
-                                    <td colspan="2">
-                                        <div id="weatherLocation" class="td_weather">City, Country</div>
+
+                                <tr>
+                                    <td rowspan="2">
+                                        <div id="weatherIcon"></div>
+                                    </td>
+                                    <td>
+                                        <div id="weatherLocation">City, Country</div>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        <div class="td_weather2" id="weatherIcon"></div>
+                                        <div id="weatherTemp" >- ℃</div>
                                     </td>
-                                    <td>
-                                        <div class="td_weather2" id="weatherTemp">- ℃</div>
+                                </tr>
+
+                                <tr>
+                                    <td colspan="2">
+                                        <div class="td_weather" style="margin-top: 15px; text-align: left">체감 온도 : <span id="feels-like"> </span></div>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td colspan="2">
-                                        <div class="td_weather">체감 온도 : <span id="feels-like"> </span></div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2">
-                                        <div class="td_weather" id="dust_dobong">...</div>
+                                        <div class="td_weather" id="dust_dobong" style="text-align: left">...</div>
                                     </td>
                                 </tr>
 
@@ -94,19 +82,16 @@
                 </div>
             </main>
 
-            <!--<div id="dust">
-                <p id="dust_dobong">...</p>
-            </div>
--->
             <div id="boxApp">
-                <input type="button" onclick="showSubway()" id="btn_subway" class="btn_left" value="지하철"/>
-                <input type="button" onclick="showCalendar()" id="btn_calendar" class="btn_left" value="달력"/>
+                <button onclick="showSubway()" id="btn_subway" class="btn_left"><i class="fas fa-subway fa-2x"></i></button>
+                <button onclick="showCalendar()" id="btn_calendar" class="btn_left"><i class="fas fa-calendar-alt fa-2x"></i></button>
+                <button class="btn_left"><i class="fas fa-running fa-2x"></i></button>
             </div>
         </div>
 
         <div id="boxCenter">
             <div id="div_main">
-                보여지는 영역
+
             </div>
 
             <div id="div_subway" style="display: none" class="div_subway">
@@ -134,6 +119,10 @@
                         <td align="center"><font color=#7ED5E4>토</font></td>
                     </tr>
                 </table>
+            </div>
+
+            <div id="div_calendar" style="display: none">
+                나중에 운동
             </div>
         </div>
 
