@@ -16,7 +16,7 @@ const subway_url = url + SUBWAY_KEY + '/' + TYPE + '/' + SERVICE + '/' + START_I
 //http://swopenapi.seoul.go.kr/api/subway/6441514e666872393130375077635a49/json/realtimeStationArrival/0/5/솔밭공원
 
 
-setInterval(function(){
+//setInterval(function(){
     fetch(subway_url,{
         headers:{
             'Accept': 'application/json'
@@ -47,14 +47,12 @@ setInterval(function(){
         .catch(err => {
             console.log('Fetch Error',err);
         });
-},5000);
+//},5000);
 
 function showSubway(){
 
     $("#div_main").hide();
 
     $("#div_subway").show();
-    $("#div_bus").hide();
-    $("#div_youtube").hide();
     $("#div_calendar").hide();
 }

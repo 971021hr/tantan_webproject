@@ -4,8 +4,6 @@ function showCalendar(){
 
     $("#div_calendar").show();
     $("#div_subway").hide();
-    $("#div_bus").hide();
-    $("#div_youtube").hide();
 
     build();
 

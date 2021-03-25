@@ -20,126 +20,126 @@
 </head>
 <body>
 
-<div id="container">
-    <div id="boxLeft">
-        <div id="clock">
-            <p class="dateview1" id="dataview1"></p>
-            <p class="dateview2" id="dataview2"></p>
+    <div id="container">
+        <div id="boxLeft">
+            <div id="clock">
+                <p class="dateview1" id="dataview1"></p>
+                <p class="dateview2" id="dataview2"></p>
 
-            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
-            <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/locale/ko.js"></script>-->
-            <script>
-                setInterval(function(){
-                    var date = new Date();
-                    $('.dateview1').html(moment(date).format('LT'));
-                    $('.dateview2').html(moment().format('LL'));
-                },5000);
+                <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+             <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/locale/ko.js"></script>-->
+                <script>
+                    setInterval(function(){
+                        var date = new Date();
+                        $('.dateview1').html(moment(date).format('LT'));
+                        $('.dateview2').html(moment().format('LL'));
+                    },5000);
 
-            </script>
-        </div>
+                </script>
+            </div>
 
-        <main class="site-main" role="main">
-            <div class="container">
-                <!-- 화면 -->
-                <div class="center" >
-                    <div class="weather" id="awesomeWeather" >
+            <main class="site-main" role="main">
+                <div class="container">
+                    <!-- 화면 -->
+                    <div class="center" >
+                        <div class="weather" id="awesomeWeather" >
 
-                        <table id="tb_weather" align="center" style="width: 100%">
+                            <table id="tb_weather" align="center" style="width: 100%">
 
-                            <tr>
-                                <td rowspan="2">
-                                    <div id="weatherIcon"></div>
-                                </td>
-                                <td>
-                                    <div id="weatherLocation">City, Country</div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div id="weatherTemp" >- ℃</div>
-                                </td>
-                            </tr>
+                                <tr>
+                                    <td rowspan="2">
+                                        <div id="weatherIcon"></div>
+                                    </td>
+                                    <td>
+                                        <div id="weatherLocation">City, Country</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div id="weatherTemp" >- ℃</div>
+                                    </td>
+                                </tr>
 
-                            <tr>
-                                <td colspan="2">
-                                    <div class="td_weather" style="margin-top: 15px; text-align: left">체감 온도 : <span id="feels-like"> </span></div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">
-                                    <div class="td_weather" id="dust_dobong" style="text-align: left">...</div>
-                                </td>
-                            </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <div class="td_weather" style="margin-top: 15px; text-align: left">체감 온도 : <span id="feels-like"> </span></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <div class="td_weather" id="dust_dobong" style="text-align: left">...</div>
+                                    </td>
+                                </tr>
 
 
-                        </table>
+                            </table>
+                        </div>
                     </div>
                 </div>
+            </main>
+
+            <div id="boxApp">
+                <button onclick="showSubway()" id="btn_subway" class="btn_left"><i class="fas fa-subway fa-2x"></i></button>
+                <button onclick="showCalendar()" id="btn_calendar" class="btn_left"><i class="fas fa-calendar-alt fa-2x"></i></button>
+                <button class="btn_left"><i class="fas fa-running fa-2x"></i></button>
             </div>
-        </main>
-
-        <div id="boxApp">
-            <button onclick="showSubway()" id="btn_subway" class="btn_left"><i class="fas fa-subway fa-2x"></i></button>
-            <button onclick="showCalendar()" id="btn_calendar" class="btn_left"><i class="fas fa-calendar-alt fa-2x"></i></button>
-            <button class="btn_left"><i class="fas fa-running fa-2x"></i></button>
-        </div>
-    </div>
-
-    <div id="boxCenter">
-        <div id="div_main">
-
         </div>
 
-        <div id="div_subway" style="display: none" class="div_subway">
-            <h2 id="subway_name">지하철 정류소 이름</h2>
-            <p id="arr00_div">첫번째 도착 예정 시간</p>
-            <p id="arr01_div">두번째 도착 예정 시간</p>
-            <p id="arr02_div">세번째 도착 예정 시간</p>
-            <p id="arr03_div">네번째 도착 예정 시간</p>
-        </div>
+        <div id="boxCenter">
+            <div id="div_main">
 
-        <div id="div_calendar" style="display: none">
-            <table align="center" id="calendar" style="height: 300px;">
-                <tr>
-                    <td><font size=1%; color="#B3B6B3"><label onclick="beforem()" id="before" ></label></font></td>
-                    <td colspan="5" align="center" id="yearmonth"></td>
-                    <td><font size=1%; color="#B3B6B3"><label onclick="nextm()" id="next"></label></font></td>
-                </tr>
-                <tr>
-                    <td align="center"> <font color="#FF9090">일</font></td>
-                    <td align="center"> 월 </td>
-                    <td align="center"> 화 </td>
-                    <td align="center"> 수 </td>
-                    <td align="center"> 목 </td>
-                    <td align="center"> 금 </td>
-                    <td align="center"><font color=#7ED5E4>토</font></td>
-                </tr>
-            </table>
-        </div>
-
-        <div id="div_calendar" style="display: none">
-            나중에 운동
-        </div>
-    </div>
-
-    <div id="boxRight">
-        <div id="todolist">
-            <div id="signbutton">
-                <button id="authorize_button" style="display: none;">오늘의 일정</button>
-                <button id="signout_button" style="display: none;">오늘의 일정</button>
             </div>
 
-            <pre id="content" style="white-space: pre-wrap;"></pre>
+            <div id="div_subway" style="display: none" class="div_subway">
+                <h2 id="subway_name">지하철 정류소 이름</h2>
+                <p id="arr00_div">첫번째 도착 예정 시간</p>
+                <p id="arr01_div">두번째 도착 예정 시간</p>
+                <p id="arr02_div">세번째 도착 예정 시간</p>
+                <p id="arr03_div">네번째 도착 예정 시간</p>
+            </div>
 
-            <script type="text/javascript" src="js/google.js"></script>
-            <script async defer src="https://apis.google.com/js/api.js"
-                    onload="this.onload=function(){};handleClientLoad()"
-                    onreadystatechange="if (this.readyState === 'complete') this.onload()">
-            </script>
+            <div id="div_calendar" style="display: none">
+                <table align="center" id="calendar" style="height: 300px;">
+                    <tr>
+                        <td><font size=1%; color="#B3B6B3"><label onclick="beforem()" id="before" ></label></font></td>
+                        <td colspan="5" align="center" id="yearmonth"></td>
+                        <td><font size=1%; color="#B3B6B3"><label onclick="nextm()" id="next"></label></font></td>
+                    </tr>
+                    <tr>
+                        <td align="center"> <font color="#FF9090">일</font></td>
+                        <td align="center"> 월 </td>
+                        <td align="center"> 화 </td>
+                        <td align="center"> 수 </td>
+                        <td align="center"> 목 </td>
+                        <td align="center"> 금 </td>
+                        <td align="center"><font color=#7ED5E4>토</font></td>
+                    </tr>
+                </table>
+            </div>
 
+            <div id="div_calendar" style="display: none">
+                나중에 운동
+            </div>
         </div>
-    </div>
 
-</div>
+        <div id="boxRight">
+            <div id="todolist">
+                <div id="signbutton">
+                    <button id="authorize_button" style="display: none;">오늘의 일정</button>
+                    <button id="signout_button" style="display: none;">오늘의 일정</button>
+                </div>
+
+                <pre id="content" style="white-space: pre-wrap;"></pre>
+
+                <script type="text/javascript" src="js/google.js"></script>
+                <script async defer src="https://apis.google.com/js/api.js"
+                        onload="this.onload=function(){};handleClientLoad()"
+                        onreadystatechange="if (this.readyState === 'complete') this.onload()">
+                </script>
+
+            </div>
+        </div>
+
+    </div>
 </body>
 </html>
