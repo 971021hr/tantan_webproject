@@ -1,7 +1,7 @@
 /* 전체적 화면 설정 */
 body {
     padding: 10px;
-    font: 20px "Lucida Grande", Helvetica, Arial, sans-serif;
+    font-family: 'Jua', sans-serif;
     color: white;
     background: #000000;
     margin:20px;
@@ -18,12 +18,12 @@ body {
 }
 
 #clock{
-    margin-top: -50px;
+    margin-top: -65px;
     font-size: 30px;
 }
 
 #dataview1 {
-    font-size: 50px;
+    font-size: 57px;
     margin-bottom: -30px;
 }
 
@@ -62,9 +62,9 @@ body {
     background: #000000;
     border: none;
     color: white;
-    font-size: 30px;
+    font-size: 40px;
     float: right;
-    font-weight: bold;
+    font-family: 'Jua', sans-serif;
 }
 
 #signout_button {
@@ -73,16 +73,18 @@ body {
     background: #000000;
     border: none;
     color: white;
-    font-size: 30px;
+    font-size: 40px;
     float: right;
-    font-weight: bold;
+    font-family: 'Jua', sans-serif;
 }
 
 #content{
     margin-top: 6px;
+    padding-right: 5px;
     padding-top: -50px;
-    font: 20px "Lucida Grande", Helvetica, Arial, sans-serif;
+    font-family: 'Jua', sans-serif;
     float: right;
+    font-size: 20px;
 }
 
 #boxApp{
@@ -108,10 +110,12 @@ table {
 }
 
 .td_weather{
+    font-size: 20px;
     height: 40px;
 }
 #td_weather{
     height: 40px;
+    font-size: 20px;
     margin-bottom: -10px;
 }
 #weatherTemp{
