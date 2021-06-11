@@ -102,6 +102,20 @@ body {
     margin: 2px;
 }
 
+#btn_speech{
+    padding:20px;
+    background-color: black;
+    opacity: 1.0;
+    border-style: none;
+}
+
+#btn_dandan_squat{
+    padding:10px;
+    background-color: white;
+    opacity: 0.5;
+    border-style: none;
+}
+
 table {
     border:0px solid #000000;
     text-align:center;

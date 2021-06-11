@@ -12,10 +12,18 @@
     <script defer src="/js/weather.js"></script>
     <script type="text/javascript" src="js/appbox/showSubway.js"></script>
     <script type="text/javascript" src="js/appbox/showCalendar.js"></script>
+    <script type="text/javascript" src="js/appbox/showDandan.js"></script>
+    <script type="text/javascript" src="js/appbox/showDandanSquat.js"></script>
+
+    <!--21.04.15 speech test start-->
+    <script defer src="/js/main.js"></script>
+    <!--21.04.15 speech test end-->
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
     </style>
+
+
 
 </head>
 <body>
@@ -81,8 +89,23 @@
             <div id="boxApp">
                 <button onclick="showSubway()" id="btn_subway" class="btn_left"><i class="fas fa-subway fa-2x"></i></button>
                 <button onclick="showCalendar()" id="btn_calendar" class="btn_left"><i class="fas fa-calendar-alt fa-2x"></i></button>
-                <button class="btn_left"><i class="fas fa-running fa-2x"></i></button>
+                <button onclick="showDandan()" id="btn_dandan" class="btn_left"><i class="fas fa-running fa-2x"></i></button>
+                <!--<button onclick="showDandanSquat()" id="btn_dandan_squat" class="btn_left"><i class="fas fa-dumbbell fa-2x"></i></button>-->
+
+
+                <!--
+                21.04.15 speech test start
+                나중에 이 버튼을 사람이 앞에 보이면 마이크 on/off로 변경할 것
+                -->
+                <!--<button onclick="initialize()" id="btn_speech" class="btn_left">speech</button>-->
+
+                <!--21.04.15 speech test end-->
+
             </div>
+            <br>
+            <button onclick="showDandanSquat()" id="btn_dandan_squat" class="btn_left"><i class="fas fa-dumbbell fa-2x"></i></button>
+
+            <button id="btn_speech">speech</button>
         </div>
 
         <div id="boxCenter">
@@ -119,9 +142,52 @@
                 </table>
             </div>
 
-            <div id="div_calendar" style="display: none">
-                나중에 운동
+            <div id="div_dandan" style="display: none">
+                <img src="img/squat.png" width="780" height="780"/>
+
             </div>
+
+            <div id="div_dandan_squat" style="display: none">
+                <video src="video/squat5.mp4" width="780" height="780" autoplay loop muted>
+
+                </video>
+            </div>
+
+            <!--21.04.15 speech test start-->
+            <div id="div_speech" style="display: none">
+                <div class="wrap">
+
+                    <div id="result">
+                        <span class="final" id="final_span"></span>
+                        <span class="interim" id="interim_span"></span>
+                    </div>
+                    <!--마이크 on/off 버튼-->
+                    <!--<button id="btn-mic" class="off">마이크 <span></span></button>-->
+                    <!--입력된 문자열 읽기-->
+                    <button id="btn-tts">Text to speech</button>
+                   <!-- <audio id="audio" src="audio/ending.mp3"></audio>-->
+                    <!--
+                    음악 재생 주석처리
+                        <div>
+                          <button onclick="document.getElementById('audio').play()">Play the Audio</button>
+                          <button onclick="document.getElementById('audio').pause()">Pause the Audio</button>
+                          <button onclick="document.getElementById('audio').volume+=0.2">Increase Volume</button>
+                          <button onclick="document.getElementById('audio').volume-=0.2">Decrease Volume</button>
+                        </div>
+                        -->
+                    <br /><br />
+
+                    <h3>예약어 (마이크를 켠 상태에서 아래 문자를 읽어보세요)</h3>
+                    <ul>
+                        <li>알람</li>
+                        <li>스피치, 말해줘</li>
+                        <!-- 프로젝트 실행용 명령어 모음 -->
+                        <li>지하철, 달력, 단단, 운동</li>
+                        <li>하체, 상체, 복근, 유산소</li>
+                    </ul>
+                </div>
+            </div>
+            <!--21.04.15 speech test end-->
         </div>
 
         <div id="boxRight">

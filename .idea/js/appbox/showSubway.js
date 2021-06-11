@@ -55,4 +55,7 @@ function showSubway(){
 
     $("#div_subway").show();
     $("#div_calendar").hide();
+    $("#div_dandan").hide();
+    $("#div_speech").hide();
+    $("#div_dandan_squat").hide();
 }
