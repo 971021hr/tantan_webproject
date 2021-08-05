@@ -1,0 +1,157 @@
+/* 전체적 화면 설정 */
+body {
+    padding: 10px;
+    font-family: 'Jua', sans-serif;
+    color: white;
+    background: #000000;
+    margin:20px;
+}
+
+#container{
+    display: flex;
+
+}
+
+#boxLeft{
+    background: #000000;
+    flex: 1;
+}
+
+#clock{
+    margin-top: -65px;
+    font-size: 30px;
+}
+
+#dataview1 {
+    font-size: 57px;
+    margin-bottom: -30px;
+}
+
+#awesomeWeather {
+    display: inline-block;
+    margin-top: -10px;
+}
+
+.weatherLocation{
+    display:inline-block;
+}
+
+.weatherTemp {
+    display: inline-block;
+}
+
+#boxCenter{
+    background: #000000;
+    flex: 4;
+    text-align: center;
+}
+
+#boxRight{
+    background: #000000;
+    flex: 1;
+    text-align: right;
+}
+
+#signbutton {
+    margin-top: -20px;
+}
+
+#authorize_button {
+    padding-top: 20px;
+    outline: none;
+    background: #000000;
+    border: none;
+    color: white;
+    font-size: 40px;
+    float: right;
+    font-family: 'Jua', sans-serif;
+}
+
+#signout_button {
+    padding-top: 20px;
+    outline: none;
+    background: #000000;
+    border: none;
+    color: white;
+    font-size: 40px;
+    float: right;
+    font-family: 'Jua', sans-serif;
+}
+
+#content{
+    margin-top: 6px;
+    padding-right: 5px;
+    padding-top: -50px;
+    font-family: 'Jua', sans-serif;
+    float: right;
+    font-size: 20px;
+}
+
+#boxApp{
+    background-color: rgba( 255, 255, 255, 0.3 );
+    margin: 5px;
+    padding: 8px;
+    width: 135px;
+    border-radius: 5px 5px 5px 5px;
+}
+
+/* 왼쪽 버튼 스타일 */
+.btn_left{
+    border-radius: 5px;
+    padding: 5px;
+    margin: 2px;
+}
+
+#btn_speech{
+    padding:20px;
+    background-color: black;
+    opacity: 1.0;
+    border-style: none;
+}
+
+#btn_dandan_squat{
+    padding:10px;
+    background-color: white;
+    opacity: 0.5;
+    border-style: none;
+}
+
+table {
+    border:0px solid #000000;
+    text-align:center;
+    width:50%;
+
+}
+
+.td_weather{
+    font-size: 20px;
+    height: 40px;
+}
+#td_weather{
+    height: 40px;
+    font-size: 20px;
+    margin-bottom: -10px;
+}
+#weatherTemp{
+    font-size: xx-large;
+}
+
+#subway_name {
+    font-size: 30px;
+}
+
+.sub_arrive {
+    font-size: 20px;
+}
+
+#div_subway{
+    margin-top: -20px;
+}
+
+#yearmonth {
+    font-size: 30px;
+}
+
+#cal_date{
+    font-size: 20px;
+}

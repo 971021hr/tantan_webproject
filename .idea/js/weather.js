@@ -29,7 +29,6 @@ function success(position) {
             FeelsLike.innerHTML = `${json.main.feels_like}℃`;
             icon.innerHTML = `<img src='http://openweathermap.org/img/wn/${wIcon}.png'>`;
 
-
         });
     },5000);
 

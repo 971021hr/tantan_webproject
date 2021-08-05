@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>smartmirror</title>
+    <link rel='stylesheet' href="{{ url_for('static', filename='css/style.css') }}" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <script src="{{ url_for('static', filename='js/google.js') }}" > </script>
+    <script defer src="{{ url_for('static', filename='js/main.js') }}" > </script>
+    <script defer src="{{ url_for('static', filename='js/dust.js') }}" > </script>
+    <script defer src="{{ url_for('static', filename='js/weather.js') }}" > </script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/appbox/showSubway.js') }}" > </script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/appbox/showCalendar.js') }}" > </script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/appbox/showDandan.js') }}" > </script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/appbox/showDandanSquat.js') }}" > </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
+    </style>
+</head>
+
+
+<body>
+
+<div id="container">
+    <div id="boxLeft">
+        <div id="clock">
+            <p class="dateview1" id="dataview1"></p>
+            <p class="dateview2" id="dataview2"></p>
+
+            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+            <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/locale/ko.js"></script>-->
+            <script>
+                setInterval(function(){
+                    var date = new Date();
+                    $('.dateview1').html(moment(date).format('LT'));
+                    $('.dateview2').html(moment().format('LL'));
+                    document.cookie = 'user=; expires=Thu, 18 Dec 2013 12:00:00 GMT'
+                    // $('#data').text("40");
+                    // $(document).ready(function(){
+                    //     $.ajax({
+                    //         url: "static/cnt_saved.txt",
+                    //         async : false
+                    //     }).done(function(response) {
+                    //         $('#data').html(response);
+                    //         response.empty();
+                    //     });
+                    // })
+
+                },5000);
+
+                $(document).ready(function() {
+                    // $("#data").load("static/cnt_saved.txt");
+                    var refreshId = setInterval(function() {
+                        $("#data").load("static/cnt_saved.txt");
+                    }, 3000);
+                    $.ajaxSetup({ cache: false });
+                });
+
+            </script>
+        </div>
+
+        <main class="site-main" role="main">
+            <div class="container">
+                <!-- 화면 -->
+                <div class="center" >
+                    <div class="weather" id="awesomeWeather" >
+
+                        <table id="tb_weather" align="center" style="width: 100%">
+
+                            <tr>
+                                <td rowspan="2">
+                                    <div id="weatherIcon"></div>
+                                </td>
+                                <td>
+                                    <div id="weatherLocation">City, Country</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div id="weatherTemp" >- ℃</div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="2">
+                                    <div id="td_weather" style="margin-top: 15px; text-align: left">체감온도 : <span id="feels-like"> </span></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <div class="td_weather" id="dust_dobong" style="text-align: left">미세먼지 : </div>
+                                </td>
+                            </tr>
+
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div id="boxApp">
+            <button onclick="showSubway()" id="btn_subway" class="btn_left"><i class="fas fa-subway fa-2x"></i></button>
+            <button onclick="showCalendar()" id="btn_calendar" class="btn_left"><i class="fas fa-calendar-alt fa-2x"></i></button>
+            <button onclick="showDandan()" id="btn_dandan" class="btn_left"><i class="fas fa-running fa-2x"></i></button>
+            <!--<button onclick="showDandanSquat()" id="btn_dandan_squat" class="btn_left"><i class="fas fa-dumbbell fa-2x"></i></button>-->
+
+
+            <!--
+            21.04.15 speech test start
+            나중에 이 버튼을 사람이 앞에 보이면 마이크 on/off로 변경할 것
+            -->
+            <!--<button onclick="initialize()" id="btn_speech" class="btn_left">speech</button>-->
+
+            <!--21.04.15 speech test end-->
+
+        </div>
+        <br>
+        <button onclick="showDandanSquat()" id="btn_dandan_squat" class="btn_left"><i class="fas fa-dumbbell fa-2x"></i></button>
+
+        <button id="btn_speech">speech</button>
+    </div>
+
+    <div id="boxCenter">
+        <div id="div_main">
+
+        </div>
+
+        <div id="div_subway" style="display: none" class="div_subway">
+            <p id="subway_name">지하철 정류소 이름</p>
+            <div class="sub_arrive">
+                <p id="arr00_div">첫번째 도착 예정 시간</p>
+                <p id="arr01_div">두번째 도착 예정 시간</p>
+                <p id="arr02_div">세번째 도착 예정 시간</p>
+                <p id="arr03_div">네번째 도착 예정 시간</p>
+            </div>
+        </div>
+
+        <div id="div_calendar" style="display: none">
+            <table align="center" id="calendar" style="height: 300px;">
+                <tr>
+                    <td><font size=3%; color="#B3B6B3"><label onclick="beforem()" id="before" ></label></font></td>
+                    <td colspan="5" align="center" id="yearmonth"></td>
+                    <td><font size=3%; color="#B3B6B3"><label onclick="nextm()" id="next"></label></font></td>
+                </tr>
+                <tr id="cal_date">
+                    <td align="center"> <font color="#FF9090">일</font></td>
+                    <td align="center"> 월 </td>
+                    <td align="center"> 화 </td>
+                    <td align="center"> 수 </td>
+                    <td align="center"> 목 </td>
+                    <td align="center"> 금 </td>
+                    <td align="center"><font color=#7ED5E4>토</font></td>
+                </tr>
+            </table>
+        </div>
+
+        <div id="div_dandan" style="display: none">
+            <!--                <img src="img/squat.png" width="780" height="780"/>-->
+            <!--                <a href="my-link/">Click me</a>-->
+
+            <p id="data">0</p>
+            <video src="{{ url_for('static', filename='video/squat5.mp4') }}" width="780" height="780" autoplay loop muted>
+            </video>
+            <script>
+                // function parseData(data){
+                //     //do something with the data
+                //     alert("data is: " + data);
+                // }
+                // $.get("C:\\Users\\chku5\\IdeaProjects\\tantan_webproject\\.idea\\static\\cnt_saved.txt",parseData);
+                // var stringData = $.ajax({
+                //     url: "static/cnt_saved.txt",
+                //     async: false
+                // }).responseText;
+                // //Split values of string data
+                // alert("Data Loaded: " + stringData);
+                //     //
+                // setInterval(function(){
+                //     $(document).ready(function(){
+                //         $.ajax({
+                //             url: "static/cnt_saved.txt"
+                //         }).done(function(response) {
+                //             $('#data').html(response);
+                //         });
+                //     })
+                //
+                // },5000);
+                // $(document).ready(function(){
+                //     $.ajax({
+                //         url: "static/cnt_saved.txt"
+                //     }).done(function(response) {
+                //         $('#data').html(response);
+                //     });
+                // })
+            </script>
+<!--            <div id="data">secy</div>-->
+<!--            횟수 : {{temp01}}-->
+
+        </div>
+
+        <div id="div_dandan_squat" style="display: none">
+            <!--              <video src="video/squat5.mp4" width="780" height="780" autoplay loop muted>-->
+            <!--              </video>-->
+            <!--                <a href="/my-link/">Click me</a>-->
+        </div>
+
+        <!--21.04.15 speech test start-->
+        <div id="div_speech" style="display: none">
+            <div class="wrap">
+
+                <div id="result">
+                    <span class="final" id="final_span"></span>
+                    <span class="interim" id="interim_span"></span>
+                </div>
+                <!--마이크 on/off 버튼-->
+                <!--<button id="btn-mic" class="off">마이크 <span></span></button>-->
+                <!--입력된 문자열 읽기-->
+                <button id="btn-tts">Text to speech</button>
+                <!-- <audio id="audio" src="audio/ending.mp3"></audio>-->
+                <!--
+                음악 재생 주석처리
+                    <div>
+                      <button onclick="document.getElementById('audio').play()">Play the Audio</button>
+                      <button onclick="document.getElementById('audio').pause()">Pause the Audio</button>
+                      <button onclick="document.getElementById('audio').volume+=0.2">Increase Volume</button>
+                      <button onclick="document.getElementById('audio').volume-=0.2">Decrease Volume</button>
+                    </div>
+                    -->
+                <br /><br />
+
+                <h3>예약어 (마이크를 켠 상태에서 아래 문자를 읽어보세요)</h3>
+                <ul>
+                    <li>알람</li>
+                    <li>스피치, 말해줘</li>
+                    <!-- 프로젝트 실행용 명령어 모음 -->
+                    <li>지하철, 달력, 단단, 운동</li>
+                    <li>하체, 상체, 복근, 유산소</li>
+                </ul>
+            </div>
+        </div>
+        <!--21.04.15 speech test end-->
+    </div>
+
+    <div id="boxRight">
+        <div id="todolist">
+            <div id="signbutton">
+                <button id="authorize_button" style="display: none;">오늘의 일정</button>
+                <button id="signout_button" style="display: none;">오늘의 일정</button>
+            </div>
+
+            <pre id="content" style="white-space: pre-wrap;"></pre>
+
+            <script src="{{ url_for('static', filename='js/google.js') }}" > </script>
+            <script async defer src="https://apis.google.com/js/api.js"
+                    onload="this.onload=function(){};handleClientLoad()"
+                    onreadystatechange="if (this.readyState === 'complete') this.onload()">
+            </script>
+
+            <script>
+                setInterval(function (){
+                    const element = document.getElementById('content');
+                    element.innerText = '';
+                    element.text = listUpcomingEvents();
+                },360000);
+            </script>
+
+
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
