@@ -131,14 +131,14 @@ $(document).ready(function (){
         }else if (string.endsWith('달력')){
             showCalendar();
         }
-        else if (string.endsWith('단단') || string.endsWith('운동')){
+        else if (string.endsWith('단단') || string.endsWith('하체운동')){
             showDandan();
         }else if (string.endsWith('스쿼트') || string.endsWith('squat')){
             showDandanSquat();
         }else if (string.endsWith('하체') || string.endsWith('다리')){
             alert('하체');
-        }else if (string.endsWith('상체')){
-            alert('상체');
+        }else if (string.endsWith('상체운동') || string.endsWith('상태')){
+            showDandanUp();
         }else if (string.endsWith('복근')){
             alert('복근');
         }else if (string.endsWith('유산소')){

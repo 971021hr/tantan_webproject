@@ -1,17 +1,18 @@
+#BodyGame from GitHub draws skeletons (https://github.com/Kinect/PyKinect2/blob/master/examples/PyKinectBodyGame.py)
+# -*- coding:UTF-8 -*-
+
 from flask import Flask, render_template
 from numpy import arccos, double
-from numpy.lib import r_
+from numpy.lib import r_, select, setdiff1d
 from pykinect2 import PyKinectV2, PyKinectRuntime
 import pykinect2
 from pykinect2.PyKinectV2 import *
 from flask import redirect, Response, url_for
 from flask import request
-from livereload import Server
 
 import ctypes
 import _ctypes
 import pygame
-import sys
 import math
 import copy
 import time
@@ -30,8 +31,8 @@ def index():
 
 @app.route('/my-link/<name>')
 def my_link(name):
-    # pygame window 실행
 
+    #==================================
     #BodyGame from GitHub draws skeletons (https://github.com/Kinect/PyKinect2/blob/master/examples/PyKinectBodyGame.py)
     # -*- coding:UTF-8 -*-
 
@@ -47,25 +48,36 @@ def my_link(name):
     left_HipCnt = []
     right_HipCnt = []
 
+    left_handCnt = []
+    right_handCnt = []
+
     leftlungeCnt = []
     rightlungeCnt = []
 
     goodCnt = []
     squatCnt = []
-
+    sidebamCnt = []
     lpdCnt = []
-    slrCnt = []
 
+    yogaCnt = []
+    yogaside_status = True
+    left_YStandCnt = []
+    right_YStandCnt = []
+    sec = 200
+
+    nextRoutine = False
     squat_status = True
+
+    exCnt = ""
 
     # colors for drawing different bodies
     SKELETON_COLORS = [pygame.color.THECOLORS["red"],
-                       pygame.color.THECOLORS["blue"],
-                       pygame.color.THECOLORS["green"],
-                       pygame.color.THECOLORS["orange"],
-                       pygame.color.THECOLORS["purple"],
-                       pygame.color.THECOLORS["yellow"],
-                       pygame.color.THECOLORS["violet"]]
+                        pygame.color.THECOLORS["blue"],
+                        pygame.color.THECOLORS["green"],
+                        pygame.color.THECOLORS["orange"],
+                        pygame.color.THECOLORS["purple"],
+                        pygame.color.THECOLORS["yellow"],
+                        pygame.color.THECOLORS["violet"]]
 
     #==================================
     def get_angle_v3(p1_1, p1_2, p2_1, p2_2, p3_1, p3_2):
@@ -116,8 +128,7 @@ def my_link(name):
     class GameRuntime_leg_routine(object):
         def __init__(self):
             pygame.init()
-            pygame.font.init()
-            font = pygame.font.SysFont(None, 30)
+
             self.startScreen = False
             self.mainScreen = True
             self.time = time.strftime("%H:%M") + " " + time.strftime("%d/%m/%Y")
@@ -160,10 +171,8 @@ def my_link(name):
             self.curX = (None, None)
             self.curY = (None, None)
 
-
             self.moveDetected = False
             self.jointDetected = False
-
 
             # Used to manage how fast the screen updates
             self._clock = pygame.time.Clock()
@@ -219,21 +228,22 @@ def my_link(name):
             self.jointDetected = False
 
         def draw_title(self):
-            text = pygame.font.Font("freesansbold.ttf",200)
+            text = pygame.font.SysFont(None,200,True,False)
             textSurf, textRect = text_objects("KinectLift", text, (255,255,255))
             textRect.center = (int(self.screen_width/2),int(self.screen_height/2))
             self._frame_surface.blit(textSurf,textRect)
 
 
         def draw_squatSummaryPage(self):
+            pygame.font.init()
 
             if self.squatSummaryList == []:
-                text = pygame.font.Font("freesansbold.ttf",30)
-                textSurf, textRect = text_objects("", text)
+                text = pygame.font.SysFont(None,30,True,False)
+                textSurf, textRect = text_objects("start", text)
                 textRect.center = (int(self.screen_width/2),int(self.screen_height)/3)
                 self._frame_surface.blit(textSurf,textRect)
 
-            text = pygame.font.Font("freesansbold.ttf",30)
+            text = pygame.font.SysFont(None,30,True,False)
             textSurf1, textRect1 = text_objects("Click to return to main menu..", text)
             textRect1.center = (int(self.screen_width - self.screen_width/6.5),int(self.screen_height - self.screen_height/20))
             self._frame_surface.blit(textSurf1,textRect1)
@@ -253,23 +263,23 @@ def my_link(name):
                 self._frame_surface.blit(textSurf1,textRect1)
 
         def draw_moveScr(self):
-            text = pygame.font.Font("freesansbold.ttf",100)
+            text = pygame.font.SysFont(None,100,True,False)
             textSurf, textRect = text_objects(self.currPress, text)
             textRect.center = (int(self.screen_width/2),int(self.screen_height/6))
             self._frame_surface.blit(textSurf,textRect)
 
-            text1 = pygame.font.Font("freesansbold.ttf",50)
+            text1 = pygame.font.SysFont(None,50,True,False)
             textSurf1, textRect1 = text_objects(str(len(squatCnt)), text1)
             textRect1.center = (int(self.screen_width/2),int(1.5* self.screen_height/6))
             self._frame_surface.blit(textSurf1,textRect1)
 
             if self.jointDetected == False:
-                text2 = pygame.font.Font("freesansbold.ttf",50)
+                text2 = pygame.font.SysFont(None,50,True,False)
                 textSurf2, textRect2 = text_objects("", text1)
                 textRect2.center = (int(self.screen_width/2),int(2* self.screen_height/6))
                 self._frame_surface.blit(textSurf2,textRect2)
             else:
-                text2 = pygame.font.Font("freesansbold.ttf",50)
+                text2 = pygame.font.SysFont(None,50,True,False)
                 textSurf2, textRect2 = text_objects(str(len(squatCnt)), text1)
                 textRect2.center = (int(self.screen_width/2),int(2* self.screen_height/6))
                 self._frame_surface.blit(textSurf2,textRect2)
@@ -340,15 +350,26 @@ def my_link(name):
             del address
             target_surface.unlock()
 
+        def draw_display(self):
+            h_to_w = float(self._frame_surface.get_height()) / self._frame_surface.get_width()
+            target_height = int(h_to_w * self._screen.get_width())
+            surface_to_draw = pygame.transform.scale(self._frame_surface, (self._screen.get_width(), target_height))
+            self._screen.blit(surface_to_draw, (0,0))
+            surface_to_draw = None
+            pygame.display.update()
+
 
         def run_squat(self):
+            self.currPress = "Squat"
+
             f = open("static/video_name.txt", 'w')
             f.write("squat")
             f.close()
-            video = "squat"
-            self.currPress = "Squat"
 
-            global nextRoutine, squat_status, goodCnt
+            exCnt = ""
+            global squat_status
+            global goodCnt
+            nextRoutine = False
 
             # -------- Main Program Loop -----------
             while not self._done:
@@ -435,11 +456,14 @@ def my_link(name):
 
                                 if (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) and (nextRoutine == True) :
                                     print("start run_hip")
+                                    txtCnt = "1st>> " + str(len(squatCnt)) + " / "
+                                    exCnt += txtCnt
                                     self.run_hip()
 
-                                if (abs(leftWristY -spineBaseY) >= 0.3):
+                                if len(squatCnt) > 0 :
                                     nextRoutine = True
 
+                                if (abs(leftWristY -spineBaseY) >= 0.3):
                                     self.moveDetected = True
                                     if  abs(leftWristX - rightWristX) < 0.1:
                                         self.wristXList.append(self.curX[0])
@@ -517,24 +541,22 @@ def my_link(name):
                     else:
                         self.draw_moveScr()
 
-                h_to_w = float(self._frame_surface.get_height()) / self._frame_surface.get_width()
-                target_height = int(h_to_w * self._screen.get_width())
-                surface_to_draw = pygame.transform.scale(self._frame_surface, (self._screen.get_width(), target_height))
-                self._screen.blit(surface_to_draw, (0,0))
-                surface_to_draw = None
-                pygame.display.update()
+                self.draw_display()
 
             # Close our Kinect sensor, close the window and quit.
             self._kinect.close()
-            pygame.quit()
+            # pygame.quit()
 
         def run_hip(self):
             self.currPress = "Hip"
+
             f = open("static/video_name.txt", 'w')
             f.write("hip")
             f.close()
 
-            global nextRoutine
+            nextRoutine = True
+            global hip_status
+            global exCnt
 
             squatCnt.clear()
 
@@ -605,7 +627,7 @@ def my_link(name):
                             leftHipY = joints[PyKinectV2.JointType_HipLeft].Position.y
                             leftHipX = joints[PyKinectV2.JointType_HipLeft].Position.x
 
-                            # Hip
+                             # Hip
                             if self.currPress == "Hip":
 
                                 Left_Hip_angle = get_angle_v3(spineBaseX, spineBaseY, leftHipX, leftHipY, leftKneeX, leftKneeY)
@@ -616,14 +638,14 @@ def my_link(name):
 
                                 if (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) and (nextRoutine == False):
                                     print("start run_lunge")
+                                    txtCnt = "2nd>> " + str(len(squatCnt)) + " / "
+                                    # exCnt += txtCnt
                                     self.run_lunge()
 
                                 if (abs(leftWristY -spineBaseY) >= 0.3):
 
                                     # print(abs(headX-spineBaseX))
                                     self.moveDetected = True
-
-                                    # global left_HipCnt, right_HipCnt
 
                                     if (len(left_HipCnt)>0) and (len(right_HipCnt)>0) :
                                         nextRoutine = False
@@ -635,7 +657,6 @@ def my_link(name):
                                         else :
 
                                             if (Left_Hip_angle >= 140) :
-                                                global hip_status
                                                 if hip_status == True:
                                                     goodCnt.append(1)
                                                 print("good cnt > ",len(goodCnt))
@@ -714,7 +735,6 @@ def my_link(name):
                                                     if fix not in self.squatSummaryList:
                                                         self.squatSummaryList.append(fix)
 
-
                 self.draw_squatSummaryPage()
 
                 # Draw graphics
@@ -726,17 +746,11 @@ def my_link(name):
                     else:
                         self.draw_moveScr()
 
-                h_to_w = float(self._frame_surface.get_height()) / self._frame_surface.get_width()
-                target_height = int(h_to_w * self._screen.get_width())
-                surface_to_draw = pygame.transform.scale(self._frame_surface, (self._screen.get_width(), target_height))
-                self._screen.blit(surface_to_draw, (0,0))
-                surface_to_draw = None
-                pygame.display.update()
+                self.draw_display()
 
-
-            # Close our Kinect sensor, close the window and quit.
+            # # Close our Kinect sensor, close the window and quit.
             self._kinect.close()
-            pygame.quit()
+            # pygame.quit()
 
         def run_lunge(self):
             self.currPress = "Lunge"
@@ -744,6 +758,11 @@ def my_link(name):
             f = open("static/video_name.txt", 'w')
             f.write("lunge")
             f.close()
+
+            global exCnt
+            nextRoutine = False
+            global squat_status
+            global goodCnt
 
             squatCnt.clear()
             # -------- Main Program Loop -----------
@@ -787,6 +806,11 @@ def my_link(name):
                             headY = joints[PyKinectV2.JointType_Head].Position.y
                             headZ = joints[PyKinectV2.JointType_Head].Position.z
 
+                            leftHandX = joints[PyKinectV2.JointType_HandLeft].Position.x
+                            leftHandY = joints[PyKinectV2.JointType_HandLeft].Position.y
+                            rightHandX = joints[PyKinectV2.JointType_HandRight].Position.x
+                            rightHandY = joints[PyKinectV2.JointType_HandRight].Position.y
+
                             rightWristY = joints[PyKinectV2.JointType_WristRight].Position.y
                             leftWristY  = joints[PyKinectV2.JointType_WristLeft].Position.y
                             rightWristX = joints[PyKinectV2.JointType_WristRight].Position.x
@@ -822,6 +846,17 @@ def my_link(name):
 
                                 self.curX = (leftWristX, leftKneeX)
                                 self.curY = (leftWristY, leftFootX)
+
+                                # leg routine ending
+                                if (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) and (nextRoutine == True):
+                                    print("Last routine")
+                                    txtCnt = "3rd>> " + str(len(squatCnt))
+                                    #exCnt += txtCnt
+                                    sys.exit()
+
+                                if len(leftlungeCnt) > 0 or len(rightlungeCnt) > 0 :
+                                    nextRoutine = True
+
                                 if (abs(leftWristY -spineBaseY) >= 0.3):
                                     self.moveDetected = True
                                     if  abs(leftWristX - rightWristX) < 0.1:
@@ -866,11 +901,6 @@ def my_link(name):
                                                 goodCnt = []
                                                 squat_status = True
                                                 print("Bad!")
-                                                print("발끝 - 무릎 위치 : ", abs(self.feetList[0] - self.maxKneeX))
-                                                print("왼쪽 무릎 각도 {0}".format(Left_Knee_angle))
-                                                print("오른쪽 무릎 각도 {0}".format(Right_Knee_angle))
-                                                print("허리1 <= 0.2 ?", abs(headX-spineBaseX))
-                                                print("허리2 <= 0.2 ?", abs(headZ-spineBaseZ))
 
                                                 # 앞무릎을 더 굽혀주세요
                                                 if 70.0 > Left_Knee_angle or Left_Knee_angle > 120.0 :
@@ -926,11 +956,6 @@ def my_link(name):
                                                 goodCnt = []
                                                 squat_status = True
                                                 print("Bad!")
-                                                print("발끝 - 무릎 위치 : ", abs(self.feetList[0] - self.maxKneeX))
-                                                print("왼쪽 무릎 각도 {0}".format(Left_Knee_angle))
-                                                print("오른쪽 무릎 각도 {0}".format(Right_Knee_angle))
-                                                print("허리1 <= 0.2 ?", abs(headX-spineBaseX))
-                                                print("허리2 <= 0.2 ?", abs(headZ-spineBaseZ))
 
                                                 # 앞무릎을 더 굽혀주세요
                                                 if 70.0 > Right_Knee_angle or Right_Knee_angle > 120.0 :
@@ -972,15 +997,13 @@ def my_link(name):
                     else:
                         self.draw_moveScr()
 
-                h_to_w = float(self._frame_surface.get_height()) / self._frame_surface.get_width()
-                target_height = int(h_to_w * self._screen.get_width())
-                surface_to_draw = pygame.transform.scale(self._frame_surface, (self._screen.get_width(), target_height))
-                self._screen.blit(surface_to_draw, (0,0))
-                surface_to_draw = None
-                pygame.display.update()
+                self.draw_display()
 
             self._kinect.close()
             pygame.quit()
+
+
+
 
     class GameRuntime_upperBodyRoutine(object):
         def __init__(self):
@@ -993,7 +1016,6 @@ def my_link(name):
             self.currPress = "LatPullDown"
 
             self.screen_width = 1920
-
             self.screen_height = 1080
 
             self.profile = "Left"
@@ -1100,21 +1122,22 @@ def my_link(name):
             self.jointDetected = False
 
         def draw_title(self):
-            text = pygame.font.Font("freesansbold.ttf",200)
+            text = pygame.font.SysFont(None,200,True,False)
             textSurf, textRect = text_objects("KinectLift", text, (255,255,255))
             textRect.center = (int(self.screen_width/2),int(self.screen_height/2))
             self._frame_surface.blit(textSurf,textRect)
 
 
         def draw_latPullDownSummaryPage(self):
+            pygame.font.init()
 
             if self.latPullDownSummaryList == []:
-                text = pygame.font.Font("freesansbold.ttf",30)
+                text = pygame.font.SysFont(None,30,True,False)
                 textSurf, textRect = text_objects("", text)
                 textRect.center = (int(self.screen_width/2),int(self.screen_height)/3)
                 self._frame_surface.blit(textSurf,textRect)
 
-            text = pygame.font.Font("freesansbold.ttf",30)
+            text = pygame.font.SysFont(None,30,True,False)
             textSurf1, textRect1 = text_objects("Click to return to main menu..", text)
             textRect1.center = (int(self.screen_width - self.screen_width/6.5),int(self.screen_height - self.screen_height/20))
             self._frame_surface.blit(textSurf1,textRect1)
@@ -1160,23 +1183,23 @@ def my_link(name):
                 self._frame_surface.blit(textSurf1,textRect1)
 
         def draw_moveScr(self):
-            text = pygame.font.Font("freesansbold.ttf",100)
+            text = pygame.font.SysFont(None,100,True,False)
             textSurf, textRect = text_objects(self.currPress, text)
             textRect.center = (int(self.screen_width/2),int(self.screen_height/6))
             self._frame_surface.blit(textSurf,textRect)
 
-            text1 = pygame.font.Font("freesansbold.ttf",50)
+            text1 = pygame.font.SysFont(None,50,True,False)
             textSurf1, textRect1 = text_objects(str(len(lpdCnt)), text1)
             textRect1.center = (int(self.screen_width/2),int(1.5* self.screen_height/6))
             self._frame_surface.blit(textSurf1,textRect1)
 
             if self.jointDetected == False:
-                text2 = pygame.font.Font("freesansbold.ttf",50)
+                text2 = pygame.font.SysFont(None,50,True,False)
                 textSurf2, textRect2 = text_objects("", text1)
                 textRect2.center = (int(self.screen_width/2),int(2* self.screen_height/6))
                 self._frame_surface.blit(textSurf2,textRect2)
             else:
-                text2 = pygame.font.Font("freesansbold.ttf",50)
+                text2 = pygame.font.SysFont(None,50,True,False)
                 textSurf2, textRect2 = text_objects(str(len(lpdCnt)), text1)
                 textRect2.center = (int(self.screen_width/2),int(2* self.screen_height/6))
                 self._frame_surface.blit(textSurf2,textRect2)
@@ -1246,13 +1269,26 @@ def my_link(name):
             del address
             target_surface.unlock()
 
+        def draw_display(self):
+            h_to_w = float(self._frame_surface.get_height()) / self._frame_surface.get_width()
+            target_height = int(h_to_w * self._screen.get_width())
+            surface_to_draw = pygame.transform.scale(self._frame_surface, (self._screen.get_width(), target_height))
+            self._screen.blit(surface_to_draw, (0,0))
+            surface_to_draw = None
+            pygame.display.update()
+
 
         def run_lpd(self):
-            global squat_status
-            global goodCnt
-            global lpdCnt
-            global nextRoutine
 
+            f = open("static/video_name.txt", 'w')
+            f.write("lpd")
+            f.close()
+
+            global squat_status, nextRoutine
+            global goodCnt, lpdCnt
+            global exCnt
+
+            exCnt = ""
             nextRoutine = True
 
             # -------- Main Program Loop -----------
@@ -1336,6 +1372,8 @@ def my_link(name):
 
                                 if (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) and (nextRoutine == True) :
                                     print("start run_kickback")
+                                    txtCnt = "1st>> " + str(len(lpdCnt)) + " / "
+                                    exCnt += txtCnt
                                     self.run_kickBack()
 
                                 # start point
@@ -1349,7 +1387,6 @@ def my_link(name):
                                 if self.moveDetected == True :
 
                                     print("start latPullDown___________here !!")
-
 
                                     if (leftWristY < headY and rightWristY < headY) :
                                         print("start latPullDown !!")
@@ -1404,12 +1441,7 @@ def my_link(name):
                     else:
                         self.draw_moveScr()
 
-                h_to_w = float(self._frame_surface.get_height()) / self._frame_surface.get_width()
-                target_height = int(h_to_w * self._screen.get_width())
-                surface_to_draw = pygame.transform.scale(self._frame_surface, (self._screen.get_width(), target_height))
-                self._screen.blit(surface_to_draw, (0,0))
-                surface_to_draw = None
-                pygame.display.update()
+                self.draw_display()
 
             # Close our Kinect sensor, close the window and quit.
             self._kinect.close()
@@ -1418,10 +1450,13 @@ def my_link(name):
         def run_kickBack(self):
             self.currPress = "KickBack"
 
-            global squat_status
-            global goodCnt
-            global lpdCnt
-            global nextRoutine
+            f = open("static/video_name.txt", 'w')
+            f.write("kb")
+            f.close()
+
+            global squat_status, nextRoutine
+            global goodCnt, lpdCnt
+            global exCnt
 
             lpdCnt.clear()
             goodCnt.clear()
@@ -1507,12 +1542,14 @@ def my_link(name):
 
                                 if (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) and (nextRoutine == False) :
                                     print("start run_slr")
+                                    txtCnt = "2nd>> " + str(len(lpdCnt)) + " / "
+                                    exCnt += txtCnt
                                     self.run_slr()
 
                                 if len(lpdCnt) > 0 :
                                     nextRoutine = False
 
-                                    # start point
+                                # start point
                                 # 양쪽 팔꿈치가 spinMid보다 뒤에 있는 경우 운동 시작
                                 if (leftElbowX < spinMidX and rightElbowX > spinMidX):
                                     self.moveDetected = True
@@ -1587,12 +1624,7 @@ def my_link(name):
                     else:
                         self.draw_moveScr()
 
-                h_to_w = float(self._frame_surface.get_height()) / self._frame_surface.get_width()
-                target_height = int(h_to_w * self._screen.get_width())
-                surface_to_draw = pygame.transform.scale(self._frame_surface, (self._screen.get_width(), target_height))
-                self._screen.blit(surface_to_draw, (0,0))
-                surface_to_draw = None
-                pygame.display.update()
+                self.draw_display()
 
             # Close our Kinect sensor, close the window and quit.
             self._kinect.close()
@@ -1601,9 +1633,13 @@ def my_link(name):
         def run_slr(self):
             self.currPress = "SideLateralRaise"
 
-            global squat_status
+            f = open("static/video_name.txt", 'w')
+            f.write("slr")
+            f.close()
+
+            global squat_status, nextRoutine
             global goodCnt, lpdCnt
-            global nextRoutine
+            global exCnt
 
             lpdCnt.clear()
             goodCnt.clear()
@@ -1648,6 +1684,11 @@ def my_link(name):
                             headY = joints[PyKinectV2.JointType_Head].Position.y
                             headZ = joints[PyKinectV2.JointType_Head].Position.z
 
+                            leftHandX = joints[PyKinectV2.JointType_HandLeft].Position.x
+                            leftHandY = joints[PyKinectV2.JointType_HandLeft].Position.y
+                            rightHandX = joints[PyKinectV2.JointType_HandRight].Position.x
+                            rightHandY = joints[PyKinectV2.JointType_HandRight].Position.y
+
                             rightWristY = joints[PyKinectV2.JointType_WristRight].Position.y
                             leftWristY  = joints[PyKinectV2.JointType_WristLeft].Position.y
                             rightWristX = joints[PyKinectV2.JointType_WristRight].Position.x
@@ -1690,6 +1731,16 @@ def my_link(name):
 
                                 self.curX = (leftWristX, leftKneeX)
                                 self.curY = (leftWristY, leftFootX)
+
+                                if (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) and (nextRoutine == True) :
+                                    print("Last routine")
+                                    txtCnt = "3rd>> " + str(len(lpdCnt))
+                                    exCnt += txtCnt
+                                    sys.exit(exCnt)
+
+                                if len(lpdCnt) > 0 :
+                                    nextRoutine = True
+
                                 # if abs(leftelbowY - leftWristY) <= 0.16 :
                                 if Left_inArm_angle > 145 or Right_inArm_angle > 145 :
                                     self.moveDetected = True
@@ -1701,7 +1752,7 @@ def my_link(name):
                                     else :
 
                                         if abs(leftWristZ - spineBaseZ) <= 0.2 and abs(rightWristZ - spineBaseZ) <= 0.2 and 155 <= Left_inArm_angle <= 180 and 155 <= Right_inArm_angle <= 180 \
-                                                and 155 <= Left_outArm_angle <= 185 and 155 <= Right_outArm_angle <= 185 and abs(headX-spineBaseX) <= 0.2 and abs(headZ-spineBaseZ) <= 0.2:
+                                        and 155 <= Left_outArm_angle <= 185 and 155 <= Right_outArm_angle <= 185 and abs(headX-spineBaseX) <= 0.2 and abs(headZ-spineBaseZ) <= 0.2:
                                             if squat_status == True:
                                                 goodCnt.append(1)
                                             print("good cnt > ",len(goodCnt))
@@ -1790,12 +1841,7 @@ def my_link(name):
                     else:
                         self.draw_moveScr()
 
-                h_to_w = float(self._frame_surface.get_height()) / self._frame_surface.get_width()
-                target_height = int(h_to_w * self._screen.get_width())
-                surface_to_draw = pygame.transform.scale(self._frame_surface, (self._screen.get_width(), target_height))
-                self._screen.blit(surface_to_draw, (0,0))
-                surface_to_draw = None
-                pygame.display.update()
+                self.draw_display()
 
             # Close our Kinect sensor, close the window and quit.
             self._kinect.close()
@@ -1905,20 +1951,21 @@ def my_link(name):
             self.jointDetected = False
 
         def draw_title(self):
-            text = pygame.font.Font("freesansbold.ttf",200)
+            text = pygame.font.SysFont(None,200,True,False)
             textSurf, textRect = text_objects("KinectLift", text, (255,255,255))
             textRect.center = (int(self.screen_width/2),int(self.screen_height/2))
             self._frame_surface.blit(textSurf,textRect)
 
         def draw_squatSummaryPage(self):
+            pygame.font.init()
 
             if self.squatSummaryList == []:
-                text = pygame.font.Font("freesansbold.ttf",30)
+                text = pygame.font.SysFont(None,30,True,False)
                 textSurf, textRect = text_objects("", text)
                 textRect.center = (int(self.screen_width/2),int(self.screen_height)/3)
                 self._frame_surface.blit(textSurf,textRect)
 
-            text = pygame.font.Font("freesansbold.ttf",30)
+            text = pygame.font.SysFont(None,30,True,False)
             textSurf1, textRect1 = text_objects("Click to return to main menu..", text)
             textRect1.center = (int(self.screen_width - self.screen_width/6.5),int(self.screen_height - self.screen_height/20))
             self._frame_surface.blit(textSurf1,textRect1)
@@ -1938,37 +1985,37 @@ def my_link(name):
                 self._frame_surface.blit(textSurf1,textRect1)
 
         def draw_moveScr(self):
-            text = pygame.font.Font("freesansbold.ttf",100)
+            text = pygame.font.SysFont(None,100,True,False)
             textSurf, textRect = text_objects(self.currPress, text)
             textRect.center = (int(self.screen_width/2),int(self.screen_height/6))
             self._frame_surface.blit(textSurf,textRect)
 
             if self.currPress == "WideSquat" :
-                text1 = pygame.font.Font("freesansbold.ttf",50)
+                text1 = pygame.font.SysFont(None,50,True,False)
                 textSurf1, textRect1 = text_objects(str(len(squatCnt)), text1)
                 textRect1.center = (int(self.screen_width/2),int(1.5* self.screen_height/6))
                 self._frame_surface.blit(textSurf1,textRect1)
 
             else:
                 # left count
-                text1 = pygame.font.Font("freesansbold.ttf",50)
+                text1 = pygame.font.SysFont(None,50,True,False)
                 textSurf1, textRect1 = text_objects("left >> " + str(len(left_handCnt)), text1)
                 textRect1.center = (int(self.screen_width/2),int(1.5* self.screen_height/6))
                 self._frame_surface.blit(textSurf1,textRect1)
 
                 # right count
-                text3 = pygame.font.Font("freesansbold.ttf",50)
+                text3 = pygame.font.SysFont(None,50,True,False)
                 textSurf1, textRect1 = text_objects("right >> " + str(len(right_handCnt)), text1)
                 textRect1.center = (int(self.screen_width/2),int(2.0* self.screen_height/6))
                 self._frame_surface.blit(textSurf1,textRect1)
 
             if self.jointDetected == False:
-                text2 = pygame.font.Font("freesansbold.ttf",50)
+                text2 = pygame.font.SysFont(None,50,True,False)
                 textSurf2, textRect2 = text_objects("", text1)
                 textRect2.center = (int(self.screen_width/2),int(2* self.screen_height/6))
                 self._frame_surface.blit(textSurf2,textRect2)
             else:
-                text2 = pygame.font.Font("freesansbold.ttf",50)
+                text2 = pygame.font.SysFont(None,50,True,False)
                 textSurf2, textRect2 = text_objects(str(len(sidebamCnt)), text1)
                 textRect2.center = (int(self.screen_width/2),int(2* self.screen_height/6))
                 self._frame_surface.blit(textSurf2,textRect2)
@@ -2038,10 +2085,21 @@ def my_link(name):
             del address
             target_surface.unlock()
 
+        def draw_display(self):
+            h_to_w = float(self._frame_surface.get_height()) / self._frame_surface.get_width()
+            target_height = int(h_to_w * self._screen.get_width())
+            surface_to_draw = pygame.transform.scale(self._frame_surface, (self._screen.get_width(), target_height))
+            self._screen.blit(surface_to_draw, (0,0))
+            surface_to_draw = None
+            pygame.display.update()
+
 
         def run_side(self):
             global right_handCnt, left_handCnt
-            global nextRoutine
+            global nextRoutine, side_status
+            global exCnt
+
+            exCnt = ""
             # -------- Main Program Loop -----------
             while not self._done:
                 self.squatSummaryList = []
@@ -2128,8 +2186,7 @@ def my_link(name):
                             rightankleX = joints[PyKinectV2.JointType_AnkleRight].Position.x
                             rightankleY = joints[PyKinectV2.JointType_AnkleRight].Position.y
 
-                            global side_status
-                            # save the hand positions
+                             # save the hand positions
                             if self.currPress == "Side":
 
                                 #왼팔, 오른팔 각도
@@ -2145,6 +2202,8 @@ def my_link(name):
 
                                 if (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) and (nextRoutine == True) :
                                     print("start run_kneekick")
+                                    txtCnt = "1st>> " + str(len(left_handCnt)) + ", " + str(len(right_handCnt)) + " / "
+                                    exCnt += txtCnt
                                     self.run_kneekick()
 
                                 if len(left_handCnt) > 0 :
@@ -2158,9 +2217,7 @@ def my_link(name):
                                         self.wristXList.append(self.curX[0])
                                     self.wristYList.append(self.curY[0])
 
-                                    global left_SideCnt, right_SideCnt
-
-                                    if(len(left_SideCnt) < 3) :
+                                    if(len(left_handCnt) < 3) :
                                         if Left_Arms_angle > 110 and Right_Arms_angle > 110 and Left_Knee_angle > 160 and Right_Knee_angle > 160:
                                             print("start left side bam !!")
 
@@ -2176,12 +2233,11 @@ def my_link(name):
                                                 if len(goodCnt) >= 7:
                                                     goodCnt = []
                                                     left_handCnt.append(1)
-                                                    left_SideCnt.append(1)
                                                     sidebamCnt.append(1)
                                                     fix = "Good"
                                                     if fix not in self.squatSummaryList:
                                                         self.squatSummaryList.append(fix)
-                                                    print("left side count ========================================>>>> ",len(left_SideCnt))
+                                                    print("left side count ========================================>>>> ",len(left_handCnt))
                                                     side_status = False
 
                                             else:
@@ -2212,13 +2268,12 @@ def my_link(name):
 
                                                 if len(goodCnt) >= 7:
                                                     goodCnt = []
-                                                    right_SideCnt.append(1)
                                                     sidebamCnt.append(1)
                                                     right_handCnt.append(1)
                                                     fix = "Good"
                                                     if fix not in self.squatSummaryList:
                                                         self.squatSummaryList.append(fix)
-                                                    print("right side count ========================================>>>> ",len(right_SideCnt))
+                                                    print("right side count ========================================>>>> ",len(right_handCnt))
                                                     side_status = False
 
                                             else:
@@ -2247,13 +2302,7 @@ def my_link(name):
                     else:
                         self.draw_moveScr()
 
-                h_to_w = float(self._frame_surface.get_height()) / self._frame_surface.get_width()
-                target_height = int(h_to_w * self._screen.get_width())
-                surface_to_draw = pygame.transform.scale(self._frame_surface, (self._screen.get_width(), target_height))
-                self._screen.blit(surface_to_draw, (0,0))
-                surface_to_draw = None
-                pygame.display.update()
-
+                self.draw_display()
 
             # Close our Kinect sensor, close the window and quit.
             self._kinect.close()
@@ -2265,6 +2314,7 @@ def my_link(name):
             global goodCnt
             global right_handCnt, left_handCnt
             global nextRoutine
+            global exCnt
 
             right_handCnt.clear()
             left_handCnt.clear()
@@ -2353,6 +2403,8 @@ def my_link(name):
 
                                 if (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) and (nextRoutine == False) :
                                     print("start run_squat")
+                                    txtCnt = "2nd>> " + str(len(left_handCnt)) + ", " + str(len(right_handCnt)) + " / "
+                                    exCnt += txtCnt
                                     self.run_squat()
 
                                 if len(left_handCnt) > 0 or len(right_handCnt) > 0:
@@ -2439,12 +2491,7 @@ def my_link(name):
                     else:
                         self.draw_moveScr()
 
-                h_to_w = float(self._frame_surface.get_height()) / self._frame_surface.get_width()
-                target_height = int(h_to_w * self._screen.get_width())
-                surface_to_draw = pygame.transform.scale(self._frame_surface, (self._screen.get_width(), target_height))
-                self._screen.blit(surface_to_draw, (0,0))
-                surface_to_draw = None
-                pygame.display.update()
+                self.draw_display()
 
             # Close our Kinect sensor, close the window and quit.
             self._kinect.close()
@@ -2454,6 +2501,8 @@ def my_link(name):
             self.currPress = "WideSquat"
 
             global goodCnt, squatCnt
+            global exCnt
+            global nextRoutine
 
             goodCnt.clear()
             squatCnt.clear()
@@ -2495,6 +2544,14 @@ def my_link(name):
 
                             # save the hand positions
                             if self.currPress == "WideSquat":
+                                headX = joints[PyKinectV2.JointType_Head].Position.x
+                                headY = joints[PyKinectV2.JointType_Head].Position.y
+
+                                leftHandX = joints[PyKinectV2.JointType_HandLeft].Position.x
+                                leftHandY = joints[PyKinectV2.JointType_HandLeft].Position.y
+                                rightHandX = joints[PyKinectV2.JointType_HandRight].Position.x
+                                rightHandY = joints[PyKinectV2.JointType_HandRight].Position.y
+
                                 rightWristY = joints[PyKinectV2.JointType_WristRight].Position.y
                                 leftWristY  = joints[PyKinectV2.JointType_WristLeft].Position.y
                                 rightWristX = joints[PyKinectV2.JointType_WristRight].Position.x
@@ -2529,6 +2586,15 @@ def my_link(name):
 
                                 self.curX = (leftWristX, leftKneeX)
                                 self.curY = (leftWristY, leftFootX)
+
+                                if (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) and (nextRoutine == True):
+                                    print("Last routine")
+                                    txtCnt = "3rd>> " + str(len(squatCnt))
+                                    exCnt += txtCnt
+                                    sys.exit(exCnt)
+
+                                if len(squatCnt) > 0 :
+                                    nextRoutine = True
 
                                 if (abs(leftWristY -spineBaseY) >= 0.3):
                                     self.moveDetected = True
@@ -2606,12 +2672,828 @@ def my_link(name):
                     else:
                         self.draw_moveScr()
 
-                h_to_w = float(self._frame_surface.get_height()) / self._frame_surface.get_width()
-                target_height = int(h_to_w * self._screen.get_width())
-                surface_to_draw = pygame.transform.scale(self._frame_surface, (self._screen.get_width(), target_height))
-                self._screen.blit(surface_to_draw, (0,0))
-                surface_to_draw = None
-                pygame.display.update()
+                self.draw_display()
+
+            # Close our Kinect sensor, close the window and quit.
+            self._kinect.close()
+            pygame.quit()
+
+    class GameRuntime_yoga(object):
+        def __init__(self):
+            pygame.init()
+            self.startScreen = False
+            self.mainScreen = True
+            self.time = time.strftime("%H:%M") + " " + time.strftime("%d/%m/%Y")
+            self.moveNames = ["Yoga_StandSide","yoga_Stand","yoga_Side"]
+
+            self.currPress = "Yoga_StandSide"
+
+            self.screen_width = 1920
+
+            self.screen_height = 1080
+
+            self.profile = "Left"
+
+            self.squatSummaryList = []
+            self.summaryList = []
+            self.wristXList = []
+            self.wristYList = []
+            self.elbowList = []
+            self.feetList = []
+            self.kneeYList = []
+            self.kneeXList = []
+            self.spineBaseYList = []
+            self.hipYList = []
+            self.minspineBaseY = None
+            self.maxspineBaseY = None
+            self.minKneeY = None
+            self.maxKnee = None
+            self.minWristX = None
+            self.maxWristX = None
+            self.minWristY = None
+            self.maxWristY = None
+            self.minElbowX = None
+            self.maxElbowX = None
+            self.minFeetY = None
+            self.maxFeetY = None
+            self.minHipY = None
+            self.maxHipY = None
+            self.minKneeX = None
+            self.maxKneeX = None
+            self.curX = (None, None)
+            self.curY = (None, None)
+
+            self.moveDetected = False
+            self.jointDetected = False
+
+            # Used to manage how fast the screen updates
+            self._clock = pygame.time.Clock()
+
+            # Set the width and height of the window [width/2, height/2]
+            self._screen = pygame.display.set_mode((960,540), pygame.HWSURFACE|pygame.DOUBLEBUF, 32)
+
+            # Loop until the user clicks the close button.
+            self._done = False
+
+            # Kinect runtime object, we want color and body frames
+            self._kinect = PyKinectRuntime.PyKinectRuntime(PyKinectV2.FrameSourceTypes_Color | PyKinectV2.FrameSourceTypes_Body)
+
+            # back buffer surface for getting Kinect color frames, 32bit color, width and height equal to the Kinect color frame size
+            self._frame_surface = pygame.Surface((self._kinect.color_frame_desc.Width, self._kinect.color_frame_desc.Height), 0, 32)
+
+            # here we will store skeleton data
+            self._bodies = None
+
+        def initialize(self):
+            self.squatSummaryList = []
+            self.summaryList = []
+            self.wristXList = []
+            self.wristYList = []
+            self.elbowList = []
+            self.feetList = []
+            self.kneeYList = []
+            self.kneeXList = []
+            self.spineBaseYList = []
+            self.hipYList = []
+            self.minspineBaseY = None
+            self.maxspineBaseY = None
+            self.minKneeY = None
+            self.maxKnee = None
+            self.minWristX = None
+            self.maxWristX = None
+            self.minWristY = None
+            self.maxWristY = None
+            self.minElbowX = None
+            self.maxElbowX = None
+            self.minFeetY = None
+            self.maxFeetY = None
+            self.minHipY = None
+            self.maxHipY = None
+            self.minKneeX = None
+            self.maxKneeX = None
+            self.curX = (None, None)
+            self.curY = (None, None)
+            self.l_angle = None
+            self.r_angle = None
+
+            self.moveDetected = False
+            self.jointDetected = False
+
+        def draw_title(self):
+            text = pygame.font.SysFont(None,200,True,False)
+            textSurf, textRect = text_objects("KinectLift", text, (255,255,255))
+            textRect.center = (int(self.screen_width/2),int(self.screen_height/2))
+            self._frame_surface.blit(textSurf,textRect)
+
+        def draw_squatSummaryPage(self):
+            pygame.font.init()
+
+            if self.squatSummaryList == []:
+                text = pygame.font.SysFont(None,30,True,False)
+                textSurf, textRect = text_objects("", text)
+                textRect.center = (int(self.screen_width/2),int(self.screen_height)/3)
+                self._frame_surface.blit(textSurf,textRect)
+
+            text = pygame.font.SysFont(None,30,True,False)
+            textSurf1, textRect1 = text_objects("Click to return to main menu..", text)
+            textRect1.center = (int(self.screen_width - self.screen_width/6.5),int(self.screen_height - self.screen_height/20))
+            self._frame_surface.blit(textSurf1,textRect1)
+
+            for i in range(len(self.squatSummaryList)):
+                move = self.squatSummaryList[i]
+                if move == "Knee came too forward":
+                    move = " Knee came too forward"
+                if move == "Partial rep":
+                    move = " Partial rep"
+                if move == "Bar is not in line with feet":
+                    move = "Bar is not in line with feet "
+                if move == "Good":
+                    move = "Good"
+                textSurf1, textRect1 = text_objects(move, text)
+                textRect1.center = (int(self.screen_width/2),100 +int(self.screen_height/5)+100*i)
+                self._frame_surface.blit(textSurf1,textRect1)
+
+        def draw_moveScr(self):
+            text = pygame.font.SysFont(None,100,True,False)
+            textSurf, textRect = text_objects(self.currPress, text)
+            textRect.center = (int(self.screen_width/2),int(self.screen_height/6))
+            self._frame_surface.blit(textSurf,textRect)
+
+            text1 = pygame.font.SysFont(None,50,True,False)
+            textSurf1, textRect1 = text_objects(str(sec), text1)
+            textRect1.center = (int(self.screen_width/2),int(1.5* self.screen_height/6))
+            self._frame_surface.blit(textSurf1,textRect1)
+
+            if self.jointDetected == False:
+                text2 = pygame.font.SysFont(None,50,True,False)
+                textSurf2, textRect2 = text_objects("", text1)
+                textRect2.center = (int(self.screen_width/2),int(2* self.screen_height/6))
+                self._frame_surface.blit(textSurf2,textRect2)
+            else:
+                text2 = pygame.font.SysFont(None,50,True,False)
+                textSurf2, textRect2 = text_objects(str(sec), text1)
+                textRect2.center = (int(self.screen_width/2),int(2* self.screen_height/6))
+                self._frame_surface.blit(textSurf2,textRect2)
+
+
+        def draw_body_bone(self, joints, jointPoints, color , joint0, joint1):
+            joint0State = joints[joint0].TrackingState
+            joint1State = joints[joint1].TrackingState
+
+            # both joints are not tracked
+            if (joint0State == PyKinectV2.TrackingState_NotTracked) or (joint1State == PyKinectV2.TrackingState_NotTracked):
+                return
+
+            # both joints are not *really* tracked
+            if (joint0State == PyKinectV2.TrackingState_Inferred) and (joint1State == PyKinectV2.TrackingState_Inferred):
+                return
+
+            # ok, at least one is good
+            start = (jointPoints[joint0].x, jointPoints[joint0].y)
+            end = (jointPoints[joint1].x, jointPoints[joint1].y)
+
+            try:
+                pygame.draw.line(self._frame_surface, color, start, end, 8)
+            except: # need to catch it due to possible invalid positions (with inf)
+                pass
+
+        def draw_body(self, joints, jointPoints, color):
+            # Torso
+            self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_Head, PyKinectV2.JointType_Neck)
+            self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_Neck, PyKinectV2.JointType_SpineShoulder)
+            self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_SpineShoulder, PyKinectV2.JointType_SpineMid)
+            self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_SpineMid, PyKinectV2.JointType_SpineBase)
+            self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_SpineShoulder, PyKinectV2.JointType_ShoulderRight)
+            self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_SpineShoulder, PyKinectV2.JointType_ShoulderLeft)
+            self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_SpineBase, PyKinectV2.JointType_HipRight)
+            self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_SpineBase, PyKinectV2.JointType_HipLeft)
+
+            # Right Arm
+            self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_ShoulderRight, PyKinectV2.JointType_ElbowRight)
+            self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_ElbowRight, PyKinectV2.JointType_WristRight)
+            self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_WristRight, PyKinectV2.JointType_HandRight)
+            self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_HandRight, PyKinectV2.JointType_HandTipRight)
+            self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_WristRight, PyKinectV2.JointType_ThumbRight)
+
+            # Left Arm
+            self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_ShoulderLeft, PyKinectV2.JointType_ElbowLeft)
+            self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_ElbowLeft, PyKinectV2.JointType_WristLeft)
+            self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_WristLeft, PyKinectV2.JointType_HandLeft)
+            self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_HandLeft, PyKinectV2.JointType_HandTipLeft)
+            self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_WristLeft, PyKinectV2.JointType_ThumbLeft)
+
+            # Right Leg
+            self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_HipRight, PyKinectV2.JointType_KneeRight)
+            self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_KneeRight, PyKinectV2.JointType_AnkleRight)
+            self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_AnkleRight, PyKinectV2.JointType_FootRight)
+
+            # Left Leg
+            self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_HipLeft, PyKinectV2.JointType_KneeLeft)
+            self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_KneeLeft, PyKinectV2.JointType_AnkleLeft)
+            self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_AnkleLeft, PyKinectV2.JointType_FootLeft)
+
+
+        def draw_color_frame(self, frame, target_surface):
+            target_surface.lock()
+            address = self._kinect.surface_as_array(target_surface.get_buffer())
+            ctypes.memmove(address, frame.ctypes.data, frame.size)
+            del address
+            target_surface.unlock()
+
+        def draw_display(self):
+            h_to_w = float(self._frame_surface.get_height()) / self._frame_surface.get_width()
+            target_height = int(h_to_w * self._screen.get_width())
+            surface_to_draw = pygame.transform.scale(self._frame_surface, (self._screen.get_width(), target_height))
+            self._screen.blit(surface_to_draw, (0,0))
+            surface_to_draw = None
+            pygame.display.update()
+
+        def run_standside(self):
+            global left_YStandCnt, right_YStandCnt
+            global nextRoutine
+            global exCnt
+
+            exCnt = ""
+
+            nextRoutine = True
+            # -------- Main Program Loop -----------
+            while not self._done:
+                self.squatSummaryList = []
+
+                # --- Main event loop
+                for event in pygame.event.get(): # User did something
+                    if event.type == pygame.QUIT: # If user clicked close
+                        self._done = True # Flag that we are done so we exit this loop
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        mousePressed(event,self)
+
+                # We have a color frame. Fill out back buffer surface with frame's data
+                if self._kinect.has_new_color_frame():
+                    frame = self._kinect.get_last_color_frame()
+                    self.draw_color_frame(frame, self._frame_surface)
+                    frame = None
+
+
+                # We have a body frame, so can get skeletons
+                if self._kinect.has_new_body_frame() and self.currPress != "Main":
+                    self._bodies = self._kinect.get_last_body_frame()
+
+                    if self._bodies is not None:
+
+                        for i in range(0, self._kinect.max_body_count):
+                            body = self._bodies.bodies[i]
+                            if not body.is_tracked:
+                                continue
+
+                            joints = body.joints
+                            # convert joint coordinates to color space
+                            joint_points = self._kinect.body_joints_to_color_space(joints)
+                            self.draw_body(joints, joint_points, SKELETON_COLORS[i])
+
+                            joints = body.joints
+
+                            headX = joints[PyKinectV2.JointType_Head].Position.x
+                            headY = joints[PyKinectV2.JointType_Head].Position.y
+                            headZ = joints[PyKinectV2.JointType_Head].Position.z
+
+                            leftHandX = joints[PyKinectV2.JointType_HandLeft].Position.x
+                            leftHandY = joints[PyKinectV2.JointType_HandLeft].Position.y
+                            rightHandX = joints[PyKinectV2.JointType_HandRight].Position.x
+                            rightHandY = joints[PyKinectV2.JointType_HandRight].Position.y
+
+                            rightWristY = joints[PyKinectV2.JointType_WristRight].Position.y
+                            leftWristY  = joints[PyKinectV2.JointType_WristLeft].Position.y
+                            rightWristX = joints[PyKinectV2.JointType_WristRight].Position.x
+                            leftWristX  = joints[PyKinectV2.JointType_WristLeft].Position.x
+
+                            leftFootX = joints[PyKinectV2.JointType_AnkleLeft].Position.x
+                            rightFootX = joints[PyKinectV2.JointType_AnkleRight].Position.x
+
+                            spineBaseY = joints[PyKinectV2.JointType_SpineBase].Position.y
+                            spineBaseX = joints[PyKinectV2.JointType_SpineBase].Position.x
+                            spineBaseZ = joints[PyKinectV2.JointType_SpineBase].Position.z
+
+                            rightKneeX = joints[PyKinectV2.JointType_KneeRight].Position.x
+                            leftKneeX = joints[PyKinectV2.JointType_KneeLeft].Position.x
+                            rightKneeY = joints[PyKinectV2.JointType_KneeRight].Position.y
+                            leftKneeY = joints[PyKinectV2.JointType_KneeLeft].Position.y
+
+                            rightHipY = joints[PyKinectV2.JointType_HipRight].Position.y
+                            rightHipX = joints[PyKinectV2.JointType_HipRight].Position.x
+                            leftHipY = joints[PyKinectV2.JointType_HipLeft].Position.y
+                            leftHipX = joints[PyKinectV2.JointType_HipLeft].Position.x
+
+                            leftElbowX = joints[PyKinectV2.JointType_ElbowLeft].Position.x
+                            leftElbowY = joints[PyKinectV2.JointType_ElbowLeft].Position.y
+                            rightElbowX = joints[PyKinectV2.JointType_ElbowRight].Position.x
+                            rightElbowY = joints[PyKinectV2.JointType_ElbowRight].Position.y
+
+                            leftankleX = joints[PyKinectV2.JointType_AnkleLeft].Position.x
+                            leftankleY = joints[PyKinectV2.JointType_AnkleLeft].Position.y
+                            rightankleX = joints[PyKinectV2.JointType_AnkleRight].Position.x
+                            rightankleY = joints[PyKinectV2.JointType_AnkleRight].Position.y
+
+                            leftHandY = joints[PyKinectV2.JointType_HandLeft].Position.y
+                            rightHandY = joints[PyKinectV2.JointType_HandRight].Position.y
+
+                             # save the hand positions
+                            if self.currPress == "Yoga_StandSide":
+
+                                #왼발, 오른발 각도
+                                Left_Knee_angle = get_angle_v3(leftHipX, leftHipY, leftKneeX, leftKneeY, leftankleX, leftankleY)
+                                Right_Knee_angle = get_angle_v3(rightHipX, rightHipY, rightKneeX, rightKneeY, rightankleX, rightankleY)
+
+
+                                self.curX = (leftWristX, leftKneeX)
+                                self.curY = (leftWristY, leftFootX)
+
+                                # next routine
+                                if (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) and (nextRoutine == True) :
+                                    print("start yoga_stand")
+                                    txtCnt = "1st>> O / "
+                                    exCnt += txtCnt
+                                    self.run_stand()
+
+                                # start point
+                                # 왼쪽 손목과 오른쪽 손목이 spineShould Y보다 높을 경우 moveDetected를 True로 변경
+                                if (rightKneeX - leftKneeX > 0.1 ):
+                                    self.moveDetected = True
+
+                                    if(len(left_YStandCnt) < 1) :
+                                        if (Left_Knee_angle > 160 and Right_Knee_angle > 160 and leftHandY < spineBaseY and rightHandY < spineBaseY):
+                                            print("start left stand yoga!!")
+
+                                        else :
+                                            #while은 반복문으로 sec가 0이 되면 반복을 멈춰라
+
+                                            if (sec > 100):
+
+                                                if (Left_Knee_angle >= 160 and Right_Knee_angle >= 160 and leftHandY <= leftKneeY and rightElbowY >= headY and spineBaseX - headX > 0.3):
+                                                    sec = sec - 1
+                                                    print("good")
+
+                                                else:
+                                                    print("bad")
+
+                                                    # 무릎을 더 펴주세요
+                                                    if Left_Knee_angle < 160 and Right_Knee_angle < 160:
+                                                        print("무릎을 더 펴주세요")
+                                                        fix = "Knee came too forward"
+                                                        if fix not in self.squatSummaryList:
+                                                            self.squatSummaryList.append(fix)
+
+                                                    # 허리를 더 숙여주세요
+                                                    if abs(abs(headX) - spineBaseX) < 0.2:
+                                                        print("허리를 더 숙여주세요")
+                                                        fix = "Bar is not in line with feet"
+                                                        if fix not in self.squatSummaryList:
+                                                            self.squatSummaryList.append(fix)
+                                            print(sec)
+                                            if (sec == 100) :
+                                                left_YStandCnt.append(1)
+
+                                    else :
+                                        if Left_Knee_angle > 170 and Right_Knee_angle > 170:
+                                            print("start right side bam !!")
+
+                                        else :
+                                            #오른쪽 사이드 밤 성공조건
+                                            if (Left_Knee_angle >= 160 and Right_Knee_angle >= 160 and rightHandY <= rightKneeY and leftElbowY >= headY and headX - spineBaseX > 0.3) :
+                                                sec = sec-1
+                                                print("right good!")
+
+                                            else:
+                                                print("right Bad!")
+
+                                                # 무릎을 더 굽혀주세요
+                                                if Left_Knee_angle < 160 and Right_Knee_angle < 160:
+                                                    print("무릎을 더 굽혀주세요")
+                                                    fix = "Knee came too forward"
+                                                    if fix not in self.squatSummaryList:
+                                                        self.squatSummaryList.append(fix)
+
+                                                # 허리를 더 숙여주세요
+                                                if abs(abs(headX) - spineBaseX) < 0.2:
+                                                    print("허리를 더 숙여주세요")
+                                                    fix = "Bar is not in line with feet"
+                                                    if fix not in self.squatSummaryList:
+                                                        self.squatSummaryList.append(fix)
+                                        if (sec < 0) :
+                                            sec = 0
+                                            right_YStandCnt.append(1)
+
+
+                self.draw_squatSummaryPage()
+
+                # Draw graphics
+                if self.startScreen == True:
+                    self.draw_title()
+                elif self.currPress != "Main":
+                    if self.currPress == "SquatSummary":
+                        self.draw_squatSummaryPage()
+                    else:
+                        self.draw_moveScr()
+
+                self.draw_display()
+
+            # Close our Kinect sensor, close the window and quit.
+            self._kinect.close()
+            pygame.quit()
+
+        def run_stand(self):
+            self.currPress = "Yoga_Stand"
+
+            global nextRoutine
+            global sec
+            global left_YStandCnt, right_YStandCnt
+            global exCnt
+
+            sec = 200
+            left_YStandCnt.clear()
+            right_YStandCnt.clear()
+
+            # -------- Main Program Loop -----------
+            while not self._done:
+                self.squatSummaryList = []
+
+                # --- Main event loop
+                for event in pygame.event.get(): # User did something
+                    if event.type == pygame.QUIT: # If user clicked close
+                        self._done = True # Flag that we are done so we exit this loop
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        mousePressed(event,self)
+
+                # We have a color frame. Fill out back buffer surface with frame's data
+                if self._kinect.has_new_color_frame():
+                    frame = self._kinect.get_last_color_frame()
+                    self.draw_color_frame(frame, self._frame_surface)
+                    frame = None
+
+
+                # We have a body frame, so can get skeletons
+                if self._kinect.has_new_body_frame() and self.currPress != "Main":
+                    self._bodies = self._kinect.get_last_body_frame()
+
+                    if self._bodies is not None:
+
+                        for i in range(0, self._kinect.max_body_count):
+                            body = self._bodies.bodies[i]
+                            if not body.is_tracked:
+                                continue
+
+                            joints = body.joints
+                            # convert joint coordinates to color space
+                            joint_points = self._kinect.body_joints_to_color_space(joints)
+                            self.draw_body(joints, joint_points, SKELETON_COLORS[i])
+
+                            joints = body.joints
+
+                            headX = joints[PyKinectV2.JointType_Head].Position.x
+                            headY = joints[PyKinectV2.JointType_Head].Position.y
+                            headZ = joints[PyKinectV2.JointType_Head].Position.z
+
+                            leftHandX = joints[PyKinectV2.JointType_HandLeft].Position.x
+                            leftHandY = joints[PyKinectV2.JointType_HandLeft].Position.y
+                            rightHandX = joints[PyKinectV2.JointType_HandRight].Position.x
+                            rightHandY = joints[PyKinectV2.JointType_HandRight].Position.y
+
+                            rightWristY = joints[PyKinectV2.JointType_WristRight].Position.y
+                            leftWristY  = joints[PyKinectV2.JointType_WristLeft].Position.y
+                            rightWristX = joints[PyKinectV2.JointType_WristRight].Position.x
+                            leftWristX  = joints[PyKinectV2.JointType_WristLeft].Position.x
+
+                            leftFootX = joints[PyKinectV2.JointType_AnkleLeft].Position.x
+                            rightFootX = joints[PyKinectV2.JointType_AnkleRight].Position.x
+
+                            spineBaseY = joints[PyKinectV2.JointType_SpineBase].Position.y
+                            spineBaseX = joints[PyKinectV2.JointType_SpineBase].Position.x
+                            spineBaseZ = joints[PyKinectV2.JointType_SpineBase].Position.z
+
+                            rightKneeX = joints[PyKinectV2.JointType_KneeRight].Position.x
+                            leftKneeX = joints[PyKinectV2.JointType_KneeLeft].Position.x
+                            rightKneeY = joints[PyKinectV2.JointType_KneeRight].Position.y
+                            leftKneeY = joints[PyKinectV2.JointType_KneeLeft].Position.y
+
+                            rightHipY = joints[PyKinectV2.JointType_HipRight].Position.y
+                            rightHipX = joints[PyKinectV2.JointType_HipRight].Position.x
+                            leftHipY = joints[PyKinectV2.JointType_HipLeft].Position.y
+                            leftHipX = joints[PyKinectV2.JointType_HipLeft].Position.x
+
+                            leftElbowX = joints[PyKinectV2.JointType_ElbowLeft].Position.x
+                            leftElbowY = joints[PyKinectV2.JointType_ElbowLeft].Position.y
+                            rightElbowX = joints[PyKinectV2.JointType_ElbowRight].Position.x
+                            rightElbowY = joints[PyKinectV2.JointType_ElbowRight].Position.y
+
+                            leftankleX = joints[PyKinectV2.JointType_AnkleLeft].Position.x
+                            leftankleY = joints[PyKinectV2.JointType_AnkleLeft].Position.y
+                            rightankleX = joints[PyKinectV2.JointType_AnkleRight].Position.x
+                            rightankleY = joints[PyKinectV2.JointType_AnkleRight].Position.y
+
+                             # save the hand positions
+                            if self.currPress == "Yoga_Stand":
+
+                                #왼발, 오른발 각도
+                                Left_Knee_angle = get_angle_v3(leftHipX, leftHipY, leftKneeX, leftKneeY, leftankleX, leftankleY)
+                                Right_Knee_angle = get_angle_v3(rightHipX, rightHipY, rightKneeX, rightKneeY, rightankleX, rightankleY)
+
+
+                                self.curX = (leftWristX, leftKneeX)
+                                self.curY = (leftWristY, leftFootX)
+
+                                # next routine
+                                if (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) and (nextRoutine == False) :
+                                    print("start run_side")
+                                    txtCnt = "2st>> O / "
+                                    exCnt += txtCnt
+                                    self.run_side()
+
+                                if sec < 199 :
+                                    nextRoutine = False
+
+                                # start point
+                                # 왼쪽 손목과 오른쪽 손목이 spineShould Y보다 높을 경우 moveDetected를 True로 변경
+                                if (leftElbowY >= headY and rightElbowY >= headY):
+                                    self.moveDetected = True
+                                    if  abs(leftWristX - rightWristX) < 0.1:
+                                        self.wristXList.append(self.curX[0])
+                                    self.wristYList.append(self.curY[0])
+
+                                    if(len(left_YStandCnt) < 1) :
+                                        if Left_Knee_angle > 150 and Right_Knee_angle > 150:
+                                            print("start left stand yoga !!")
+
+                                        else :
+                                            # start = time.time()
+                                            #왼쪽 요가 사이드 밤 성공조건
+
+                                            #while은 반복문으로 sec가 0이 되면 반복을 멈춰라
+                                            if (sec > 100):
+
+                                                if (Left_Knee_angle < 120 and Right_Knee_angle > 150 and leftKneeY <= leftankleY) :
+
+                                                    print("good")
+                                                    sec = sec-1
+
+                                                else:
+                                                    print("bad")
+
+                                                    # 무릎을 더 굽혀주세요
+                                                    if Left_Knee_angle >= 100:
+                                                        print("무릎을 더 굽혀주세요")
+                                                        fix = "Knee came too forward"
+                                                        if fix not in self.squatSummaryList:
+                                                            self.squatSummaryList.append(fix)
+
+                                                    # 허리를 일자로 세워주세요
+                                                    if abs(headX - spineBaseX) > 0.1 and abs(headZ - spineBaseZ) > 0.1:
+                                                        print("허리를 일자로 세워주세요 ")
+                                                        fix = "Bar is not in line with feet"
+                                                        if fix not in self.squatSummaryList:
+                                                            self.squatSummaryList.append(fix)
+                                            print(sec)
+                                            if (sec == 100) :
+                                                left_YStandCnt.append(1)
+
+                                    else :
+                                        if Left_Knee_angle > 170 and Right_Knee_angle > 170:
+                                            print("start right side bam !!")
+
+                                        else :
+                                            #오른쪽 사이드 밤 성공조건
+                                            if (Right_Knee_angle < 100 and Left_Knee_angle > 150 and rightKneeY <= rightankleY) :
+
+                                                sec = sec-1
+
+                                            else:
+                                                print("right Bad!")
+
+                                                # 무릎을 더 굽혀주세요
+                                                if Right_Knee_angle >= 100:
+                                                    print("무릎을 더 굽혀주세요")
+                                                    fix = "Knee came too forward"
+                                                    if fix not in self.squatSummaryList:
+                                                        self.squatSummaryList.append(fix)
+
+                                                # 허리를 일자로 세워주세요
+                                                if abs(headX - spineBaseX) > 0.1 and abs(headZ - spineBaseZ) > 0.1:
+                                                    print("허리를 일자로 세워주세요 ")
+                                                    fix = "Bar is not in line with feet"
+                                                    if fix not in self.squatSummaryList:
+                                                        self.squatSummaryList.append(fix)
+                                        if (sec < 0) :
+                                            sec = 0
+                                            right_YStandCnt.append(1)
+
+
+                self.draw_squatSummaryPage()
+
+                # Draw graphics
+                if self.startScreen == True:
+                    self.draw_title()
+                elif self.currPress != "Main":
+                    if self.currPress == "SquatSummary":
+                        self.draw_squatSummaryPage()
+                    else:
+                        self.draw_moveScr()
+
+                self.draw_display()
+
+            # Close our Kinect sensor, close the window and quit.
+            self._kinect.close()
+            pygame.quit()
+
+        def run_side(self):
+            self.currPress = "Yoga_Side"
+
+            global nextRoutine
+            global sec
+            global left_YStandCnt, right_YStandCnt
+            global exCnt
+
+            sec = 200
+            left_YStandCnt.clear()
+            right_YStandCnt.clear()
+
+            # -------- Main Program Loop -----------
+            while not self._done:
+                self.squatSummaryList = []
+
+                # --- Main event loop
+                for event in pygame.event.get(): # User did something
+                    if event.type == pygame.QUIT: # If user clicked close
+                        self._done = True # Flag that we are done so we exit this loop
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        mousePressed(event,self)
+
+                # We have a color frame. Fill out back buffer surface with frame's data
+                if self._kinect.has_new_color_frame():
+                    frame = self._kinect.get_last_color_frame()
+                    self.draw_color_frame(frame, self._frame_surface)
+                    frame = None
+
+
+                # We have a body frame, so can get skeletons
+                if self._kinect.has_new_body_frame() and self.currPress != "Main":
+                    self._bodies = self._kinect.get_last_body_frame()
+
+                    if self._bodies is not None:
+
+                        for i in range(0, self._kinect.max_body_count):
+                            body = self._bodies.bodies[i]
+                            if not body.is_tracked:
+                                continue
+
+                            joints = body.joints
+                            # convert joint coordinates to color space
+                            joint_points = self._kinect.body_joints_to_color_space(joints)
+                            self.draw_body(joints, joint_points, SKELETON_COLORS[i])
+
+                            joints = body.joints
+
+                            headX = joints[PyKinectV2.JointType_Head].Position.x
+                            headY = joints[PyKinectV2.JointType_Head].Position.y
+                            headZ = joints[PyKinectV2.JointType_Head].Position.z
+
+                            leftHandX = joints[PyKinectV2.JointType_HandLeft].Position.x
+                            leftHandY = joints[PyKinectV2.JointType_HandLeft].Position.y
+                            rightHandX = joints[PyKinectV2.JointType_HandRight].Position.x
+                            rightHandY = joints[PyKinectV2.JointType_HandRight].Position.y
+
+                            rightWristY = joints[PyKinectV2.JointType_WristRight].Position.y
+                            leftWristY  = joints[PyKinectV2.JointType_WristLeft].Position.y
+                            rightWristX = joints[PyKinectV2.JointType_WristRight].Position.x
+                            leftWristX  = joints[PyKinectV2.JointType_WristLeft].Position.x
+
+                            leftFootX = joints[PyKinectV2.JointType_AnkleLeft].Position.x
+                            rightFootX = joints[PyKinectV2.JointType_AnkleRight].Position.x
+
+                            spineBaseY = joints[PyKinectV2.JointType_SpineBase].Position.y
+                            spineBaseX = joints[PyKinectV2.JointType_SpineBase].Position.x
+                            spineBaseZ = joints[PyKinectV2.JointType_SpineBase].Position.z
+
+                            rightKneeX = joints[PyKinectV2.JointType_KneeRight].Position.x
+                            leftKneeX = joints[PyKinectV2.JointType_KneeLeft].Position.x
+                            rightKneeY = joints[PyKinectV2.JointType_KneeRight].Position.y
+                            leftKneeY = joints[PyKinectV2.JointType_KneeLeft].Position.y
+
+                            rightHipY = joints[PyKinectV2.JointType_HipRight].Position.y
+                            rightHipX = joints[PyKinectV2.JointType_HipRight].Position.x
+                            leftHipY = joints[PyKinectV2.JointType_HipLeft].Position.y
+                            leftHipX = joints[PyKinectV2.JointType_HipLeft].Position.x
+
+                            spineShouldX =joints[PyKinectV2.JointType_SpineShoulder].Position.x
+                            spineShouldY =joints[PyKinectV2.JointType_SpineShoulder].Position.y
+                            spineShouldZ =joints[PyKinectV2.JointType_SpineShoulder].Position.z
+
+                            leftankleX = joints[PyKinectV2.JointType_AnkleLeft].Position.x
+                            leftankleY = joints[PyKinectV2.JointType_AnkleLeft].Position.y
+                            rightankleX = joints[PyKinectV2.JointType_AnkleRight].Position.x
+                            rightankleY = joints[PyKinectV2.JointType_AnkleRight].Position.y
+
+                             # save the hand positions
+                            if self.currPress == "Yoga_Side":
+
+                                #왼발, 오른발 각도
+                                Left_Knee_angle = get_angle_v3(leftHipX, leftHipY, leftKneeX, leftKneeY, leftankleX, leftankleY)
+                                Right_Knee_angle = get_angle_v3(rightHipX, rightHipY, rightKneeX, rightKneeY, rightankleX, rightankleY)
+
+                                self.curX = (leftWristX, leftKneeX)
+                                self.curY = (leftWristY, leftFootX)
+
+                                if (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) and (nextRoutine == True):
+                                    print("Last routine")
+                                    txtCnt = "3rd>> O"
+                                    exCnt += txtCnt
+                                    sys.exit(exCnt)
+
+                                if sec < 199 :
+                                    nextRoutine = True
+
+                                # start point
+                                # 왼쪽 손목과 오른쪽 손목이 spineShould Y보다 높을 경우 moveDetected를 True로 변경
+                                if (leftWristY >= spineShouldX and rightWristY >= spineShouldY):
+                                    self.moveDetected = True
+                                    if  abs(leftWristX - rightWristX) < 0.1:
+                                        self.wristXList.append(self.curX[0])
+                                    self.wristYList.append(self.curY[0])
+
+                                    if(len(left_YStandCnt) < 1) :
+                                        if Left_Knee_angle > 150 and Right_Knee_angle > 150:
+                                            print("start left yoga side !!")
+
+                                        else :
+                                            # start = time.time()
+                                            #왼쪽 요가 사이드 성공조건
+
+                                            #while은 반복문으로 sec가 0이 되면 반복을 멈춰라
+                                            if (sec > 100):
+
+                                                if (90 < Left_Knee_angle < 150 and Right_Knee_angle > 150) :
+
+                                                    print("good")
+                                                    sec = sec-1
+
+                                                else:
+                                                    print("bad")
+
+                                                    # 무릎을 더 굽혀주세요
+                                                    if Left_Knee_angle >= 165:
+                                                        print("무릎을 더 굽혀주세요")
+                                                        fix = "Knee came too forward"
+                                                        if fix not in self.squatSummaryList:
+                                                            self.squatSummaryList.append(fix)
+
+                                                    # 허리를 일자로 세워주세요
+                                                    if abs(headX - spineBaseX) > 0.1 and abs(headZ - spineBaseZ) > 0.1:
+                                                        print("허리를 일자로 세워주세요 ")
+                                                        fix = "Bar is not in line with feet"
+                                                        if fix not in self.squatSummaryList:
+                                                            self.squatSummaryList.append(fix)
+                                            print(sec)
+                                            if (sec == 100) :
+                                                left_YStandCnt.append(1)
+
+                                    else :
+                                        if Left_Knee_angle > 170 and Right_Knee_angle > 170:
+                                            print("start right yoga side !!")
+
+                                        else :
+                                            #오른쪽 사이드 밤 성공조건
+                                            if (90 < Right_Knee_angle < 150 and Left_Knee_angle > 150) :
+
+                                                sec = sec-1
+
+                                            else:
+                                                print("right Bad!")
+
+                                                # 무릎을 더 굽혀주세요
+                                                if Right_Knee_angle >= 165:
+                                                    print("무릎을 더 굽혀주세요")
+                                                    fix = "Knee came too forward"
+                                                    if fix not in self.squatSummaryList:
+                                                        self.squatSummaryList.append(fix)
+
+                                                # 허리를 일자로 세워주세요
+                                                if abs(headX - spineBaseX) > 0.1 and abs(headZ - spineBaseZ) > 0.1:
+                                                    print("허리를 일자로 세워주세요 ")
+                                                    fix = "Bar is not in line with feet"
+                                                    if fix not in self.squatSummaryList:
+                                                        self.squatSummaryList.append(fix)
+                                        if (sec < 0) :
+                                            sec = 0
+
+                self.draw_squatSummaryPage()
+
+                # Draw graphics
+                if self.startScreen == True:
+                    self.draw_title()
+                elif self.currPress != "Main":
+                    if self.currPress == "SquatSummary":
+                        self.draw_squatSummaryPage()
+                    else:
+                        self.draw_moveScr()
+
+                self.draw_display()
 
             # Close our Kinect sensor, close the window and quit.
             self._kinect.close()
@@ -2630,7 +3512,7 @@ def my_link(name):
     print("  ▶ 사이드 밤 > 니 킥 > 와이드 스쿼트")
     print(" --------------------------------------")
     print("  4. 요가루틴 실행")
-    print("  ▶ 개발 중...")
+    print("  ▶ stand side > stand > side")
     print(" --------------------------------------")
     print("  5. 스트레칭 실행")
     print("  ▶ 개발 중...")
@@ -2642,20 +3524,21 @@ def my_link(name):
         print("하체루틴을 실행합니다.")
         game = GameRuntime_leg_routine()
         game.run_squat()
-    elif selectNum == 2:
-        print("하체루틴을 실행합니다.")
+    elif name == "상체" :
+        print("상체루틴을 실행합니다.")
         game = GameRuntime_upperBodyRoutine()
         game.run_lpd()
     elif selectNum == 3:
-        print("하체루틴을 실행합니다.")
+        print("전신루틴을 실행합니다.")
         game = GameRuntime_WholeBodyRoutine()
         game.run_side()
     elif selectNum == 4:
-        print("하체루틴을 실행합니다.")
+        print("요가루틴을 실행합니다.")
+        game = GameRuntime_yoga()
+        game.run_standside()
     elif selectNum == 5:
-        print("하체루틴을 실행합니다.")
+        print("스트레칭을 실행합니다.")
 
-    # return render_template('index.html')
     return redirect("/")
 
 if __name__ == '__main__':

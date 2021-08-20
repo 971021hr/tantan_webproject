@@ -17,6 +17,7 @@
     <script type="text/javascript" src="{{ url_for('static', filename='js/appbox/showCalendar.js') }}" > </script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/appbox/showDandan.js') }}" > </script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/appbox/showDandanSquat.js') }}" > </script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/appbox/showDandanUp.js') }}" > </script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
@@ -57,6 +58,28 @@
                     // $("#data").load("static/cnt_saved.txt");
                     var refreshId = setInterval(function() {
                         $("#data").load("static/cnt_saved.txt");
+                        $("#name").load("static/video_name.txt", function(response) {
+                            var videoname = response
+                            // var videoname = document.getElementById("name").value();
+                            document.getElementById("realvideo").innerHTML = "<video src='static/video/" + videoname + ".mp4'" + " width='780' height='780' autoplay loop muted></video>";
+                        });
+
+                        // var client = new XMLHttpRequest();
+                        // client.open('GET', 'static/video_name.txt', true);
+                        //client.onreadystatechange = function() {
+                        //    alert(client.responseText);
+                            // $("#name").innerText(client.responseText);
+                        //    var videoname = client.responseText;
+                            // alert(videoname);
+                        //    document.getElementById("realvideo").innerHTML = "<video src='static/video/" + videoname + ".mp4'" + "width='780' height='780' autoplay loop muted></video>";
+                       // }
+                        //client.hosend(null);
+                        // var videoname = document.getElementById("video").innerText;
+                        // alert(videoname);
+                        // document.getElementById("realvideo").innerHTML = "<video src='.idea/static/video/" + videoname + "'></video>";
+                        // document.write("<video src='.idea/static/video/videoname' autoplay loop muted></video>");
+                        //document.write(<video src="{{ url_for('static', filename=videoname) }}" width="780" height="780" autoplay loop muted></video>);
+                        // document.write(""+<video src="{{ url_for('static', filename=videoname) }}" width='780' height='780' autoplay loop muted>"+</video>+"");
                     }, 3000);
                     $.ajaxSetup({ cache: false });
                 });
@@ -165,8 +188,39 @@
             <!--                <a href="my-link/">Click me</a>-->
 
             <p id="data">0</p>
-<!--            <video src="{{ url_for('static', filename='video/squat5.mp4') }}" width="780" height="780" autoplay loop muted>-->
+            <p id="name">무슨 영상이냐</p>
+            <div id="realvideo"></div>
+<!--            <script>-->
+<!--                var client = new XMLHttpRequest();-->
+<!--                client.open('GET', 'static/video_name.txt');-->
+<!--                client.onreadystatechange = function() {-->
+<!--                    alert(client.responseText);-->
+<!--                    var videoname = client.responseText;-->
+<!--                    document.getElementById("realvideo").innerHTML = "<video src='static/video/" + videoname + ".mp4'" + "width='780' height='780' autoplay loop muted></video>";-->
+<!--                }-->
+<!--                client.send();-->
+<!--                // $("#video").load("static/video_name.txt");-->
+<!--                // var videoname = document.getElementById("video").innerText;-->
+<!--                // var videoname = text;-->
+<!--                // alert(videoname)-->
+<!--                // // var videoname = 'lunge1.mp4';-->
+<!--                // document.getElementById("realvideo").innerHTML = "<video src='{{ url_for('static', filename='" + videoname + "') }}'></video>";-->
+<!--            </script>-->
+<!--            <p id="video"></p>-->
+
+<!--            <video>-->
+<!--            <script>-->
+<!--&lt;!&ndash;                var videoname = document.getElementById("video").innerText;&ndash;&gt;-->
+<!--&lt;!&ndash;                alert(videoname);&ndash;&gt;-->
+<!--                // document.write('<src="{{ url_for('static', filename=videoname) }}">');-->
+<!--                // document.write("<video src='.idea/static/video/videoname' autoplay loop muted></video>");-->
+
+<!--            </script>-->
 <!--            </video>-->
+<!--            <video id = "video"></video>-->
+<!--            src="{{ url_for('static', filename=videoname) }}" width="780" height="780" autoplay loop muted>-->
+<!--            </video>-->
+<!--            <video src="{{ url_for('static', filename='video/lunge1.mp4') }}" width="780" height="780" autoplay loop muted></video>-->
 
             <div style="display: flex; justify-content: center; margin-top: 40px">
             <div id="circle1">상체</div>

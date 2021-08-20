@@ -1,4 +1,4 @@
-function showDandan(){
+function showDandanUp(){
 
     $("#div_main").hide();
 
@@ -7,7 +7,7 @@ function showDandan(){
     $("#div_subway").hide();
     $("#div_dandan_squat").hide();
 
-    page_squat();
+    page_up();
 
     <!--21.04.15 speech test start-->
     $("#div_speech").hide();
@@ -15,6 +15,6 @@ function showDandan(){
 }
 
 
-function page_squat(){
-    location.href="/my-link/하체";
+function page_up(){
+    location.href="/my-link/상체";
 }
