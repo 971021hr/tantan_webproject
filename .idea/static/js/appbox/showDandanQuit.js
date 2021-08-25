@@ -1,16 +1,13 @@
-function showDandan(){
+function showDandanQuit(){
 
     $("#div_main").hide();
 
-    $("#data").show();
-    $("#name").show();
-    $("#realvideo").show();
     $("#exerciselist").hide();
     $("#div_calendar").hide();
     $("#div_subway").hide();
     $("#div_dandan_squat").hide();
 
-    page_squat();
+    page_quit();
 
     <!--21.04.15 speech test start-->
     $("#div_speech").hide();
@@ -18,6 +15,6 @@ function showDandan(){
 }
 
 
-function page_squat(){
-    location.href="/my-link/하체";
+function page_quit(){
+    location.href="/my-link/종료";
 }

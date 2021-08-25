@@ -18,6 +18,7 @@
     <script type="text/javascript" src="{{ url_for('static', filename='js/appbox/showDandan.js') }}" > </script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/appbox/showDandanSquat.js') }}" > </script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/appbox/showDandanUp.js') }}" > </script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/appbox/showDandanList.js') }}" > </script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
@@ -183,13 +184,13 @@
             </table>
         </div>
 
-        <div id="div_dandan" style="display: none">
+        <div id="div_dandan">
             <!--                <img src="img/squat.png" width="780" height="780"/>-->
             <!--                <a href="my-link/">Click me</a>-->
 
-            <p id="data">0</p>
-            <p id="name">무슨 영상이냐</p>
-            <div id="realvideo"></div>
+            <p id="data" style="display: none">0</p>
+            <p id="name" style="display: none">무슨 영상이냐</p>
+            <div id="realvideo" style="display: none"></div>
 <!--            <script>-->
 <!--                var client = new XMLHttpRequest();-->
 <!--                client.open('GET', 'static/video_name.txt');-->
@@ -222,6 +223,7 @@
 <!--            </video>-->
 <!--            <video src="{{ url_for('static', filename='video/lunge1.mp4') }}" width="780" height="780" autoplay loop muted></video>-->
 
+            <div id="exerciselist" style="display: none">
             <div style="display: flex; justify-content: center; margin-top: 40px">
             <div id="circle1">상체</div>
             <div id="circle1">하체</div>
@@ -230,6 +232,7 @@
             <div style="display: flex; justify-content: center;">
             <div id="circle1">요가</div>
             <div id="circle1">스트레칭</div>
+            </div>
             </div>
 
             <script>

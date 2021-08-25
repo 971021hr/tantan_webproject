@@ -3528,10 +3528,11 @@ def my_link(name):
         print("상체루틴을 실행합니다.")
         game = GameRuntime_upperBodyRoutine()
         game.run_lpd()
-    elif selectNum == 3:
-        print("전신루틴을 실행합니다.")
-        game = GameRuntime_WholeBodyRoutine()
-        game.run_side()
+    elif name == "종료":
+        pygame.quit()
+        # print("전신루틴을 실행합니다.")
+        # game = GameRuntime_WholeBodyRoutine()
+        # game.run_side()
     elif selectNum == 4:
         print("요가루틴을 실행합니다.")
         game = GameRuntime_yoga()

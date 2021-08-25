@@ -2,7 +2,10 @@ function showDandanUp(){
 
     $("#div_main").hide();
 
-    $("#div_dandan").show();
+    $("#data").show();
+    $("#name").show();
+    $("#realvideo").show();
+    $("#exerciselist").hide();
     $("#div_calendar").hide();
     $("#div_subway").hide();
     $("#div_dandan_squat").hide();
