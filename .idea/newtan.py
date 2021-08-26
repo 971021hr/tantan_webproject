@@ -1284,7 +1284,7 @@ def my_link(name):
             f.write("lpd")
             f.close()
 
-            global squat_status, nextRoutine
+            global squat_status
             global goodCnt, lpdCnt
             global exCnt
 
@@ -3528,16 +3528,15 @@ def my_link(name):
         print("상체루틴을 실행합니다.")
         game = GameRuntime_upperBodyRoutine()
         game.run_lpd()
-    elif name == "종료":
-        pygame.quit()
-        # print("전신루틴을 실행합니다.")
-        # game = GameRuntime_WholeBodyRoutine()
-        # game.run_side()
-    elif selectNum == 4:
+    elif name == "전신":
+        print("전신루틴을 실행합니다.")
+        game = GameRuntime_WholeBodyRoutine()
+        game.run_side()
+    elif name == "요가":
         print("요가루틴을 실행합니다.")
         game = GameRuntime_yoga()
         game.run_standside()
-    elif selectNum == 5:
+    elif name == "스트레칭":
         print("스트레칭을 실행합니다.")
 
     return redirect("/")

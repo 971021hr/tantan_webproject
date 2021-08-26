@@ -144,10 +144,10 @@ $(document).ready(function (){
             showDandanUp();
         }else if (string.endsWith('종료') || string.endsWith('종묘')){
             showDandanQuit();
-        }else if (string.endsWith('복근')){
-            alert('복근');
-        }else if (string.endsWith('유산소')){
-            alert('유산소');
+        }else if (string.endsWith('전신')){
+            showDandanWhole();
+        }else if (string.endsWith('요가')){
+            showDandanYoga();
         }
     }
 
