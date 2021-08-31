@@ -134,13 +134,13 @@ $(document).ready(function (){
         else if (string.endsWith('단단') || string.endsWith('탄탄')) {
             showDandanList();
         }
-        else if (string.endsWith('하체') || string.endsWith('운동')){
+        else if (string.endsWith('하체') || string.endsWith('운운')){
             showDandan();
         }else if (string.endsWith('스쿼트') || string.endsWith('squat')){
             showDandanSquat();
         }else if (string.endsWith('다리')){
             alert('하체');
-        }else if (string.endsWith('상체') || string.endsWith('상태')){
+        }else if (string.endsWith('상체') || string.endsWith('동동')){
             showDandanUp();
         }else if (string.endsWith('종료') || string.endsWith('종묘')){
             showDandanQuit();

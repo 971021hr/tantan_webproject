@@ -352,11 +352,14 @@ def my_link(name):
 
         def draw_display(self):
             h_to_w = float(self._frame_surface.get_height()) / self._frame_surface.get_width()
-            target_height = int(h_to_w * self._screen.get_width())
-            surface_to_draw = pygame.transform.scale(self._frame_surface, (self._screen.get_width(), target_height))
-            self._screen.blit(surface_to_draw, (0,0))
-            surface_to_draw = None
-            pygame.display.update()
+            try:
+                target_height = int(h_to_w * self._screen.get_width())
+                surface_to_draw = pygame.transform.scale(self._frame_surface, (self._screen.get_width(), target_height))
+                self._screen.blit(surface_to_draw, (0,0))
+                surface_to_draw = None
+                pygame.display.update()
+            except:
+                pass
 
 
         def run_squat(self):
@@ -364,6 +367,9 @@ def my_link(name):
 
             f = open("static/video_name.txt", 'w')
             f.write("squat")
+            f.close()
+            f = open("static/cnt_saved.txt", 'w')
+            f.write("count : " + str(len(squatCnt)))
             f.close()
 
             exCnt = ""
@@ -499,6 +505,9 @@ def my_link(name):
                                                 if fix not in self.squatSummaryList:
                                                     self.squatSummaryList.append(fix)
                                                 print("squat count ========================================>>>> ",len(squatCnt))
+                                                f = open("static/cnt_saved.txt", 'w')
+                                                f.write("count : " + str(len(squatCnt)))
+                                                f.close()
                                                 squat_status = False
 
                                         else:
@@ -559,6 +568,9 @@ def my_link(name):
             global exCnt
 
             squatCnt.clear()
+            f = open("static/cnt_saved.txt", 'w')
+            f.write("count : " + str(len(squatCnt)))
+            f.close()
 
             # -------- Main Program Loop -----------
             while not self._done:
@@ -670,6 +682,9 @@ def my_link(name):
                                                     if fix not in self.squatSummaryList:
                                                         self.squatSummaryList.append(fix)
                                                     print("hip count ========================================>>>> ",len(left_HipCnt))
+                                                    f = open("static/cnt_saved.txt", 'w')
+                                                    f.write("count : " + str(len(squatCnt)))
+                                                    f.close()
                                                     hip_status = False
 
                                             else:
@@ -713,6 +728,9 @@ def my_link(name):
                                                     if fix not in self.squatSummaryList:
                                                         self.squatSummaryList.append(fix)
                                                     print("hip count ========================================>>>> ",len(right_HipCnt))
+                                                    f = open("static/cnt_saved.txt", 'w')
+                                                    f.write("count : " + str(len(squatCnt)))
+                                                    f.close()
                                                     hip_status = False
 
                                             else:
@@ -765,6 +783,10 @@ def my_link(name):
             global goodCnt
 
             squatCnt.clear()
+            f = open("static/cnt_saved.txt", 'w')
+            f.write("count : " + str(len(squatCnt)))
+            f.close()
+
             # -------- Main Program Loop -----------
             while not self._done:
                 self.squatSummaryList = []
@@ -895,6 +917,9 @@ def my_link(name):
                                                     if fix not in self.squatSummaryList:
                                                         self.squatSummaryList.append(fix)
                                                     print("left lunge count ========================================>>>> ",len(leftlungeCnt))
+                                                    f = open("static/cnt_saved.txt", 'w')
+                                                    f.write("count : " + str(len(squatCnt)))
+                                                    f.close()
                                                     squat_status = False
 
                                             else:
@@ -950,6 +975,9 @@ def my_link(name):
                                                     if fix not in self.squatSummaryList:
                                                         self.squatSummaryList.append(fix)
                                                     print("right lunge count ========================================>>>> ",len(rightlungeCnt))
+                                                    f = open("static/cnt_saved.txt", 'w')
+                                                    f.write("count : " + str(len(squatCnt)))
+                                                    f.close()
                                                     squat_status = False
 
                                             else:
@@ -1271,25 +1299,29 @@ def my_link(name):
 
         def draw_display(self):
             h_to_w = float(self._frame_surface.get_height()) / self._frame_surface.get_width()
-            target_height = int(h_to_w * self._screen.get_width())
-            surface_to_draw = pygame.transform.scale(self._frame_surface, (self._screen.get_width(), target_height))
-            self._screen.blit(surface_to_draw, (0,0))
-            surface_to_draw = None
-            pygame.display.update()
-
+            try:
+                target_height = int(h_to_w * self._screen.get_width())
+                surface_to_draw = pygame.transform.scale(self._frame_surface, (self._screen.get_width(), target_height))
+                self._screen.blit(surface_to_draw, (0,0))
+                surface_to_draw = None
+                pygame.display.update()
+            except:
+                pass
 
         def run_lpd(self):
-
             f = open("static/video_name.txt", 'w')
             f.write("lpd")
             f.close()
 
-            global squat_status
-            global goodCnt, lpdCnt
-            global exCnt
+            squat_status = True
+            goodCnt = []
 
             exCnt = ""
-            nextRoutine = True
+            nextRoutine = False
+
+            f = open("static/cnt_saved.txt", 'w')
+            f.write("count : " + str(len(lpdCnt)))
+            f.close()
 
             # -------- Main Program Loop -----------
             while not self._done:
@@ -1376,6 +1408,9 @@ def my_link(name):
                                     exCnt += txtCnt
                                     self.run_kickBack()
 
+                                if len(lpdCnt) > 0 :
+                                    nextRoutine = True
+
                                 # start point
                                 # 왼쪽 손목과 오른쪽 손목이 spineBase Y보다 높을 경우 moveDetected를 True로 변경
                                 if (abs(leftWristY -spineBaseY) >= 0.3) and (abs(rightWristY -spineBaseY) >= 0.3):
@@ -1408,6 +1443,9 @@ def my_link(name):
                                                 if fix not in self.latPullDownSummaryList:
                                                     self.latPullDownSummaryList.append(fix)
                                                 print("latPullDown count ========================================>>>> ",len(lpdCnt))
+                                                f = open("static/cnt_saved.txt", 'w')
+                                                f.write("count : " + str(len(lpdCnt)))
+                                                f.close()
                                                 squat_status = False
 
                                         else:
@@ -1445,7 +1483,7 @@ def my_link(name):
 
             # Close our Kinect sensor, close the window and quit.
             self._kinect.close()
-            pygame.quit()
+            # pygame.quit()
 
         def run_kickBack(self):
             self.currPress = "KickBack"
@@ -1454,12 +1492,15 @@ def my_link(name):
             f.write("kb")
             f.close()
 
-            global squat_status, nextRoutine
-            global goodCnt, lpdCnt
+            squat_status = True
+            nextRoutine = True
             global exCnt
 
-            lpdCnt.clear()
-            goodCnt.clear()
+            lpdCnt = []
+            goodCnt = []
+            f = open("static/cnt_saved.txt", 'w')
+            f.write("count : " + str(len(lpdCnt)))
+            f.close()
 
             # -------- Main Program Loop -----------
             while not self._done:
@@ -1543,7 +1584,7 @@ def my_link(name):
                                 if (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) and (nextRoutine == False) :
                                     print("start run_slr")
                                     txtCnt = "2nd>> " + str(len(lpdCnt)) + " / "
-                                    exCnt += txtCnt
+                                    # exCnt += txtCnt
                                     self.run_slr()
 
                                 if len(lpdCnt) > 0 :
@@ -1585,6 +1626,9 @@ def my_link(name):
                                                 if fix not in self.latPullDownSummaryList:
                                                     self.latPullDownSummaryList.append(fix)
                                                 print("KickBack count ========================================>>>> ",len(lpdCnt))
+                                                f = open("static/cnt_saved.txt", 'w')
+                                                f.write("count : " + str(len(lpdCnt)))
+                                                f.close()
                                                 squat_status = False
 
                                         else:
@@ -1628,7 +1672,7 @@ def my_link(name):
 
             # Close our Kinect sensor, close the window and quit.
             self._kinect.close()
-            pygame.quit()
+            # pygame.quit()
 
         def run_slr(self):
             self.currPress = "SideLateralRaise"
@@ -1637,12 +1681,16 @@ def my_link(name):
             f.write("slr")
             f.close()
 
-            global squat_status, nextRoutine
-            global goodCnt, lpdCnt
+            global squat_status
+            nextRoutine = False
             global exCnt
 
-            lpdCnt.clear()
-            goodCnt.clear()
+            lpdCnt = []
+            goodCnt = []
+            f = open("static/cnt_saved.txt", 'w')
+            f.write("count : " + str(len(lpdCnt)))
+            f.close()
+
             # -------- Main Program Loop -----------
             while not self._done:
                 self.latPullDownSummaryList = []
@@ -1735,8 +1783,8 @@ def my_link(name):
                                 if (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) and (nextRoutine == True) :
                                     print("Last routine")
                                     txtCnt = "3rd>> " + str(len(lpdCnt))
-                                    exCnt += txtCnt
-                                    sys.exit(exCnt)
+                                    # exCnt += txtCnt
+                                    # sys.exit()
 
                                 if len(lpdCnt) > 0 :
                                     nextRoutine = True
@@ -1765,6 +1813,9 @@ def my_link(name):
                                                 if fix not in self.latPullDownSummaryList:
                                                     self.latPullDownSummaryList.append(fix)
                                                 print("slr count ========================================>>>> ",len(lpdCnt))
+                                                f = open("static/cnt_saved.txt", 'w')
+                                                f.write("count : " + str(len(lpdCnt)))
+                                                f.close()
                                                 squat_status = False
 
                                             print("Good!")
@@ -2087,17 +2138,27 @@ def my_link(name):
 
         def draw_display(self):
             h_to_w = float(self._frame_surface.get_height()) / self._frame_surface.get_width()
-            target_height = int(h_to_w * self._screen.get_width())
-            surface_to_draw = pygame.transform.scale(self._frame_surface, (self._screen.get_width(), target_height))
-            self._screen.blit(surface_to_draw, (0,0))
-            surface_to_draw = None
-            pygame.display.update()
+            try:
+                target_height = int(h_to_w * self._screen.get_width())
+                surface_to_draw = pygame.transform.scale(self._frame_surface, (self._screen.get_width(), target_height))
+                self._screen.blit(surface_to_draw, (0,0))
+                surface_to_draw = None
+                pygame.display.update()
+            except:
+                pass
 
 
         def run_side(self):
             global right_handCnt, left_handCnt
             global nextRoutine, side_status
             global exCnt
+
+            f = open("static/video_name.txt", 'w')
+            f.write("side")
+            f.close()
+            f = open("static/cnt_saved.txt", 'w')
+            f.write("count : " + str(len(sidebamCnt)))
+            f.close()
 
             exCnt = ""
             # -------- Main Program Loop -----------
@@ -2238,6 +2299,9 @@ def my_link(name):
                                                     if fix not in self.squatSummaryList:
                                                         self.squatSummaryList.append(fix)
                                                     print("left side count ========================================>>>> ",len(left_handCnt))
+                                                    f = open("static/cnt_saved.txt", 'w')
+                                                    f.write("count : " + str(len(sidebamCnt)))
+                                                    f.close()
                                                     side_status = False
 
                                             else:
@@ -2274,6 +2338,9 @@ def my_link(name):
                                                     if fix not in self.squatSummaryList:
                                                         self.squatSummaryList.append(fix)
                                                     print("right side count ========================================>>>> ",len(right_handCnt))
+                                                    f = open("static/cnt_saved.txt", 'w')
+                                                    f.write("count : " + str(len(sidebamCnt)))
+                                                    f.close()
                                                     side_status = False
 
                                             else:
@@ -2311,13 +2378,22 @@ def my_link(name):
         def run_kneekick(self):
             self.currPress = "KneeKick"
 
+            f = open("static/video_name.txt", 'w')
+            f.write("kneekick")
+            f.close()
+
             global goodCnt
             global right_handCnt, left_handCnt
             global nextRoutine
             global exCnt
 
+            sidebamCnt.clear()
             right_handCnt.clear()
             left_handCnt.clear()
+            f = open("static/cnt_saved.txt", 'w')
+            f.write("count : " + str(len(sidebamCnt)))
+            f.close()
+
             # -------- Main Program Loop -----------
             while not self._done:
                 self.SquatSummaryList = []
@@ -2434,11 +2510,15 @@ def my_link(name):
 
                                             if len(goodCnt) >= 5:
                                                 goodCnt = []
+                                                sidebamCnt.append(1)
                                                 left_handCnt.append(1)
                                                 fix = "Good"
                                                 if fix not in self.SquatSummaryList:
                                                     self.SquatSummaryList.append(fix)
                                                 print("KneeKick count ========================================>>>> ",len(left_handCnt))
+                                                f = open("static/cnt_saved.txt", 'w')
+                                                f.write("count : " + str(len(sidebamCnt)))
+                                                f.close()
                                                 squat_status = False
 
                                         else:
@@ -2466,11 +2546,15 @@ def my_link(name):
 
                                             if len(goodCnt) >= 5:
                                                 goodCnt = []
+                                                sidebamCnt.append(1)
                                                 right_handCnt.append(1)
                                                 fix = "Good"
                                                 if fix not in self.SquatSummaryList:
                                                     self.SquatSummaryList.append(fix)
                                                 print("KneeKick count ========================================>>>> ",len(right_handCnt))
+                                                f = open("static/cnt_saved.txt", 'w')
+                                                f.write("count : " + str(len(sidebamCnt)))
+                                                f.close()
                                                 squat_status = False
 
                                         else:
@@ -2500,12 +2584,20 @@ def my_link(name):
         def run_squat(self):
             self.currPress = "WideSquat"
 
+            f = open("static/video_name.txt", 'w')
+            f.write("widesquat")
+            f.close()
+
             global goodCnt, squatCnt
             global exCnt
             global nextRoutine
 
             goodCnt.clear()
             squatCnt.clear()
+            f = open("static/cnt_saved.txt", 'w')
+            f.write("count : " + str(len(sidebamCnt)))
+            f.close()
+
             # -------- Main Program Loop -----------
             while not self._done:
                 self.squatSummaryList = []
@@ -2630,6 +2722,9 @@ def my_link(name):
                                                 if fix not in self.squatSummaryList:
                                                     self.squatSummaryList.append(fix)
                                                 print("squat count ========================================>>>> ",len(squatCnt))
+                                                f = open("static/cnt_saved.txt", 'w')
+                                                f.write("count : " + str(len(squatCnt)))
+                                                f.close()
                                                 squat_status = False
 
                                         else:
@@ -2902,11 +2997,14 @@ def my_link(name):
 
         def draw_display(self):
             h_to_w = float(self._frame_surface.get_height()) / self._frame_surface.get_width()
-            target_height = int(h_to_w * self._screen.get_width())
-            surface_to_draw = pygame.transform.scale(self._frame_surface, (self._screen.get_width(), target_height))
-            self._screen.blit(surface_to_draw, (0,0))
-            surface_to_draw = None
-            pygame.display.update()
+            try:
+                target_height = int(h_to_w * self._screen.get_width())
+                surface_to_draw = pygame.transform.scale(self._frame_surface, (self._screen.get_width(), target_height))
+                self._screen.blit(surface_to_draw, (0,0))
+                surface_to_draw = None
+                pygame.display.update()
+            except:
+                pass
 
         def run_standside(self):
             global left_YStandCnt, right_YStandCnt
