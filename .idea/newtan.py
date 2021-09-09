@@ -16,18 +16,68 @@ import pygame
 import math
 import copy
 import time
+import datetime
 import numpy as np
 import sys
 import io
+import logging
+import pymysql
+import base64
+import requests
+import string
+import random
 
 sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding = 'utf-8')
 sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding = 'utf-8')
 
 app = Flask(__name__)
 
+new_pw_len = 6
+new_pw = ""
+
+#mysql 연동
+host = "database-1.cj61bbiht7nz.us-east-2.rds.amazonaws.com"
+port = 3306
+username = "tantan_db"
+database = "tantanDB"
+password = "tantan21!"
+
+def connect_RDS(host,port,username,password,database):
+    try:
+        conn = pymysql.connect(host=host,user=username,passwd = password,db=database, port=port,use_unicode=True,charset ='utf8')
+        curcor = conn.cursor()
+
+    except:
+        logging.error("RDS에 연결되지 않았습니다.")
+        sys.exit(1)
+
+    return conn,curcor
+
 @app.route('/')
 def index():
-    return render_template('index.html')
+    variable = 000000
+    return render_template('index.html', variable=variable)
+
+@app.route('/connect')
+def connect():
+    conn, cursor = connect_RDS(host,port,username,password,database)
+
+    print("랜덤 숫자", string.digits)
+
+    global new_pw
+    for i in range(new_pw_len):
+        new_pw += random.choice(string.digits)
+
+    print("\n생성된 랜덤 비밀번호", new_pw)
+
+    query = """INSERT INTO tantanDB.connectTB (randomNum,userEmail) VALUES ('{0}','{1}');
+            """.format(new_pw,'joy@joy')
+
+    cursor.execute(query)
+    conn.commit()
+    conn.close()
+
+    return render_template('index.html', variable=new_pw)
 
 @app.route('/my-link/<name>')
 def my_link(name):
@@ -79,6 +129,27 @@ def my_link(name):
                         pygame.color.THECOLORS["yellow"],
                         pygame.color.THECOLORS["violet"]]
 
+    #login=============================
+    def login(variable):
+        if variable != "":
+            conn, cursor = connect_RDS(host,port,username,password,database)
+
+            # select_pw = ""
+            # for i in variable(0,6) :
+            #     select_pw = variable[i]
+
+            sql = "SELECT userEmail FROM tantanDB.connectTB WHERE randomNum =" + variable # 실행할 SQL문
+
+            cursor.execute(sql)
+            result = cursor.fetchone()
+            userEmail = result[0]
+
+            print("\n유저 이메일", userEmail)
+            print("\n생성된 랜덤 비밀번호", variable)
+
+            conn.commit()
+            conn.close()
+
     #==================================
     def get_angle_v3(p1_1, p1_2, p2_1, p2_2, p3_1, p3_2):
         a = math.sqrt(pow(p1_1-p3_1,2) + pow(p1_2-p3_2, 2))
@@ -125,9 +196,21 @@ def my_link(name):
         with open(path, "wt") as f:
             f.write(contents)
 
+    def time_calculate():
+        print(f"{endtime - starttime:.0f} sec")
+        sec = endtime - starttime
+        times = str(datetime.timedelta(seconds=sec)).split(".")
+        times = times[0]
+        print(times)
+        return sec
+
     class GameRuntime_leg_routine(object):
         def __init__(self):
             pygame.init()
+
+            global starttime
+            starttime = time.time()
+            print("시작 시간 : ", starttime)
 
             self.startScreen = False
             self.mainScreen = True
@@ -375,6 +458,7 @@ def my_link(name):
             exCnt = ""
             global squat_status
             global goodCnt
+            global endtime
             nextRoutine = False
 
             # -------- Main Program Loop -----------
@@ -554,7 +638,12 @@ def my_link(name):
 
             # Close our Kinect sensor, close the window and quit.
             self._kinect.close()
-            # pygame.quit()
+            endtime = time.time()
+            print("끝 시간 : ", endtime)
+            time_calculate()
+            login(new_pw)
+            print("new_pw : ", new_pw)
+            pygame.quit()
 
         def run_hip(self):
             self.currPress = "Hip"
@@ -566,6 +655,7 @@ def my_link(name):
             nextRoutine = True
             global hip_status
             global exCnt
+            global endtime
 
             squatCnt.clear()
             f = open("static/cnt_saved.txt", 'w')
@@ -768,6 +858,8 @@ def my_link(name):
 
             # # Close our Kinect sensor, close the window and quit.
             self._kinect.close()
+            endtime = time.time()
+            print("끝 시간 : ", endtime)
             # pygame.quit()
 
         def run_lunge(self):
@@ -781,6 +873,7 @@ def my_link(name):
             nextRoutine = False
             global squat_status
             global goodCnt
+            global endtime
 
             squatCnt.clear()
             f = open("static/cnt_saved.txt", 'w')
@@ -1027,8 +1120,11 @@ def my_link(name):
 
                 self.draw_display()
 
+            endtime = time.time()
+            print("끝 시간 : ", endtime)
             self._kinect.close()
             pygame.quit()
+
 
 
 
@@ -2149,12 +2245,14 @@ def my_link(name):
 
 
         def run_side(self):
-            global right_handCnt, left_handCnt
-            global nextRoutine, side_status
+            right_handCnt = []
+            left_handCnt = []
+            nextRoutine = False
+            global side_status
             global exCnt
 
             f = open("static/video_name.txt", 'w')
-            f.write("side")
+            f.write("hip")
             f.close()
             f = open("static/cnt_saved.txt", 'w')
             f.write("count : " + str(len(sidebamCnt)))
@@ -2379,17 +2477,16 @@ def my_link(name):
             self.currPress = "KneeKick"
 
             f = open("static/video_name.txt", 'w')
-            f.write("kneekick")
+            f.write("kb")
             f.close()
 
             global goodCnt
-            global right_handCnt, left_handCnt
-            global nextRoutine
             global exCnt
+            nextRoutine = True
+            right_handCnt = []
+            left_handCnt = []
 
             sidebamCnt.clear()
-            right_handCnt.clear()
-            left_handCnt.clear()
             f = open("static/cnt_saved.txt", 'w')
             f.write("count : " + str(len(sidebamCnt)))
             f.close()
@@ -2585,15 +2682,16 @@ def my_link(name):
             self.currPress = "WideSquat"
 
             f = open("static/video_name.txt", 'w')
-            f.write("widesquat")
+            f.write("lpd")
             f.close()
 
-            global goodCnt, squatCnt
             global exCnt
-            global nextRoutine
+            squat_status = True
+            nextRoutine = False
 
-            goodCnt.clear()
-            squatCnt.clear()
+            goodCnt = []
+            squatCnt = []
+            sidebamCnt = []
             f = open("static/cnt_saved.txt", 'w')
             f.write("count : " + str(len(sidebamCnt)))
             f.close()

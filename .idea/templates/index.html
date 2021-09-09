@@ -22,6 +22,7 @@
     <script type="text/javascript" src="{{ url_for('static', filename='js/appbox/showDandanQuit.js') }}" > </script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/appbox/showDandanWhole.js') }}" > </script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/appbox/showDandanYoga.js') }}" > </script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/appbox/showConnect.js') }}" > </script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
@@ -133,8 +134,8 @@
 
         <div id="boxApp">
             <button onclick="showSubway()" id="btn_subway" class="btn_left"><i class="fas fa-subway fa-2x"></i></button>
-            <button onclick="showCalendar()" id="btn_calendar" class="btn_left"><i class="fas fa-calendar-alt fa-2x"></i></button>
-            <button onclick="showDandanUp()" id="btn_dandan" class="btn_left"><i class="fas fa-running fa-2x"></i></button>
+            <button onclick="showConnect()" id="btn_calendar" class="btn_left"><i class="fas fa-calendar-alt fa-2x"></i></button>
+            <button onclick="showDandan()" id="btn_dandan" class="btn_left"><i class="fas fa-running fa-2x"></i></button>
             <!--<button onclick="showDandanSquat()" id="btn_dandan_squat" class="btn_left"><i class="fas fa-dumbbell fa-2x"></i></button>-->
 
 
@@ -238,6 +239,15 @@
             </div>
             </div>
 
+            <p>
+                <span>{{ select_pw }}</span>
+                <span>{{ variable[0] }}</span>
+                <span>{{ variable[1] }}</span>
+                <span>{{ variable[2] }}</span>
+                <span>{{ variable[3] }}</span>
+                <span>{{ variable[4] }}</span>
+                <span>{{ variable[5] }}</span>
+            </p>
             <script>
                 // function parseData(data){
                 //     //do something with the data
