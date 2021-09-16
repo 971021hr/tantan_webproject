@@ -9,6 +9,7 @@ import pykinect2
 from pykinect2.PyKinectV2 import *
 from flask import redirect, Response, url_for
 from flask import request
+from datetime import date
 
 import ctypes
 import _ctypes
@@ -34,6 +35,8 @@ app = Flask(__name__)
 
 new_pw_len = 6
 new_pw = ""
+userEmail = ""
+sec = 200
 
 #mysql 연동
 host = "database-1.cj61bbiht7nz.us-east-2.rds.amazonaws.com"
@@ -71,7 +74,7 @@ def connect():
     print("\n생성된 랜덤 비밀번호", new_pw)
 
     query = """INSERT INTO tantanDB.connectTB (randomNum,userEmail) VALUES ('{0}','{1}');
-            """.format(new_pw,'joy@joy')
+            """.format(new_pw, '')
 
     cursor.execute(query)
     conn.commit()
@@ -113,7 +116,6 @@ def my_link(name):
     yogaside_status = True
     left_YStandCnt = []
     right_YStandCnt = []
-    sec = 200
 
     nextRoutine = False
     squat_status = True
@@ -134,6 +136,7 @@ def my_link(name):
         if variable != "":
             conn, cursor = connect_RDS(host,port,username,password,database)
 
+            global userEmail
             # select_pw = ""
             # for i in variable(0,6) :
             #     select_pw = variable[i]
@@ -146,6 +149,24 @@ def my_link(name):
 
             print("\n유저 이메일", userEmail)
             print("\n생성된 랜덤 비밀번호", variable)
+
+            conn.commit()
+            conn.close()
+
+    #add_run===========================
+    def addrun(variable):
+        if variable != "":
+            conn, cursor = connect_RDS(host,port,username,password,database)
+
+            global userEmail, runSub
+            runTime_h, runTime_m =  time_calculate()
+
+            sql = """INSERT INTO tantanDB.addRunTB (runDate, runTime_h, runMain, runSub, userEmail, runTime_m) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}');
+            """.format(date.today().isoformat(), runTime_h, '스마트미러', runSub, userEmail, runTime_m)
+
+            cursor.execute(sql)
+
+            print("운동 데이터 입력 완료")
 
             conn.commit()
             conn.close()
@@ -196,13 +217,25 @@ def my_link(name):
         with open(path, "wt") as f:
             f.write(contents)
 
+    def feedbackFile(contents):
+        with open("static/feedback.txt", "wt", encoding="UTF-8") as f:
+            f.write(contents)
+            f.close()
+
     def time_calculate():
-        print(f"{endtime - starttime:.0f} sec")
+        # print(f"{endtime - starttime:.0f} sec")
         sec = endtime - starttime
         times = str(datetime.timedelta(seconds=sec)).split(".")
         times = times[0]
-        print(times)
-        return sec
+        times = times.split(":")
+        times_h = times[0]
+        times_m = times[1]
+        if times_m[0] == "0":
+            times_m = times_m[1]
+        print("운동 시 : ", times_h)
+        print("운동 분 : ", times_m)
+        print(date.today().isoformat())
+        return times_h, times_m
 
     class GameRuntime_leg_routine(object):
         def __init__(self):
@@ -210,7 +243,10 @@ def my_link(name):
 
             global starttime
             starttime = time.time()
-            print("시작 시간 : ", starttime)
+            print("하체운동 시작 시간 : ", starttime)
+
+            global runSub
+            runSub = "하체운동1"
 
             self.startScreen = False
             self.mainScreen = True
@@ -316,7 +352,6 @@ def my_link(name):
             textRect.center = (int(self.screen_width/2),int(self.screen_height/2))
             self._frame_surface.blit(textSurf,textRect)
 
-
         def draw_squatSummaryPage(self):
             pygame.font.init()
 
@@ -367,7 +402,6 @@ def my_link(name):
                 textRect2.center = (int(self.screen_width/2),int(2* self.screen_height/6))
                 self._frame_surface.blit(textSurf2,textRect2)
 
-
         def draw_body_bone(self, joints, jointPoints, color , joint0, joint1):
             joint0State = joints[joint0].TrackingState
             joint1State = joints[joint1].TrackingState
@@ -388,7 +422,6 @@ def my_link(name):
                 pygame.draw.line(self._frame_surface, color, start, end, 8)
             except: # need to catch it due to possible invalid positions (with inf)
                 pass
-
 
         def draw_body(self, joints, jointPoints, color):
             # Torso
@@ -425,7 +458,6 @@ def my_link(name):
             self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_KneeLeft, PyKinectV2.JointType_AnkleLeft)
             self.draw_body_bone(joints, jointPoints, color, PyKinectV2.JointType_AnkleLeft, PyKinectV2.JointType_FootLeft)
 
-
         def draw_color_frame(self, frame, target_surface):
             target_surface.lock()
             address = self._kinect.surface_as_array(target_surface.get_buffer())
@@ -444,7 +476,6 @@ def my_link(name):
             except:
                 pass
 
-
         def run_squat(self):
             self.currPress = "Squat"
 
@@ -456,9 +487,9 @@ def my_link(name):
             f.close()
 
             exCnt = ""
-            global squat_status
-            global goodCnt
+            goodCnt = []
             global endtime
+            squat_status = True
             nextRoutine = False
 
             # -------- Main Program Loop -----------
@@ -469,6 +500,11 @@ def my_link(name):
                 for event in pygame.event.get(): # User did something
                     if event.type == pygame.QUIT: # If user clicked close
                         self._done = True # Flag that we are done so we exit this loop
+                        endtime = time.time()
+                        print("스쿼트 끝 시간 : ", endtime)
+                        login(new_pw)
+                        addrun(userEmail)
+                        print("스쿼트에서 데이터 입력")
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         mousePressed(event,self)
 
@@ -477,7 +513,6 @@ def my_link(name):
                     frame = self._kinect.get_last_color_frame()
                     self.draw_color_frame(frame, self._frame_surface)
                     frame = None
-
 
                 # We have a body frame, so can get skeletons
                 if self._kinect.has_new_body_frame() and self.currPress != "Main":
@@ -638,11 +673,6 @@ def my_link(name):
 
             # Close our Kinect sensor, close the window and quit.
             self._kinect.close()
-            endtime = time.time()
-            print("끝 시간 : ", endtime)
-            time_calculate()
-            login(new_pw)
-            print("new_pw : ", new_pw)
             pygame.quit()
 
         def run_hip(self):
@@ -653,7 +683,8 @@ def my_link(name):
             f.close()
 
             nextRoutine = True
-            global hip_status
+            hip_status = True
+            goodCnt = []
             global exCnt
             global endtime
 
@@ -670,6 +701,11 @@ def my_link(name):
                 for event in pygame.event.get(): # User did something
                     if event.type == pygame.QUIT: # If user clicked close
                         self._done = True # Flag that we are done so we exit this loop
+                        endtime = time.time()
+                        print("힙 끝 시간 : ", endtime)
+                        login(new_pw)
+                        addrun(userEmail)
+                        print("힙에서 데이터 입력")
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         mousePressed(event,self)
 
@@ -858,9 +894,7 @@ def my_link(name):
 
             # # Close our Kinect sensor, close the window and quit.
             self._kinect.close()
-            endtime = time.time()
-            print("끝 시간 : ", endtime)
-            # pygame.quit()
+            pygame.quit()
 
         def run_lunge(self):
             self.currPress = "Lunge"
@@ -869,10 +903,10 @@ def my_link(name):
             f.write("lunge")
             f.close()
 
-            global exCnt
             nextRoutine = False
-            global squat_status
-            global goodCnt
+            squat_status = True
+            goodCnt = []
+            global exCnt
             global endtime
 
             squatCnt.clear()
@@ -888,6 +922,11 @@ def my_link(name):
                 for event in pygame.event.get(): # User did something
                     if event.type == pygame.QUIT: # If user clicked close
                         self._done = True # Flag that we are done so we exit this loop
+                        endtime = time.time()
+                        print("런지 끝 시간 : ", endtime)
+                        login(new_pw)
+                        addrun(userEmail)
+                        print("런지에서 데이터 입력")
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         mousePressed(event,self)
 
@@ -967,7 +1006,7 @@ def my_link(name):
                                     print("Last routine")
                                     txtCnt = "3rd>> " + str(len(squatCnt))
                                     #exCnt += txtCnt
-                                    sys.exit()
+                                    # sys.exit()
 
                                 if len(leftlungeCnt) > 0 or len(rightlungeCnt) > 0 :
                                     nextRoutine = True
@@ -1120,18 +1159,22 @@ def my_link(name):
 
                 self.draw_display()
 
-            endtime = time.time()
-            print("끝 시간 : ", endtime)
             self._kinect.close()
             pygame.quit()
-
-
 
 
 
     class GameRuntime_upperBodyRoutine(object):
         def __init__(self):
             pygame.init()
+
+            global starttime
+            starttime = time.time()
+            print("상체운동 시작 시간 : ", starttime)
+
+            global runSub
+            runSub = "상체운동1"
+
             self.startScreen = False
             self.mainScreen = True
             self.time = time.strftime("%H:%M") + " " + time.strftime("%d/%m/%Y")
@@ -1414,6 +1457,7 @@ def my_link(name):
 
             exCnt = ""
             nextRoutine = False
+            global endtime
 
             f = open("static/cnt_saved.txt", 'w')
             f.write("count : " + str(len(lpdCnt)))
@@ -1427,6 +1471,11 @@ def my_link(name):
                 for event in pygame.event.get(): # User did something
                     if event.type == pygame.QUIT: # If user clicked close
                         self._done = True # Flag that we are done so we exit this loop
+                        endtime = time.time()
+                        print("lpd 끝 시간 : ", endtime)
+                        login(new_pw)
+                        addrun(userEmail)
+                        print("lpd에서 데이터 입력")
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         mousePressed(event,self)
 
@@ -1591,8 +1640,9 @@ def my_link(name):
             squat_status = True
             nextRoutine = True
             global exCnt
+            global endtime
 
-            lpdCnt = []
+            lpdCnt.clear()
             goodCnt = []
             f = open("static/cnt_saved.txt", 'w')
             f.write("count : " + str(len(lpdCnt)))
@@ -1606,6 +1656,11 @@ def my_link(name):
                 for event in pygame.event.get(): # User did something
                     if event.type == pygame.QUIT: # If user clicked close
                         self._done = True # Flag that we are done so we exit this loop
+                        endtime = time.time()
+                        print("kickback 끝 시간 : ", endtime)
+                        login(new_pw)
+                        addrun(userEmail)
+                        print("kickback에서 데이터 입력")
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         mousePressed(event,self)
 
@@ -1780,8 +1835,9 @@ def my_link(name):
             global squat_status
             nextRoutine = False
             global exCnt
+            global endtime
 
-            lpdCnt = []
+            lpdCnt.clear()
             goodCnt = []
             f = open("static/cnt_saved.txt", 'w')
             f.write("count : " + str(len(lpdCnt)))
@@ -1795,6 +1851,11 @@ def my_link(name):
                 for event in pygame.event.get(): # User did something
                     if event.type == pygame.QUIT: # If user clicked close
                         self._done = True # Flag that we are done so we exit this loop
+                        endtime = time.time()
+                        print("slr 끝 시간 : ", endtime)
+                        login(new_pw)
+                        addrun(userEmail)
+                        print("slr에서 데이터 입력")
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         mousePressed(event,self)
 
@@ -1997,6 +2058,14 @@ def my_link(name):
     class GameRuntime_WholeBodyRoutine(object):
         def __init__(self):
             pygame.init()
+
+            global starttime
+            starttime = time.time()
+            print("전신운동 시작 시간 : ", starttime)
+
+            global runSub
+            runSub = "전신운동1"
+
             self.startScreen = False
             self.mainScreen = True
             self.time = time.strftime("%H:%M") + " " + time.strftime("%d/%m/%Y")
@@ -2245,11 +2314,12 @@ def my_link(name):
 
 
         def run_side(self):
-            right_handCnt = []
-            left_handCnt = []
+            right_handCnt.clear()
+            left_handCnt.clear()
             nextRoutine = False
             global side_status
             global exCnt
+            global endtime
 
             f = open("static/video_name.txt", 'w')
             f.write("hip")
@@ -2267,6 +2337,11 @@ def my_link(name):
                 for event in pygame.event.get(): # User did something
                     if event.type == pygame.QUIT: # If user clicked close
                         self._done = True # Flag that we are done so we exit this loop
+                        endtime = time.time()
+                        print("side 끝 시간 : ", endtime)
+                        login(new_pw)
+                        addrun(userEmail)
+                        print("side에서 데이터 입력")
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         mousePressed(event,self)
 
@@ -2482,9 +2557,10 @@ def my_link(name):
 
             global goodCnt
             global exCnt
+            global endtime
             nextRoutine = True
-            right_handCnt = []
-            left_handCnt = []
+            right_handCnt.clear()
+            left_handCnt.clear()
 
             sidebamCnt.clear()
             f = open("static/cnt_saved.txt", 'w')
@@ -2499,6 +2575,11 @@ def my_link(name):
                 for event in pygame.event.get(): # User did something
                     if event.type == pygame.QUIT: # If user clicked close
                         self._done = True # Flag that we are done so we exit this loop
+                        endtime = time.time()
+                        print("kneekick 끝 시간 : ", endtime)
+                        login(new_pw)
+                        addrun(userEmail)
+                        print("kneekick에서 데이터 입력")
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         mousePressed(event,self)
 
@@ -2686,6 +2767,7 @@ def my_link(name):
             f.close()
 
             global exCnt
+            global endtime
             squat_status = True
             nextRoutine = False
 
@@ -2704,6 +2786,11 @@ def my_link(name):
                 for event in pygame.event.get(): # User did something
                     if event.type == pygame.QUIT: # If user clicked close
                         self._done = True # Flag that we are done so we exit this loop
+                        endtime = time.time()
+                        print("squat 끝 시간 : ", endtime)
+                        login(new_pw)
+                        addrun(userEmail)
+                        print("squat에서 데이터 입력")
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         mousePressed(event,self)
 
@@ -2874,6 +2961,14 @@ def my_link(name):
     class GameRuntime_yoga(object):
         def __init__(self):
             pygame.init()
+
+            global starttime
+            starttime = time.time()
+            print("요가운동 시작 시간 : ", starttime)
+
+            global runSub
+            runSub = "요가운동1"
+
             self.startScreen = False
             self.mainScreen = True
             self.time = time.strftime("%H:%M") + " " + time.strftime("%d/%m/%Y")
@@ -3104,14 +3199,27 @@ def my_link(name):
             except:
                 pass
 
+        #1
         def run_standside(self):
-            global left_YStandCnt, right_YStandCnt
-            global nextRoutine
-            global exCnt
+            left_YStandCnt = []
+            right_YStandCnt = []
 
-            exCnt = ""
+            global sec
+            sec = 200
+
+            global nextRoutine
+            global endtime
+            #exCnt = ""
 
             nextRoutine = True
+
+            f = open("static/video_name.txt", 'w')
+            f.write("standside")
+            f.close()
+            f = open("static/cnt_saved.txt", 'w')
+            f.write("count : start!")
+            f.close()
+
             # -------- Main Program Loop -----------
             while not self._done:
                 self.squatSummaryList = []
@@ -3120,6 +3228,11 @@ def my_link(name):
                 for event in pygame.event.get(): # User did something
                     if event.type == pygame.QUIT: # If user clicked close
                         self._done = True # Flag that we are done so we exit this loop
+                        endtime = time.time()
+                        print("standside 끝 시간 : ", endtime)
+                        login(new_pw)
+                        addrun(userEmail)
+                        print("standside에서 데이터 입력")
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         mousePressed(event,self)
 
@@ -3169,6 +3282,10 @@ def my_link(name):
                             spineBaseX = joints[PyKinectV2.JointType_SpineBase].Position.x
                             spineBaseZ = joints[PyKinectV2.JointType_SpineBase].Position.z
 
+                            spineShouldX =joints[PyKinectV2.JointType_SpineShoulder].Position.x
+                            spineShouldY =joints[PyKinectV2.JointType_SpineShoulder].Position.y
+                            spineShouldZ =joints[PyKinectV2.JointType_SpineShoulder].Position.z
+
                             rightKneeX = joints[PyKinectV2.JointType_KneeRight].Position.x
                             leftKneeX = joints[PyKinectV2.JointType_KneeLeft].Position.x
                             rightKneeY = joints[PyKinectV2.JointType_KneeRight].Position.y
@@ -3189,95 +3306,136 @@ def my_link(name):
                             rightankleX = joints[PyKinectV2.JointType_AnkleRight].Position.x
                             rightankleY = joints[PyKinectV2.JointType_AnkleRight].Position.y
 
-                            leftHandY = joints[PyKinectV2.JointType_HandLeft].Position.y
-                            rightHandY = joints[PyKinectV2.JointType_HandRight].Position.y
-
-                             # save the hand positions
+                            # save the hand positions
                             if self.currPress == "Yoga_StandSide":
 
                                 #왼발, 오른발 각도
                                 Left_Knee_angle = get_angle_v3(leftHipX, leftHipY, leftKneeX, leftKneeY, leftankleX, leftankleY)
                                 Right_Knee_angle = get_angle_v3(rightHipX, rightHipY, rightKneeX, rightKneeY, rightankleX, rightankleY)
 
-
                                 self.curX = (leftWristX, leftKneeX)
                                 self.curY = (leftWristY, leftFootX)
 
                                 # next routine
-                                if (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) and (nextRoutine == True) :
+                                if (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) and (nextRoutine == True):
                                     print("start yoga_stand")
-                                    txtCnt = "1st>> O / "
-                                    exCnt += txtCnt
+                                    #txtCnt = "1st>> O / "
+                                    #exCnt += txtCnt
                                     self.run_stand()
 
                                 # start point
                                 # 왼쪽 손목과 오른쪽 손목이 spineShould Y보다 높을 경우 moveDetected를 True로 변경
-                                if (rightKneeX - leftKneeX > 0.1 ):
+                                if (leftWristY >= spineShouldX and rightWristY >= spineShouldY):
                                     self.moveDetected = True
+                                    if  abs(leftWristX - rightWristX) < 0.1:
+                                        self.wristXList.append(self.curX[0])
+                                    self.wristYList.append(self.curY[0])
 
                                     if(len(left_YStandCnt) < 1) :
-                                        if (Left_Knee_angle > 160 and Right_Knee_angle > 160 and leftHandY < spineBaseY and rightHandY < spineBaseY):
-                                            print("start left stand yoga!!")
+                                        if Left_Knee_angle > 160 and Right_Knee_angle > 160:
+                                            print("start left yoga stand side !!")
+                                            f = open("static/cnt_saved.txt", 'w')
+                                            f.write("count : move!")
+                                            f.close()
 
                                         else :
-                                            #while은 반복문으로 sec가 0이 되면 반복을 멈춰라
+                                            # start = time.time()
+                                            #왼쪽 스탠드 사이드 성공조건
 
+                                            #while은 반복문으로 sec가 0이 되면 반복을 멈춰라
                                             if (sec > 100):
 
-                                                if (Left_Knee_angle >= 160 and Right_Knee_angle >= 160 and leftHandY <= leftKneeY and rightElbowY >= headY and spineBaseX - headX > 0.3):
-                                                    sec = sec - 1
+                                                if (90 < Left_Knee_angle < 150 and Right_Knee_angle > 150):
                                                     print("good")
+                                                    sec = sec-1
+                                                    feedbackFile("")
+                                                    f = open("static/cnt_saved.txt", 'w')
+                                                    f.write("count : good")
+                                                    f.close()
 
                                                 else:
                                                     print("bad")
+                                                    f = open("static/cnt_saved.txt", 'w')
+                                                    f.write("count : bad")
+                                                    f.close()
 
-                                                    # 무릎을 더 펴주세요
-                                                    if Left_Knee_angle < 160 and Right_Knee_angle < 160:
-                                                        print("무릎을 더 펴주세요")
-                                                        fix = "Knee came too forward"
+                                                    # 무릎을 더 굽혀주세요
+                                                    if Left_Knee_angle >= 150:
+                                                        print("무릎을 더 굽혀주세요")
+                                                        fix = "무릎을 더 굽혀주세요"
+                                                        feedbackFile(fix)
                                                         if fix not in self.squatSummaryList:
                                                             self.squatSummaryList.append(fix)
 
-                                                    # 허리를 더 숙여주세요
-                                                    if abs(abs(headX) - spineBaseX) < 0.2:
-                                                        print("허리를 더 숙여주세요")
-                                                        fix = "Bar is not in line with feet"
+                                                    # 허리를 일자로 세워주세요
+                                                    if abs(headX - spineBaseX) > 0.1 and abs(headZ - spineBaseZ) > 0.1:
+                                                        print("허리를 일자로 세워주세요")
+                                                        fix = "허리를 일자로 세워주세요"
+                                                        feedbackFile(fix)
                                                         if fix not in self.squatSummaryList:
                                                             self.squatSummaryList.append(fix)
                                             print(sec)
                                             if (sec == 100) :
                                                 left_YStandCnt.append(1)
+                                                feedbackFile("")
+                                                f = open("static/cnt_saved.txt", 'w')
+                                                f.write("count : next level")
+                                                f.close()
 
                                     else :
-                                        if Left_Knee_angle > 170 and Right_Knee_angle > 170:
-                                            print("start right side bam !!")
+                                        if Left_Knee_angle > 160 and Right_Knee_angle > 160:
+                                            print("start right yoga stand side !!")
+                                            f = open("static/cnt_saved.txt", 'w')
+                                            f.write("count : move!")
+                                            f.close()
 
                                         else :
-                                            #오른쪽 사이드 밤 성공조건
-                                            if (Left_Knee_angle >= 160 and Right_Knee_angle >= 160 and rightHandY <= rightKneeY and leftElbowY >= headY and headX - spineBaseX > 0.3) :
+                                            #오른쪽 스탠드 사이드 성공조건
+                                            if (90 < Right_Knee_angle < 150 and Left_Knee_angle > 150) :
+
                                                 sec = sec-1
-                                                print("right good!")
+                                                feedbackFile("")
+                                                f = open("static/cnt_saved.txt", 'w')
+                                                f.write("count : good!")
+                                                f.close()
 
                                             else:
                                                 print("right Bad!")
+                                                f = open("static/cnt_saved.txt", 'w')
+                                                f.write("count : bad!")
+                                                f.close()
 
                                                 # 무릎을 더 굽혀주세요
-                                                if Left_Knee_angle < 160 and Right_Knee_angle < 160:
+                                                if Right_Knee_angle >= 150:
                                                     print("무릎을 더 굽혀주세요")
-                                                    fix = "Knee came too forward"
+                                                    fix = "무릎을 더 굽혀주세요"
+                                                    feedbackFile(fix)
                                                     if fix not in self.squatSummaryList:
                                                         self.squatSummaryList.append(fix)
 
-                                                # 허리를 더 숙여주세요
-                                                if abs(abs(headX) - spineBaseX) < 0.2:
-                                                    print("허리를 더 숙여주세요")
-                                                    fix = "Bar is not in line with feet"
+                                                # 허리를 일자로 세워주세요
+                                                if abs(headX - spineBaseX) > 0.1 and abs(headZ - spineBaseZ) > 0.1:
+                                                    print("허리를 일자로 세워주세요")
+                                                    fix = "허리를 일자로 세워주세요"
+                                                    feedbackFile(fix)
                                                     if fix not in self.squatSummaryList:
                                                         self.squatSummaryList.append(fix)
                                         if (sec < 0) :
                                             sec = 0
-                                            right_YStandCnt.append(1)
 
+                                else:
+                                    feedbackFile("운동하세요")
+                                    f = open("static/cnt_saved.txt", 'w')
+                                    f.write("count : start")
+                                    f.close()
+                                    if 90 < Right_Knee_angle < 150 or 90 < Left_Knee_angle < 150:
+                                        fix = "손 드세요"
+                                        feedbackFile(fix)
+                                    if (sec == 100) or (sec <= 0):
+                                        feedbackFile("")
+                                        f = open("static/cnt_saved.txt", 'w')
+                                        f.write("count : next level")
+                                        f.close()
 
                 self.draw_squatSummaryPage()
 
@@ -3296,17 +3454,27 @@ def my_link(name):
             self._kinect.close()
             pygame.quit()
 
+        #2
         def run_stand(self):
             self.currPress = "Yoga_Stand"
 
             global nextRoutine
-            global sec
-            global left_YStandCnt, right_YStandCnt
+            left_YStandCnt = []
+            right_YStandCnt = []
             global exCnt
+            global endtime
 
+            global sec
             sec = 200
             left_YStandCnt.clear()
             right_YStandCnt.clear()
+
+            f = open("static/video_name.txt", 'w')
+            f.write("stand")
+            f.close()
+            f = open("static/cnt_saved.txt", 'w')
+            f.write("count : " + str(sec))
+            f.close()
 
             # -------- Main Program Loop -----------
             while not self._done:
@@ -3316,6 +3484,11 @@ def my_link(name):
                 for event in pygame.event.get(): # User did something
                     if event.type == pygame.QUIT: # If user clicked close
                         self._done = True # Flag that we are done so we exit this loop
+                        endtime = time.time()
+                        print("stand 끝 시간 : ", endtime)
+                        login(new_pw)
+                        addrun(userEmail)
+                        print("stand에서 데이터 입력")
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         mousePressed(event,self)
 
@@ -3365,6 +3538,10 @@ def my_link(name):
                             spineBaseX = joints[PyKinectV2.JointType_SpineBase].Position.x
                             spineBaseZ = joints[PyKinectV2.JointType_SpineBase].Position.z
 
+                            spineShouldX =joints[PyKinectV2.JointType_SpineShoulder].Position.x
+                            spineShouldY =joints[PyKinectV2.JointType_SpineShoulder].Position.y
+                            spineShouldZ =joints[PyKinectV2.JointType_SpineShoulder].Position.z
+
                             rightKneeX = joints[PyKinectV2.JointType_KneeRight].Position.x
                             leftKneeX = joints[PyKinectV2.JointType_KneeLeft].Position.x
                             rightKneeY = joints[PyKinectV2.JointType_KneeRight].Position.y
@@ -3385,7 +3562,7 @@ def my_link(name):
                             rightankleX = joints[PyKinectV2.JointType_AnkleRight].Position.x
                             rightankleY = joints[PyKinectV2.JointType_AnkleRight].Position.y
 
-                             # save the hand positions
+                            # save the hand positions
                             if self.currPress == "Yoga_Stand":
 
                                 #왼발, 오른발 각도
@@ -3399,16 +3576,16 @@ def my_link(name):
                                 # next routine
                                 if (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) and (nextRoutine == False) :
                                     print("start run_side")
-                                    txtCnt = "2st>> O / "
-                                    exCnt += txtCnt
+                                    # txtCnt = "2st>> O / "
+                                    # exCnt += txtCnt
                                     self.run_side()
 
                                 if sec < 199 :
                                     nextRoutine = False
 
                                 # start point
-                                # 왼쪽 손목과 오른쪽 손목이 spineShould Y보다 높을 경우 moveDetected를 True로 변경
-                                if (leftElbowY >= headY and rightElbowY >= headY):
+                                # 왼쪽 손목과 오른쪽 손목이 머리보다 높이 있을 때 moveDetected = True
+                                if (leftWristY <= spineShouldY and rightWristY <= spineShouldY):
                                     self.moveDetected = True
                                     if  abs(leftWristX - rightWristX) < 0.1:
                                         self.wristXList.append(self.curX[0])
@@ -3420,15 +3597,18 @@ def my_link(name):
 
                                         else :
                                             # start = time.time()
-                                            #왼쪽 요가 사이드 밤 성공조건
 
                                             #while은 반복문으로 sec가 0이 되면 반복을 멈춰라
                                             if (sec > 100):
 
-                                                if (Left_Knee_angle < 120 and Right_Knee_angle > 150 and leftKneeY <= leftankleY) :
+                                                #왼쪽 스탠드 성공조건
+                                                if (Left_Knee_angle < 100 and Right_Knee_angle > 150 and rightKneeY <= leftankleY) :
 
                                                     print("good")
                                                     sec = sec-1
+                                                    f = open("static/cnt_saved.txt", 'w')
+                                                    f.write("count : " + str(sec))
+                                                    f.close()
 
                                                 else:
                                                     print("bad")
@@ -3455,8 +3635,8 @@ def my_link(name):
                                             print("start right side bam !!")
 
                                         else :
-                                            #오른쪽 사이드 밤 성공조건
-                                            if (Right_Knee_angle < 100 and Left_Knee_angle > 150 and rightKneeY <= rightankleY) :
+                                            #오른쪽 스탠드 성공조건
+                                            if (Right_Knee_angle < 100 and Left_Knee_angle > 150 and leftKneeY <= rightankleY) :
 
                                                 sec = sec-1
 
@@ -3498,17 +3678,27 @@ def my_link(name):
             self._kinect.close()
             pygame.quit()
 
+        #3
         def run_side(self):
             self.currPress = "Yoga_Side"
 
             global nextRoutine
-            global sec
-            global left_YStandCnt, right_YStandCnt
+            left_YStandCnt = []
+            right_YStandCnt = []
             global exCnt
+            global endtime
 
+            global sec
             sec = 200
             left_YStandCnt.clear()
             right_YStandCnt.clear()
+
+            f = open("static/video_name.txt", 'w')
+            f.write("side")
+            f.close()
+            f = open("static/cnt_saved.txt", 'w')
+            f.write("count : " + str(sec))
+            f.close()
 
             # -------- Main Program Loop -----------
             while not self._done:
@@ -3518,6 +3708,11 @@ def my_link(name):
                 for event in pygame.event.get(): # User did something
                     if event.type == pygame.QUIT: # If user clicked close
                         self._done = True # Flag that we are done so we exit this loop
+                        endtime = time.time()
+                        print("side 끝 시간 : ", endtime)
+                        login(new_pw)
+                        addrun(userEmail)
+                        print("side에서 데이터 입력")
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         mousePressed(event,self)
 
@@ -3567,6 +3762,11 @@ def my_link(name):
                             spineBaseX = joints[PyKinectV2.JointType_SpineBase].Position.x
                             spineBaseZ = joints[PyKinectV2.JointType_SpineBase].Position.z
 
+                            leftElbowX = joints[PyKinectV2.JointType_ElbowLeft].Position.x
+                            leftElbowY = joints[PyKinectV2.JointType_ElbowLeft].Position.y
+                            rightElbowX = joints[PyKinectV2.JointType_ElbowRight].Position.x
+                            rightElbowY = joints[PyKinectV2.JointType_ElbowRight].Position.y
+
                             rightKneeX = joints[PyKinectV2.JointType_KneeRight].Position.x
                             leftKneeX = joints[PyKinectV2.JointType_KneeLeft].Position.x
                             rightKneeY = joints[PyKinectV2.JointType_KneeRight].Position.y
@@ -3586,62 +3786,61 @@ def my_link(name):
                             rightankleX = joints[PyKinectV2.JointType_AnkleRight].Position.x
                             rightankleY = joints[PyKinectV2.JointType_AnkleRight].Position.y
 
-                             # save the hand positions
+                            # save the hand positions
                             if self.currPress == "Yoga_Side":
 
                                 #왼발, 오른발 각도
                                 Left_Knee_angle = get_angle_v3(leftHipX, leftHipY, leftKneeX, leftKneeY, leftankleX, leftankleY)
                                 Right_Knee_angle = get_angle_v3(rightHipX, rightHipY, rightKneeX, rightKneeY, rightankleX, rightankleY)
 
+
                                 self.curX = (leftWristX, leftKneeX)
                                 self.curY = (leftWristY, leftFootX)
 
+                                # Last routine
                                 if (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) and (nextRoutine == True):
                                     print("Last routine")
-                                    txtCnt = "3rd>> O"
-                                    exCnt += txtCnt
-                                    sys.exit(exCnt)
+                                    # txtCnt = "3rd>> O"
+                                    #exCnt += txtCnt
+                                    #sys.exit(exCnt)
 
                                 if sec < 199 :
                                     nextRoutine = True
 
                                 # start point
-                                # 왼쪽 손목과 오른쪽 손목이 spineShould Y보다 높을 경우 moveDetected를 True로 변경
-                                if (leftWristY >= spineShouldX and rightWristY >= spineShouldY):
+                                # 오른쪽 무릎과 왼쪽 무릎 거리가 10cm 이상 일때 moveDetected = True
+                                if (rightKneeX - leftKneeX > 0.1 ):
                                     self.moveDetected = True
-                                    if  abs(leftWristX - rightWristX) < 0.1:
-                                        self.wristXList.append(self.curX[0])
-                                    self.wristYList.append(self.curY[0])
 
                                     if(len(left_YStandCnt) < 1) :
-                                        if Left_Knee_angle > 150 and Right_Knee_angle > 150:
-                                            print("start left yoga side !!")
+                                        if (Left_Knee_angle > 160 and Right_Knee_angle > 160 and leftHandY < spineBaseY and rightHandY < spineBaseY):
+                                            print("start yoga ]eft side!!")
 
                                         else :
-                                            # start = time.time()
-                                            #왼쪽 요가 사이드 성공조건
-
                                             #while은 반복문으로 sec가 0이 되면 반복을 멈춰라
+
                                             if (sec > 100):
 
-                                                if (90 < Left_Knee_angle < 150 and Right_Knee_angle > 150) :
-
+                                                if (Left_Knee_angle >= 160 and Right_Knee_angle >= 160 and leftWristY <= spineBaseY and rightWristY >= headY and spineBaseX - headX > 0.05):
+                                                    sec = sec - 1
                                                     print("good")
-                                                    sec = sec-1
+                                                    f = open("static/cnt_saved.txt", 'w')
+                                                    f.write("count : " + str(sec))
+                                                    f.close()
 
                                                 else:
                                                     print("bad")
 
-                                                    # 무릎을 더 굽혀주세요
-                                                    if Left_Knee_angle >= 165:
-                                                        print("무릎을 더 굽혀주세요")
+                                                    # 무릎을 더 펴주세요
+                                                    if Left_Knee_angle < 160 and Right_Knee_angle < 160:
+                                                        print("무릎을 더 펴주세요")
                                                         fix = "Knee came too forward"
                                                         if fix not in self.squatSummaryList:
                                                             self.squatSummaryList.append(fix)
 
-                                                    # 허리를 일자로 세워주세요
-                                                    if abs(headX - spineBaseX) > 0.1 and abs(headZ - spineBaseZ) > 0.1:
-                                                        print("허리를 일자로 세워주세요 ")
+                                                    # 허리를 더 숙여주세요
+                                                    if abs(abs(headX) - spineBaseX) < 0.1:
+                                                        print("허리를 더 숙여주세요")
                                                         fix = "Bar is not in line with feet"
                                                         if fix not in self.squatSummaryList:
                                                             self.squatSummaryList.append(fix)
@@ -3651,32 +3850,33 @@ def my_link(name):
 
                                     else :
                                         if Left_Knee_angle > 170 and Right_Knee_angle > 170:
-                                            print("start right yoga side !!")
+                                            print("start yoga right side !!")
 
                                         else :
                                             #오른쪽 사이드 밤 성공조건
-                                            if (90 < Right_Knee_angle < 150 and Left_Knee_angle > 150) :
-
+                                            if (Left_Knee_angle >= 160 and Right_Knee_angle >= 160 and rightWristY <= spineBaseY and leftWristY >= headY and headX - spineBaseX > 0.05) :
                                                 sec = sec-1
+                                                print("right good!")
 
                                             else:
                                                 print("right Bad!")
 
                                                 # 무릎을 더 굽혀주세요
-                                                if Right_Knee_angle >= 165:
+                                                if Left_Knee_angle < 160 and Right_Knee_angle < 160:
                                                     print("무릎을 더 굽혀주세요")
                                                     fix = "Knee came too forward"
                                                     if fix not in self.squatSummaryList:
                                                         self.squatSummaryList.append(fix)
 
-                                                # 허리를 일자로 세워주세요
-                                                if abs(headX - spineBaseX) > 0.1 and abs(headZ - spineBaseZ) > 0.1:
-                                                    print("허리를 일자로 세워주세요 ")
+                                                # 허리를 더 숙여주세요
+                                                if abs(abs(headX) - spineBaseX) < 0.1:
+                                                    print("허리를 더 숙여주세요")
                                                     fix = "Bar is not in line with feet"
                                                     if fix not in self.squatSummaryList:
                                                         self.squatSummaryList.append(fix)
                                         if (sec < 0) :
                                             sec = 0
+                                            right_YStandCnt.append(1)
 
                 self.draw_squatSummaryPage()
 
@@ -3709,9 +3909,6 @@ def my_link(name):
     print(" --------------------------------------")
     print("  4. 요가루틴 실행")
     print("  ▶ stand side > stand > side")
-    print(" --------------------------------------")
-    print("  5. 스트레칭 실행")
-    print("  ▶ 개발 중...")
     print(" ======================================")
 
     # selectNum = int(input(">>  "))
@@ -3732,8 +3929,6 @@ def my_link(name):
         print("요가루틴을 실행합니다.")
         game = GameRuntime_yoga()
         game.run_standside()
-    elif name == "스트레칭":
-        print("스트레칭을 실행합니다.")
 
     return redirect("/")
 

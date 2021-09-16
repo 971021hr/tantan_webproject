@@ -63,11 +63,7 @@
                     // $("#data").load("static/cnt_saved.txt");
                     var refreshId = setInterval(function() {
                         $("#data").load("static/cnt_saved.txt");
-                        $("#name").load("static/video_name.txt", function(response) {
-                            var videoname = response
-                            // var videoname = document.getElementById("name").value();
-                            document.getElementById("realvideo").innerHTML = "<video src='static/video/" + videoname + ".mp4'" + " width='780' height='780' autoplay loop muted></video>";
-                        });
+                        $("#feedback").load("static/feedback.txt");
 
                         // var client = new XMLHttpRequest();
                         // client.open('GET', 'static/video_name.txt', true);
@@ -85,7 +81,19 @@
                         // document.write("<video src='.idea/static/video/videoname' autoplay loop muted></video>");
                         //document.write(<video src="{{ url_for('static', filename=videoname) }}" width="780" height="780" autoplay loop muted></video>);
                         // document.write(""+<video src="{{ url_for('static', filename=videoname) }}" width='780' height='780' autoplay loop muted>"+</video>+"");
+                    }, 100);
+                    $.ajaxSetup({ cache: false });
+                });
+
+                $(document).ready(function() {
+                    var refreshId2 = setInterval(function() {
+                        $("#name").load("static/video_name.txt", function(response) {
+                            var videoname = response
+                            // var videoname = document.getElementById("name").value();
+                            document.getElementById("realvideo").innerHTML = "<video src='static/video/" + videoname + ".mp4'" + " width='780' height='780' autoplay loop muted></video>";
+                        });
                     }, 3000);
+
                     $.ajaxSetup({ cache: false });
                 });
 
@@ -135,7 +143,7 @@
         <div id="boxApp">
             <button onclick="showSubway()" id="btn_subway" class="btn_left"><i class="fas fa-subway fa-2x"></i></button>
             <button onclick="showConnect()" id="btn_calendar" class="btn_left"><i class="fas fa-calendar-alt fa-2x"></i></button>
-            <button onclick="showDandan()" id="btn_dandan" class="btn_left"><i class="fas fa-running fa-2x"></i></button>
+            <button onclick="showDandanList()" id="btn_dandan" class="btn_left"><i class="fas fa-running fa-2x"></i></button>
             <!--<button onclick="showDandanSquat()" id="btn_dandan_squat" class="btn_left"><i class="fas fa-dumbbell fa-2x"></i></button>-->
 
 
@@ -194,6 +202,7 @@
 
             <p id="data" style="display: none">0</p>
             <p id="name" style="display: none">무슨 영상이냐</p>
+            <p id="feedback" style="display: none">피드백</p>
             <div id="realvideo" style="display: none"></div>
 <!--            <script>-->
 <!--                var client = new XMLHttpRequest();-->
@@ -229,18 +238,16 @@
 
             <div id="exerciselist" style="display: none">
             <div style="display: flex; justify-content: center; margin-top: 40px">
-            <div id="circle1">상체</div>
-            <div id="circle1">하체</div>
-            <div id="circle1">전신</div>
+                <div id="circle1">상체</div>
+                <div id="circle1">하체</div>
             </div>
             <div style="display: flex; justify-content: center;">
-            <div id="circle1">요가</div>
-            <div id="circle1">스트레칭</div>
+                <div id="circle1">전신</div>
+                <div id="circle1">요가</div>
             </div>
             </div>
 
             <p>
-                <span>{{ select_pw }}</span>
                 <span>{{ variable[0] }}</span>
                 <span>{{ variable[1] }}</span>
                 <span>{{ variable[2] }}</span>
