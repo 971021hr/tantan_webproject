@@ -46,44 +46,8 @@
                     $('.dateview1').html(moment(date).format('LT'));
                     $('.dateview2').html(moment().format('LL'));
                     document.cookie = 'user=; expires=Thu, 18 Dec 2013 12:00:00 GMT'
-                    // $('#data').text("40");
-                    // $(document).ready(function(){
-                    //     $.ajax({
-                    //         url: "static/cnt_saved.txt",
-                    //         async : false
-                    //     }).done(function(response) {
-                    //         $('#data').html(response);
-                    //         response.empty();
-                    //     });
-                    // })
 
                 },5000);
-
-                $(document).ready(function() {
-                    // $("#data").load("static/cnt_saved.txt");
-                    var refreshId = setInterval(function() {
-                        $("#data").load("static/cnt_saved.txt");
-                        $("#feedback").load("static/feedback.txt");
-
-                        // var client = new XMLHttpRequest();
-                        // client.open('GET', 'static/video_name.txt', true);
-                        //client.onreadystatechange = function() {
-                        //    alert(client.responseText);
-                            // $("#name").innerText(client.responseText);
-                        //    var videoname = client.responseText;
-                            // alert(videoname);
-                        //    document.getElementById("realvideo").innerHTML = "<video src='static/video/" + videoname + ".mp4'" + "width='780' height='780' autoplay loop muted></video>";
-                       // }
-                        //client.hosend(null);
-                        // var videoname = document.getElementById("video").innerText;
-                        // alert(videoname);
-                        // document.getElementById("realvideo").innerHTML = "<video src='.idea/static/video/" + videoname + "'></video>";
-                        // document.write("<video src='.idea/static/video/videoname' autoplay loop muted></video>");
-                        //document.write(<video src="{{ url_for('static', filename=videoname) }}" width="780" height="780" autoplay loop muted></video>);
-                        // document.write(""+<video src="{{ url_for('static', filename=videoname) }}" width='780' height='780' autoplay loop muted>"+</video>+"");
-                    }, 100);
-                    $.ajaxSetup({ cache: false });
-                });
 
                 $(document).ready(function() {
                     var refreshId2 = setInterval(function() {
@@ -94,8 +58,21 @@
                         });
                     }, 3000);
 
+                    var refreshId = setInterval(function() {
+                        $("#data").load("static/cnt_saved.txt");
+                        $("#feedback").load("static/feedback.txt");
+                    }, 1000);
                     $.ajaxSetup({ cache: false });
                 });
+                //
+                // $(document).ready(function() {
+                //     // $("#data").load("static/cnt_saved.txt");
+                //     var refreshId = setInterval(function() {
+                //         $("#data").load("static/cnt_saved.txt");
+                //         $("#feedback").load("static/feedback.txt");
+                //     }, 100);
+                //     $.ajaxSetup({ cache: false });
+                // });
 
             </script>
         </div>
@@ -143,7 +120,7 @@
         <div id="boxApp">
             <button onclick="showSubway()" id="btn_subway" class="btn_left"><i class="fas fa-subway fa-2x"></i></button>
             <button onclick="showConnect()" id="btn_calendar" class="btn_left"><i class="fas fa-calendar-alt fa-2x"></i></button>
-            <button onclick="showDandanList()" id="btn_dandan" class="btn_left"><i class="fas fa-running fa-2x"></i></button>
+            <button onclick="showDandan()" id="btn_dandan" class="btn_left"><i class="fas fa-running fa-2x"></i></button>
             <!--<button onclick="showDandanSquat()" id="btn_dandan_squat" class="btn_left"><i class="fas fa-dumbbell fa-2x"></i></button>-->
 
 
@@ -204,37 +181,6 @@
             <p id="name" style="display: none">무슨 영상이냐</p>
             <p id="feedback" style="display: none">피드백</p>
             <div id="realvideo" style="display: none"></div>
-<!--            <script>-->
-<!--                var client = new XMLHttpRequest();-->
-<!--                client.open('GET', 'static/video_name.txt');-->
-<!--                client.onreadystatechange = function() {-->
-<!--                    alert(client.responseText);-->
-<!--                    var videoname = client.responseText;-->
-<!--                    document.getElementById("realvideo").innerHTML = "<video src='static/video/" + videoname + ".mp4'" + "width='780' height='780' autoplay loop muted></video>";-->
-<!--                }-->
-<!--                client.send();-->
-<!--                // $("#video").load("static/video_name.txt");-->
-<!--                // var videoname = document.getElementById("video").innerText;-->
-<!--                // var videoname = text;-->
-<!--                // alert(videoname)-->
-<!--                // // var videoname = 'lunge1.mp4';-->
-<!--                // document.getElementById("realvideo").innerHTML = "<video src='{{ url_for('static', filename='" + videoname + "') }}'></video>";-->
-<!--            </script>-->
-<!--            <p id="video"></p>-->
-
-<!--            <video>-->
-<!--            <script>-->
-<!--&lt;!&ndash;                var videoname = document.getElementById("video").innerText;&ndash;&gt;-->
-<!--&lt;!&ndash;                alert(videoname);&ndash;&gt;-->
-<!--                // document.write('<src="{{ url_for('static', filename=videoname) }}">');-->
-<!--                // document.write("<video src='.idea/static/video/videoname' autoplay loop muted></video>");-->
-
-<!--            </script>-->
-<!--            </video>-->
-<!--            <video id = "video"></video>-->
-<!--            src="{{ url_for('static', filename=videoname) }}" width="780" height="780" autoplay loop muted>-->
-<!--            </video>-->
-<!--            <video src="{{ url_for('static', filename='video/lunge1.mp4') }}" width="780" height="780" autoplay loop muted></video>-->
 
             <div id="exerciselist" style="display: none">
             <div style="display: flex; justify-content: center; margin-top: 40px">
@@ -255,39 +201,6 @@
                 <span>{{ variable[4] }}</span>
                 <span>{{ variable[5] }}</span>
             </p>
-            <script>
-                // function parseData(data){
-                //     //do something with the data
-                //     alert("data is: " + data);
-                // }
-                // $.get("C:\\Users\\chku5\\IdeaProjects\\tantan_webproject\\.idea\\static\\cnt_saved.txt",parseData);
-                // var stringData = $.ajax({
-                //     url: "static/cnt_saved.txt",
-                //     async: false
-                // }).responseText;
-                // //Split values of string data
-                // alert("Data Loaded: " + stringData);
-                //     //
-                // setInterval(function(){
-                //     $(document).ready(function(){
-                //         $.ajax({
-                //             url: "static/cnt_saved.txt"
-                //         }).done(function(response) {
-                //             $('#data').html(response);
-                //         });
-                //     })
-                //
-                // },5000);
-                // $(document).ready(function(){
-                //     $.ajax({
-                //         url: "static/cnt_saved.txt"
-                //     }).done(function(response) {
-                //         $('#data').html(response);
-                //     });
-                // })
-            </script>
-<!--            <div id="data">secy</div>-->
-<!--            횟수 : {{temp01}}-->
 
         </div>
 

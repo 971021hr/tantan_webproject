@@ -248,6 +248,8 @@ def my_link(name):
             global runSub
             runSub = "하체운동1"
 
+            feedbackFile("")
+
             self.startScreen = False
             self.mainScreen = True
             self.time = time.strftime("%H:%M") + " " + time.strftime("%d/%m/%Y")
@@ -617,7 +619,7 @@ def my_link(name):
                                             print("good cnt > ",len(goodCnt))
                                             # squat_status = False
 
-                                            if len(goodCnt) >= 10:
+                                            if len(goodCnt) >= 8:
                                                 goodCnt = []
                                                 squatCnt.append(1)
                                                 fix = "Good"
