@@ -3,7 +3,6 @@ function showDandanYoga(){
     $("#div_main").hide();
 
     $("#data").show();
-    $("#name").show();
     $("#feedback").show();
     $("#realvideo").show();
     $("#exerciselist").hide();

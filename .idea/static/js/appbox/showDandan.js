@@ -3,8 +3,9 @@ function showDandan(){
     $("#div_main").hide();
 
     $("#data").show();
-    $("#name").show();
+    $("#feedback").show();
     $("#realvideo").show();
+    $("#connect").hide();
     $("#exerciselist").hide();
     $("#div_calendar").hide();
     $("#div_subway").hide();

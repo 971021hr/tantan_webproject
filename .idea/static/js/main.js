@@ -131,19 +131,18 @@ $(document).ready(function (){
         }else if (string.endsWith('달력')){
             showCalendar();
         }
-        else if (string.endsWith('단단') || string.endsWith('탄탄')) {
+        else if (string.endsWith('연결') || string.endsWith('연동')) {
+            showConnect();
+        }
+        else if (string.endsWith('단단') || string.endsWith('운동')) {
             showDandanList();
         }
-        else if (string.endsWith('하체') || string.endsWith('운동')){
+        else if (string.endsWith('하체') || string.endsWith('스쿼트')) {
             showDandan();
-        }else if (string.endsWith('스쿼트') || string.endsWith('squat')){
-            showDandanSquat();
-        }else if (string.endsWith('다리')){
-            alert('하체');
         }else if (string.endsWith('상체') || string.endsWith('상태')){
             showDandanUp();
         }else if (string.endsWith('종료') || string.endsWith('종묘')){
-            showDandanQuit();
+            // showDandanQuit();
         }else if (string.endsWith('전신')){
             showDandanWhole();
         }else if (string.endsWith('요가')){

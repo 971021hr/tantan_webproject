@@ -3,7 +3,7 @@ function showDandanUp(){
     $("#div_main").hide();
 
     $("#data").show();
-    $("#name").show();
+    $("#feedback").show();
     $("#realvideo").show();
     $("#exerciselist").hide();
     $("#div_calendar").hide();

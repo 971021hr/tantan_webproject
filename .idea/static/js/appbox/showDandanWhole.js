@@ -3,7 +3,6 @@ function showDandanWhole(){
     $("#div_main").hide();
 
     $("#data").show();
-    $("#name").show();
     $("#realvideo").show();
     $("#exerciselist").hide();
     $("#div_calendar").hide();

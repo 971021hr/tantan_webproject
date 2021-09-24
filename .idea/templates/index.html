@@ -120,7 +120,7 @@
         <div id="boxApp">
             <button onclick="showSubway()" id="btn_subway" class="btn_left"><i class="fas fa-subway fa-2x"></i></button>
             <button onclick="showConnect()" id="btn_calendar" class="btn_left"><i class="fas fa-calendar-alt fa-2x"></i></button>
-            <button onclick="showDandan()" id="btn_dandan" class="btn_left"><i class="fas fa-running fa-2x"></i></button>
+            <button onclick="showDandanList()" id="btn_dandan" class="btn_left"><i class="fas fa-running fa-2x"></i></button>
             <!--<button onclick="showDandanSquat()" id="btn_dandan_squat" class="btn_left"><i class="fas fa-dumbbell fa-2x"></i></button>-->
 
 
@@ -134,7 +134,6 @@
 
         </div>
         <br>
-        <button onclick="showDandanSquat()" id="btn_dandan_squat" class="btn_left"><i class="fas fa-dumbbell fa-2x"></i></button>
 
         <button id="btn_speech">speech</button>
     </div>
@@ -177,10 +176,9 @@
             <!--                <img src="img/squat.png" width="780" height="780"/>-->
             <!--                <a href="my-link/">Click me</a>-->
 
-            <p id="data" style="display: none">0</p>
-            <p id="name" style="display: none">무슨 영상이냐</p>
-            <p id="feedback" style="display: none">피드백</p>
-            <div id="realvideo" style="display: none"></div>
+            <p id="data" style="display: none; font-size: 30px; text-align: right;">0</p>
+            <p id="feedback" style="display: none; height: 25px; font-size: 30px; text-align: right;">피드백</p>
+            <div id="realvideo" style="display: none;"></div>
 
             <div id="exerciselist" style="display: none">
             <div style="display: flex; justify-content: center; margin-top: 40px">
@@ -193,7 +191,7 @@
             </div>
             </div>
 
-            <p>
+            <p id="connect" style="font-size: 30px; margin-top: 20px;">
                 <span>{{ variable[0] }}</span>
                 <span>{{ variable[1] }}</span>
                 <span>{{ variable[2] }}</span>
