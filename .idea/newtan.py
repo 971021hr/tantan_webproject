@@ -217,8 +217,18 @@ def my_link(name):
         with open(path, "wt") as f:
             f.write(contents)
 
+    def cntsavedFile(contents):
+        with open("static/cnt_saved.txt", "wt", encoding="UTF-8") as f:
+            f.write(contents + "/10회")
+            f.close()
+
     def feedbackFile(contents):
         with open("static/feedback.txt", "wt", encoding="UTF-8") as f:
+            f.write(contents)
+            f.close()
+
+    def exercisestepFile(contents):
+        with open("static/exercise_step.txt", "wt", encoding="UTF-8") as f:
             f.write(contents)
             f.close()
 
@@ -249,6 +259,7 @@ def my_link(name):
             runSub = "하체운동1"
 
             feedbackFile("")
+            exercisestepFile("0/3")
 
             self.startScreen = False
             self.mainScreen = True
@@ -484,10 +495,9 @@ def my_link(name):
             f = open("static/video_name.txt", 'w')
             f.write("squat")
             f.close()
-            f = open("static/cnt_saved.txt", 'w')
-            f.write("count : " + str(len(squatCnt)))
-            f.close()
+            cntsavedFile(str(len(squatCnt)))
             feedbackFile("스쿼트 운동 시작하세요.")
+            exercisestepFile("○ ○ ●")
 
             exCnt = ""
             goodCnt = []
@@ -614,7 +624,7 @@ def my_link(name):
 
                                     if Left_Knee_angle >= 160 :
                                         print("start squat !!")
-                                        feedbackFile("움직이세요.")
+                                        feedbackFile("스쿼트 운동하세요.")
 
                                     else :
 
@@ -622,20 +632,18 @@ def my_link(name):
                                             if squat_status == True:
                                                 goodCnt.append(1)
                                             print("good cnt > ",len(goodCnt))
-                                            feedbackFile("좋아요!")
+                                            feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                             # squat_status = False
 
                                             if len(goodCnt) >= 8:
                                                 goodCnt = []
                                                 squatCnt.append(1)
                                                 fix = "Good"
-                                                feedbackFile("좋아요!")
+                                                feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                 if fix not in self.squatSummaryList:
                                                     self.squatSummaryList.append(fix)
                                                 print("squat count ========================================>>>> ",len(squatCnt))
-                                                f = open("static/cnt_saved.txt", 'w')
-                                                f.write("count : " + str(len(squatCnt)))
-                                                f.close()
+                                                cntsavedFile(str(len(squatCnt)))
                                                 squat_status = False
 
                                         else:
@@ -702,10 +710,10 @@ def my_link(name):
             global endtime
 
             squatCnt.clear()
-            f = open("static/cnt_saved.txt", 'w')
-            f.write("count : " + str(len(squatCnt)))
-            f.close()
+            exercisestepFile("○ ● ●")
+            cntsavedFile(str(len(squatCnt)))
             feedbackFile("힙 운동 시작하세요.")
+            time.sleep(3)
 
             # -------- Main Program Loop -----------
             while not self._done:
@@ -815,20 +823,18 @@ def my_link(name):
                                                     goodCnt.append(1)
                                                 print("good cnt > ",len(goodCnt))
                                                 print("왼쪽 성공 빵댕이 각도 {0}".format(Left_Hip_angle))
-                                                feedbackFile("좋아요!")
+                                                feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
 
                                                 if len(goodCnt) >= 6:
                                                     goodCnt = []
                                                     left_HipCnt.append(1)
                                                     squatCnt.append(1)
                                                     fix = "Good"
-                                                    feedbackFile("좋아요!")
+                                                    feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                     if fix not in self.squatSummaryList:
                                                         self.squatSummaryList.append(fix)
                                                     print("hip count ========================================>>>> ",len(left_HipCnt))
-                                                    f = open("static/cnt_saved.txt", 'w')
-                                                    f.write("count : " + str(len(squatCnt)))
-                                                    f.close()
+                                                    cntsavedFile(str(len(squatCnt)))
                                                     hip_status = False
 
                                             else:
@@ -854,61 +860,65 @@ def my_link(name):
                                                     if fix not in self.squatSummaryList:
                                                         self.squatSummaryList.append(fix)
 
-                                    else :
+                                    if(len(left_HipCnt) >= 2):
+                                        feedbackFile("오른쪽 힙 운동하세요.")
                                         f = open("static/video_name.txt", 'w')
                                         f.write("hipRight")
                                         f.close()
 
-                                        if 85 <= Right_Hip_angle <= 95 :
-                                            print("start right hip !!")
-                                            feedbackFile("오른쪽 힙 운동하세요.")
+                                        if(len(left_HipCnt) == 2):
+                                            time.sleep(3)
+                                            left_HipCnt.append(1)
 
-                                        else :
+                                        else:
+                                            if 85 <= Right_Hip_angle <= 95 :
+                                                print("start right hip !!")
+                                                feedbackFile("오른쪽 힙 운동하세요.")
 
-                                            if (Right_Hip_angle >= 140) :
-                                                if hip_status == True:
-                                                    goodCnt.append(1)
-                                                print("good cnt > ",len(goodCnt))
-                                                print("오른쪽 성공 빵댕이 각도 {0}".format(Right_Hip_angle))
-                                                feedbackFile("좋아요!")
-                                                # squat_status = False
+                                            else :
 
-                                                if len(goodCnt) >= 6:
+                                                if (Right_Hip_angle >= 140) :
+                                                    if hip_status == True:
+                                                        goodCnt.append(1)
+                                                    print("good cnt > ",len(goodCnt))
+                                                    print("오른쪽 성공 빵댕이 각도 {0}".format(Right_Hip_angle))
+                                                    feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                                    # squat_status = False
+
+                                                    if len(goodCnt) >= 6:
+                                                        goodCnt = []
+                                                        right_HipCnt.append(1)
+                                                        squatCnt.append(1)
+                                                        fix = "Good"
+                                                        feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                                        if fix not in self.squatSummaryList:
+                                                            self.squatSummaryList.append(fix)
+                                                        print("hip count ========================================>>>> ",len(right_HipCnt))
+                                                        cntsavedFile(str(len(squatCnt)))
+                                                        hip_status = False
+
+                                                else:
                                                     goodCnt = []
-                                                    right_HipCnt.append(1)
-                                                    squatCnt.append(1)
-                                                    fix = "Good"
-                                                    feedbackFile("좋아요!")
-                                                    if fix not in self.squatSummaryList:
-                                                        self.squatSummaryList.append(fix)
-                                                    print("hip count ========================================>>>> ",len(right_HipCnt))
-                                                    f = open("static/cnt_saved.txt", 'w')
-                                                    f.write("count : " + str(len(squatCnt)))
-                                                    f.close()
-                                                    hip_status = False
+                                                    hip_status = True
+                                                    print("Bad!")
+                                                    feedbackFile("자세가 바르지 않아요.")
+                                                    print("오른쪽 빵댕이 각도 {0}".format(Right_Hip_angle))
 
-                                            else:
-                                                goodCnt = []
-                                                hip_status = True
-                                                print("Bad!")
-                                                feedbackFile("자세가 바르지 않아요.")
-                                                print("오른쪽 빵댕이 각도 {0}".format(Right_Hip_angle))
+                                                    # 허리를 좀 더 세워주세요
+                                                    if abs(headX-spineBaseX) > 0.2 and abs(headZ-spineBaseZ) > 0.2 :
+                                                        print("허리를 좀 더 세워주세요 ")
+                                                        fix = "Bar is not in line with feet"
+                                                        feedbackFile("허리를 조금 더 세워주세요.")
+                                                        if fix not in self.squatSummaryList:
+                                                            self.squatSummaryList.append(fix)
 
-                                                # 허리를 좀 더 세워주세요
-                                                if abs(headX-spineBaseX) > 0.2 and abs(headZ-spineBaseZ) > 0.2 :
-                                                    print("허리를 좀 더 세워주세요 ")
-                                                    fix = "Bar is not in line with feet"
-                                                    feedbackFile("허리를 조금 더 세워주세요.")
-                                                    if fix not in self.squatSummaryList:
-                                                        self.squatSummaryList.append(fix)
-
-                                                # 엉덩이를 더 높이 올리세요
-                                                if Right_Hip_angle < 140 :
-                                                    print("오른쪽 엉덩이를 더 높이 올리세요")
-                                                    fix = "Knee came too forward"
-                                                    feedbackFile("오른쪽 엉덩이를 더 높이 올리세요.")
-                                                    if fix not in self.squatSummaryList:
-                                                        self.squatSummaryList.append(fix)
+                                                    # 엉덩이를 더 높이 올리세요
+                                                    if Right_Hip_angle < 140 :
+                                                        print("오른쪽 엉덩이를 더 높이 올리세요")
+                                                        fix = "Knee came too forward"
+                                                        feedbackFile("오른쪽 엉덩이를 더 높이 올리세요.")
+                                                        if fix not in self.squatSummaryList:
+                                                            self.squatSummaryList.append(fix)
 
                                 else:
                                     feedbackFile("운동이 인식되기 위해 손을 올려주세요.")
@@ -944,10 +954,10 @@ def my_link(name):
             global endtime
 
             squatCnt.clear()
-            f = open("static/cnt_saved.txt", 'w')
-            f.write("count : " + str(len(squatCnt)))
-            f.close()
+            exercisestepFile("● ● ●")
+            cntsavedFile(str(len(squatCnt)))
             feedbackFile("런지 운동 시작하세요.")
+            time.sleep(3)
 
             # -------- Main Program Loop -----------
             while not self._done:
@@ -1078,7 +1088,7 @@ def my_link(name):
                                                 if squat_status == True:
                                                     goodCnt.append(1)
                                                 print("good cnt > ",len(goodCnt))
-                                                feedbackFile("좋아요!")
+                                                feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                 # squat_status = False
 
                                                 if len(goodCnt) >= 7:
@@ -1086,13 +1096,11 @@ def my_link(name):
                                                     leftlungeCnt.append(1)
                                                     squatCnt.append(1)
                                                     fix = "Good"
-                                                    feedbackFile("좋아요!")
+                                                    feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                     if fix not in self.squatSummaryList:
                                                         self.squatSummaryList.append(fix)
                                                     print("left lunge count ========================================>>>> ",len(leftlungeCnt))
-                                                    f = open("static/cnt_saved.txt", 'w')
-                                                    f.write("count : " + str(len(squatCnt)))
-                                                    f.close()
+                                                    cntsavedFile(str(len(squatCnt)))
                                                     squat_status = False
 
                                             else:
@@ -1134,74 +1142,78 @@ def my_link(name):
                                                         self.squatSummaryList.append(fix)
 
                                     # 오른쪽 다리 앞으로
-                                    else :
+                                    if(len(leftlungeCnt) >= 1):
+                                        feedbackFile("오른쪽 다리 런지 운동하세요.")
                                         f = open("static/video_name.txt", 'w')
                                         f.write("lungeRight")
                                         f.close()
 
-                                        if Right_Knee_angle >= 160 :
-                                            print("start right lunge !!")
-                                            feedbackFile("오른쪽 다리 런지 운동하세요.")
+                                        if(len(leftlungeCnt) == 1):
+                                            time.sleep(3)
+                                            leftlungeCnt.append(1)
 
                                         else :
-                                            if (abs(self.feetList[0] - self.maxKneeX)) <= 0.8 and 70.0 <= Right_Knee_angle <= 120.0 and abs(headX-spineBaseX) <= 0.2 and abs(headZ-spineBaseZ) <= 0.2:
-                                                if squat_status == True:
-                                                    goodCnt.append(1)
-                                                print("good cnt > ",len(goodCnt))
-                                                feedbackFile("좋아요!")
-                                                # squat_status = False
+                                            if Right_Knee_angle >= 160 :
+                                                print("start right lunge !!")
+                                                feedbackFile("오른쪽 다리 런지 운동하세요.")
 
-                                                if len(goodCnt) >= 7:
+                                            else :
+                                                if (abs(self.feetList[0] - self.maxKneeX)) <= 0.8 and 70.0 <= Right_Knee_angle <= 120.0 and abs(headX-spineBaseX) <= 0.2 and abs(headZ-spineBaseZ) <= 0.2:
+                                                    if squat_status == True:
+                                                        goodCnt.append(1)
+                                                    print("good cnt > ",len(goodCnt))
+                                                    feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                                    # squat_status = False
+
+                                                    if len(goodCnt) >= 7:
+                                                        goodCnt = []
+                                                        rightlungeCnt.append(1)
+                                                        squatCnt.append(1)
+                                                        fix = "Good"
+                                                        feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                                        if fix not in self.squatSummaryList:
+                                                            self.squatSummaryList.append(fix)
+                                                        print("right lunge count ========================================>>>> ",len(rightlungeCnt))
+                                                        cntsavedFile(str(len(squatCnt)))
+                                                        squat_status = False
+
+                                                else:
                                                     goodCnt = []
-                                                    rightlungeCnt.append(1)
-                                                    squatCnt.append(1)
-                                                    fix = "Good"
-                                                    feedbackFile("좋아요!")
-                                                    if fix not in self.squatSummaryList:
-                                                        self.squatSummaryList.append(fix)
-                                                    print("right lunge count ========================================>>>> ",len(rightlungeCnt))
-                                                    f = open("static/cnt_saved.txt", 'w')
-                                                    f.write("count : " + str(len(squatCnt)))
-                                                    f.close()
-                                                    squat_status = False
+                                                    squat_status = True
+                                                    print("Bad!")
+                                                    feedbackFile("자세가 바르지 않아요.")
 
-                                            else:
-                                                goodCnt = []
-                                                squat_status = True
-                                                print("Bad!")
-                                                feedbackFile("자세가 바르지 않아요.")
+                                                    # 앞무릎을 더 굽혀주세요
+                                                    if 70.0 > Right_Knee_angle or Right_Knee_angle > 120.0 :
+                                                        print("오른무릎을 더 굽혀주세요")
+                                                        fix = "Partial rep"
+                                                        feedbackFile("오른쪽 무릎을 더 굽혀주세요.")
+                                                        if fix not in self.squatSummaryList:
+                                                            self.squatSummaryList.append(fix)
 
-                                                # 앞무릎을 더 굽혀주세요
-                                                if 70.0 > Right_Knee_angle or Right_Knee_angle > 120.0 :
-                                                    print("오른무릎을 더 굽혀주세요")
-                                                    fix = "Partial rep"
-                                                    feedbackFile("오른쪽 무릎을 더 굽혀주세요.")
-                                                    if fix not in self.squatSummaryList:
-                                                        self.squatSummaryList.append(fix)
+                                                    # 뒷무릎을 더 굽혀주세요
+                                                    # if 80 > Left_Knee_angle or Left_Knee_angle > 160.0 :
+                                                    #     print("왼무릎을 더 굽혀주세요")
+                                                    #     fix = "Partial rep"
+                                                    #     feedbackFile("왼쪽 무릎을 더 굽혀주세요.")
+                                                    #     if fix not in self.squatSummaryList:
+                                                    #         self.squatSummaryList.append(fix)
 
-                                                # 뒷무릎을 더 굽혀주세요
-                                                # if 80 > Left_Knee_angle or Left_Knee_angle > 160.0 :
-                                                #     print("왼무릎을 더 굽혀주세요")
-                                                #     fix = "Partial rep"
-                                                #     feedbackFile("왼쪽 무릎을 더 굽혀주세요.")
-                                                #     if fix not in self.squatSummaryList:
-                                                #         self.squatSummaryList.append(fix)
+                                                    # 무릎이 발끝을 너무 많이 넘었어요
+                                                    if (abs(self.feetList[0] - self.maxKneeX)) > 0.8 :
+                                                        print("무릎이 발끝을 너무 많이 넘었어요")
+                                                        fix = "Knee came too forward"
+                                                        feedbackFile("무릎이 발끝을 너무 많이 넘었어요.")
+                                                        if fix not in self.squatSummaryList:
+                                                            self.squatSummaryList.append(fix)
 
-                                                # 무릎이 발끝을 너무 많이 넘었어요
-                                                if (abs(self.feetList[0] - self.maxKneeX)) > 0.8 :
-                                                    print("무릎이 발끝을 너무 많이 넘었어요")
-                                                    fix = "Knee came too forward"
-                                                    feedbackFile("무릎이 발끝을 너무 많이 넘었어요.")
-                                                    if fix not in self.squatSummaryList:
-                                                        self.squatSummaryList.append(fix)
-
-                                                # 허리를 좀 더 세워주세요
-                                                if abs(headX-spineBaseX) > 0.2 and abs(headY-spineBaseY) > 0.2 :
-                                                    print("허리를 좀 더 세워주세요 ")
-                                                    fix = "Bar is not in line with feet"
-                                                    feedbackFile("허리를 조금 더 세워주세요.")
-                                                    if fix not in self.squatSummaryList:
-                                                        self.squatSummaryList.append(fix)
+                                                    # 허리를 좀 더 세워주세요
+                                                    if abs(headX-spineBaseX) > 0.2 and abs(headY-spineBaseY) > 0.2 :
+                                                        print("허리를 좀 더 세워주세요 ")
+                                                        fix = "Bar is not in line with feet"
+                                                        feedbackFile("허리를 조금 더 세워주세요.")
+                                                        if fix not in self.squatSummaryList:
+                                                            self.squatSummaryList.append(fix)
 
 
                 self.draw_squatSummaryPage()
@@ -1645,7 +1657,7 @@ def my_link(name):
                                             if squat_status == True:
                                                 goodCnt.append(1)
                                             print("good cnt > ",len(goodCnt))
-                                            feedbackFile("좋아요!")
+                                            feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                             # squat_status = False
 
                                             if len(goodCnt) >= 10:
@@ -1658,7 +1670,7 @@ def my_link(name):
                                                 f = open("static/cnt_saved.txt", 'w')
                                                 f.write("count : " + str(len(lpdCnt)))
                                                 f.close()
-                                                feedbackFile("좋아요!")
+                                                feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                 squat_status = False
 
                                         else:
@@ -1844,7 +1856,7 @@ def my_link(name):
                                             if squat_status == True:
                                                 goodCnt.append(1)
                                             print("good cnt > ",len(goodCnt))
-                                            feedbackFile("좋아요!")
+                                            feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                             # squat_status = False
 
                                             if len(goodCnt) >= 10:
@@ -1857,7 +1869,7 @@ def my_link(name):
                                                 f = open("static/cnt_saved.txt", 'w')
                                                 f.write("count : " + str(len(lpdCnt)))
                                                 f.close()
-                                                feedbackFile("좋아요!")
+                                                feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                 squat_status = False
 
                                         else:
@@ -2046,7 +2058,7 @@ def my_link(name):
                                             if squat_status == True:
                                                 goodCnt.append(1)
                                             print("good cnt > ",len(goodCnt))
-                                            feedbackFile("좋아요!")
+                                            feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                             # squat_status = False
 
                                             if len(goodCnt) >= 7:
@@ -2059,7 +2071,7 @@ def my_link(name):
                                                 f = open("static/cnt_saved.txt", 'w')
                                                 f.write("count : " + str(len(lpdCnt)))
                                                 f.close()
-                                                feedbackFile("좋아요!")
+                                                feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                 squat_status = False
 
                                             print("Good!")
@@ -2567,7 +2579,7 @@ def my_link(name):
                                                 if side_status == True:
                                                     goodCnt.append(1)
                                                 print("good cnt > ",len(goodCnt))
-                                                feedbackFile("좋아요!")
+                                                feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
 
                                                 if len(goodCnt) >= 7:
                                                     goodCnt = []
@@ -2580,7 +2592,7 @@ def my_link(name):
                                                     f = open("static/cnt_saved.txt", 'w')
                                                     f.write("count : " + str(len(sidebamCnt)))
                                                     f.close()
-                                                    feedbackFile("좋아요!")
+                                                    feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                     side_status = False
 
                                             else:
@@ -2610,7 +2622,7 @@ def my_link(name):
 
                                                 if side_status == True:
                                                     goodCnt.append(1)
-                                                    feedbackFile("좋아요!")
+                                                    feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                 print("good cnt > ",len(goodCnt))
 
                                                 if len(goodCnt) >= 7:
@@ -2624,7 +2636,7 @@ def my_link(name):
                                                     f = open("static/cnt_saved.txt", 'w')
                                                     f.write("count : " + str(len(sidebamCnt)))
                                                     f.close()
-                                                    feedbackFile("좋아요!")
+                                                    feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                     side_status = False
 
                                             else:
@@ -2806,7 +2818,7 @@ def my_link(name):
                                             if squat_status == True:
                                                 goodCnt.append(1)
                                             print("good cnt > ",len(goodCnt))
-                                            feedbackFile("좋아요!")
+                                            feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
 
                                             if len(goodCnt) >= 5:
                                                 goodCnt = []
@@ -2819,7 +2831,7 @@ def my_link(name):
                                                 f = open("static/cnt_saved.txt", 'w')
                                                 f.write("count : " + str(len(sidebamCnt)))
                                                 f.close()
-                                                feedbackFile("좋아요!")
+                                                feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                 squat_status = False
 
                                         else:
@@ -2846,7 +2858,7 @@ def my_link(name):
                                             if squat_status == True:
                                                 goodCnt.append(1)
                                             print("good cnt > ",len(goodCnt))
-                                            feedbackFile("좋아요!")
+                                            feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
 
                                             if len(goodCnt) >= 5:
                                                 goodCnt = []
@@ -2859,7 +2871,7 @@ def my_link(name):
                                                 f = open("static/cnt_saved.txt", 'w')
                                                 f.write("count : " + str(len(sidebamCnt)))
                                                 f.close()
-                                                feedbackFile("좋아요!")
+                                                feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                 squat_status = False
 
                                         else:
@@ -3032,7 +3044,7 @@ def my_link(name):
                                         if (abs(self.feetList[0] - self.maxKneeX)) <= 0.8 and 70.0 < Left_Knee_angle < 140.0 and 70.0 < Left_Hip_angle:
                                             if squat_status == True:
                                                 goodCnt.append(1)
-                                                feedbackFile("좋아요!")
+                                                feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
 
                                             if len(goodCnt) >= 10:
                                                 goodCnt = []
@@ -3044,7 +3056,7 @@ def my_link(name):
                                                 f = open("static/cnt_saved.txt", 'w')
                                                 f.write("count : " + str(len(squatCnt)))
                                                 f.close()
-                                                feedbackFile("좋아요!")
+                                                feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                 squat_status = False
 
                                         else:
@@ -3725,7 +3737,7 @@ def my_link(name):
 
                                                     print("good")
                                                     sec = sec-1
-                                                    feedbackFile("왼쪽 자세가 좋아요")
+                                                    feedbackFile("왼쪽 자세가 좋아요.")
 
                                                 else:
                                                     print("bad")

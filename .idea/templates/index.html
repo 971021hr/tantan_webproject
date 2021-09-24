@@ -51,6 +51,7 @@
 
                 $(document).ready(function() {
                     var refreshId2 = setInterval(function() {
+                        $("#step").load("static/exercise_step.txt");
                         $("#name").load("static/video_name.txt", function(response) {
                             var videoname = response
                             // var videoname = document.getElementById("name").value();
@@ -120,7 +121,7 @@
         <div id="boxApp">
             <button onclick="showSubway()" id="btn_subway" class="btn_left"><i class="fas fa-subway fa-2x"></i></button>
             <button onclick="showConnect()" id="btn_calendar" class="btn_left"><i class="fas fa-calendar-alt fa-2x"></i></button>
-            <button onclick="showDandanList()" id="btn_dandan" class="btn_left"><i class="fas fa-running fa-2x"></i></button>
+            <button onclick="showDandan()" id="btn_dandan" class="btn_left"><i class="fas fa-running fa-2x"></i></button>
             <!--<button onclick="showDandanSquat()" id="btn_dandan_squat" class="btn_left"><i class="fas fa-dumbbell fa-2x"></i></button>-->
 
 
@@ -176,8 +177,10 @@
             <!--                <img src="img/squat.png" width="780" height="780"/>-->
             <!--                <a href="my-link/">Click me</a>-->
 
-            <p id="data" style="display: none; font-size: 30px; text-align: right;">0</p>
-            <p id="feedback" style="display: none; height: 25px; font-size: 30px; text-align: right;">피드백</p>
+            <p id="name" style="display: none"></p>
+            <p id="step" style="display: none; font-size: 20px; text-align: right;">○ ○ ○</p>
+            <p id="data" style="display: none; margin-top: -10px; font-size: 30px; text-align: right;">0/10회</p>
+            <p id="feedback" style="display: none; height: 25px; margin-top: -30px; font-size: 30px; text-align: right;">Start!</p>
             <div id="realvideo" style="display: none;"></div>
 
             <div id="exerciselist" style="display: none">

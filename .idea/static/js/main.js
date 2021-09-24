@@ -137,7 +137,7 @@ $(document).ready(function (){
         else if (string.endsWith('단단') || string.endsWith('운동')) {
             showDandanList();
         }
-        else if (string.endsWith('하체') || string.endsWith('스쿼트')) {
+        else if (string.endsWith('하체') || string.endsWith('합체')) {
             showDandan();
         }else if (string.endsWith('상체') || string.endsWith('상태')){
             showDandanUp();
