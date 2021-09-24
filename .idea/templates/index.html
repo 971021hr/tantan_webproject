@@ -63,6 +63,13 @@
                         $("#data").load("static/cnt_saved.txt");
                         $("#feedback").load("static/feedback.txt");
                     }, 1000);
+
+                    var refreshId3 = setInterval(function() {
+                        $("#emoticon").load("static/emoticon.txt", function(response) {
+                            var emoticon_name = response
+                            document.getElementById("emoticon").innerHTML = "<img src='static/img/" + emoticon_name + ".png'" + " width='30' height='30'></img>";
+                        });
+                    }, 1000);
                     $.ajaxSetup({ cache: false });
                 });
                 //
@@ -177,21 +184,39 @@
             <!--                <img src="img/squat.png" width="780" height="780"/>-->
             <!--                <a href="my-link/">Click me</a>-->
 
-            <p id="name" style="display: none"></p>
-            <p id="step" style="display: none; font-size: 20px; text-align: right;">○ ○ ○</p>
-            <p id="data" style="display: none; margin-top: -10px; font-size: 30px; text-align: right;">0/10회</p>
-            <p id="feedback" style="display: none; height: 25px; margin-top: -30px; font-size: 30px; text-align: right;">Start!</p>
-            <div id="realvideo" style="display: none;"></div>
+<!--            <div style="display: flex; justify-content: center; width: 100%; height: 200px; border: 1px solid #000">-->
+<!--                <div id="emoticon" style="display: none; width: 50%; float: left; box-sizing: border-box;"></div>-->
+<!--                <p id="name" style="display: none"></p>-->
+<!--                <div style="width: 50%; float: right; box-sizing: border-box;">-->
+<!--                    <p id="step" style="display: none; font-size: 20px; text-align: right;">○ ○ ○</p>-->
+<!--                    <p id="data" style="display: none; margin-top: -10px; font-size: 30px; text-align: right;">0/10회</p>-->
+<!--                    <p id="feedback" style="display: none; height: 25px; margin-top: -30px; font-size: 30px; text-align: right;">Start!</p>-->
+<!--                </div>-->
+<!--            </div>-->
+
+            <div style="flex-direction: column; padding-bottom: 100px">
+                <p id="name" style="display: none;"></p>
+                <p id="step" style="display: none; font-size: 20px; text-align: right;">○ ○ ○</p>
+                <p id="data" style="display: none; margin-top: -10px; font-size: 30px; text-align: right;">0/10회</p>
+
+                <div style="display: flex; float: right; height: 30px; margin-top: -20px;">
+                    <p id="feedback" style="display: none; font-size: 30px; margin-top: -10px;">Start!</p>
+                    &nbsp;
+                    <div id="emoticon" style="display: none; margin-top: -3px;"></div>
+                </div>
+                <br><br>
+                <div id="realvideo" style="display: none;"></div>
+            </div>
 
             <div id="exerciselist" style="display: none">
-            <div style="display: flex; justify-content: center; margin-top: 40px">
-                <div id="circle1">상체</div>
-                <div id="circle1">하체</div>
-            </div>
-            <div style="display: flex; justify-content: center;">
-                <div id="circle1">전신</div>
-                <div id="circle1">요가</div>
-            </div>
+                <div style="display: flex; justify-content: center; margin-top: 40px">
+                    <div id="circle1">상체</div>
+                    <div id="circle1">하체</div>
+                </div>
+                <div style="display: flex; justify-content: center;">
+                    <div id="circle1">전신</div>
+                    <div id="circle1">요가</div>
+                </div>
             </div>
 
             <p id="connect" style="font-size: 30px; margin-top: 20px;">

@@ -68,6 +68,7 @@ def connect():
     print("랜덤 숫자", string.digits)
 
     global new_pw
+    new_pw = ""
     for i in range(new_pw_len):
         new_pw += random.choice(string.digits)
 
@@ -232,6 +233,11 @@ def my_link(name):
             f.write(contents)
             f.close()
 
+    def emoticonFile(contents):
+        with open("static/emoticon.txt", "wt") as f:
+            f.write(contents)
+            f.close()
+
     def time_calculate():
         # print(f"{endtime - starttime:.0f} sec")
         sec = endtime - starttime
@@ -256,10 +262,11 @@ def my_link(name):
             print("하체운동 시작 시간 : ", starttime)
 
             global runSub
-            runSub = "하체운동1"
+            runSub = "하체운동"
 
             feedbackFile("")
-            exercisestepFile("0/3")
+            emoticonFile("muscle")
+            exercisestepFile("○ ○ ○")
 
             self.startScreen = False
             self.mainScreen = True
@@ -498,6 +505,7 @@ def my_link(name):
             cntsavedFile(str(len(squatCnt)))
             feedbackFile("스쿼트 운동 시작하세요.")
             exercisestepFile("○ ○ ●")
+            emoticonFile("muscle")
 
             exCnt = ""
             goodCnt = []
@@ -614,6 +622,7 @@ def my_link(name):
 
                                 else:
                                     feedbackFile("운동이 인식되기 위해 손을 올려주세요.")
+                                    emoticonFile("cry")
 
                                 if len(self.wristXList) != 0 and len(self.wristYList) != 0 and len(self.kneeYList) != 0 and len(self.kneeXList) != 0 and len(self.feetList) != 0 and len(self.hipYList) != 0 and (abs(leftWristY -spineBaseY) >= 0.3):
                                     (self.minWristX, self.maxWristX) = min(self.wristXList), max(self.wristXList)
@@ -625,6 +634,7 @@ def my_link(name):
                                     if Left_Knee_angle >= 160 :
                                         print("start squat !!")
                                         feedbackFile("스쿼트 운동하세요.")
+                                        emoticonFile("cry")
 
                                     else :
 
@@ -633,6 +643,7 @@ def my_link(name):
                                                 goodCnt.append(1)
                                             print("good cnt > ",len(goodCnt))
                                             feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                            emoticonFile("smile")
                                             # squat_status = False
 
                                             if len(goodCnt) >= 8:
@@ -640,6 +651,7 @@ def my_link(name):
                                                 squatCnt.append(1)
                                                 fix = "Good"
                                                 feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                                emoticonFile("smile")
                                                 if fix not in self.squatSummaryList:
                                                     self.squatSummaryList.append(fix)
                                                 print("squat count ========================================>>>> ",len(squatCnt))
@@ -651,6 +663,7 @@ def my_link(name):
                                             squat_status = True
                                             print("Bad!")
                                             feedbackFile("자세가 바르지 않습니다.")
+                                            emoticonFile("cry")
                                             print("발끝 - 무릎 위치 : ", abs(self.feetList[0] - self.maxKneeX))
                                             print("왼 빵댕이 각도 {0}".format(Left_Hip_angle))
                                             print("왼쪽 무릎 각도 {0}".format(Left_Knee_angle))
@@ -660,6 +673,7 @@ def my_link(name):
                                                 print("무릎을 더 굽혀주세요")
                                                 fix = "Partial rep"
                                                 feedbackFile("무릎을 더 굽혀주세요.")
+                                                emoticonFile("cry")
                                                 if fix not in self.squatSummaryList:
                                                     self.squatSummaryList.append(fix)
 
@@ -668,6 +682,7 @@ def my_link(name):
                                                 print("무릎이 발끝을 너무 많이 넘었어요")
                                                 fix = "Knee came too forward"
                                                 feedbackFile("무릎이 발끝을 너무 많이 넘었어요.")
+                                                emoticonFile("cry")
                                                 if fix not in self.squatSummaryList:
                                                     self.squatSummaryList.append(fix)
 
@@ -676,6 +691,7 @@ def my_link(name):
                                                 print("허리를 좀 더 세워주세요 ")
                                                 fix = "Bar is not in line with feet"
                                                 feedbackFile("허리를 조금 더 세워주세요.")
+                                                emoticonFile("cry")
                                                 if fix not in self.squatSummaryList:
                                                     self.squatSummaryList.append(fix)
 
@@ -713,6 +729,7 @@ def my_link(name):
             exercisestepFile("○ ● ●")
             cntsavedFile(str(len(squatCnt)))
             feedbackFile("힙 운동 시작하세요.")
+            emoticonFile("muscle")
             time.sleep(3)
 
             # -------- Main Program Loop -----------
@@ -815,6 +832,7 @@ def my_link(name):
                                         if 85 <= Left_Hip_angle <= 95 :
                                             print("start left hip !!")
                                             feedbackFile("왼쪽 힙 운동하세요.")
+                                            emoticonFile("cry")
 
                                         else :
 
@@ -824,6 +842,7 @@ def my_link(name):
                                                 print("good cnt > ",len(goodCnt))
                                                 print("왼쪽 성공 빵댕이 각도 {0}".format(Left_Hip_angle))
                                                 feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                                emoticonFile("smile")
 
                                                 if len(goodCnt) >= 6:
                                                     goodCnt = []
@@ -831,6 +850,7 @@ def my_link(name):
                                                     squatCnt.append(1)
                                                     fix = "Good"
                                                     feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                                    emoticonFile("smile")
                                                     if fix not in self.squatSummaryList:
                                                         self.squatSummaryList.append(fix)
                                                     print("hip count ========================================>>>> ",len(left_HipCnt))
@@ -843,12 +863,14 @@ def my_link(name):
                                                 print("Bad!")
                                                 print("왼쪽 빵댕이 각도 {0}".format(Left_Hip_angle))
                                                 feedbackFile("자세가 바르지 않아요.")
+                                                emoticonFile("cry")
 
                                                 # 허리를 좀 더 세워주세요 + 머리 뒤로 넘기지 마세요
                                                 if abs(headX-spineBaseX) > 0.2 and abs(headZ-spineBaseZ) > 0.2 :
                                                     print("허리를 좀 더 세워주세요 ")
                                                     fix = "Bar is not in line with feet"
                                                     feedbackFile("허리를 조금 더 세워주세요.")
+                                                    emoticonFile("cry")
                                                     if fix not in self.squatSummaryList:
                                                         self.squatSummaryList.append(fix)
 
@@ -857,11 +879,13 @@ def my_link(name):
                                                     print("왼쪽 엉덩이를 더 높이 올리세요")
                                                     fix = "Knee came too forward"
                                                     feedbackFile("왼쪽 엉덩이를 더 높이 올리세요.")
+                                                    emoticonFile("cry")
                                                     if fix not in self.squatSummaryList:
                                                         self.squatSummaryList.append(fix)
 
                                     if(len(left_HipCnt) >= 2):
                                         feedbackFile("오른쪽 힙 운동하세요.")
+                                        emoticonFile("muscle")
                                         f = open("static/video_name.txt", 'w')
                                         f.write("hipRight")
                                         f.close()
@@ -874,6 +898,7 @@ def my_link(name):
                                             if 85 <= Right_Hip_angle <= 95 :
                                                 print("start right hip !!")
                                                 feedbackFile("오른쪽 힙 운동하세요.")
+                                                emoticonFile("cry")
 
                                             else :
 
@@ -883,6 +908,7 @@ def my_link(name):
                                                     print("good cnt > ",len(goodCnt))
                                                     print("오른쪽 성공 빵댕이 각도 {0}".format(Right_Hip_angle))
                                                     feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                                    emoticonFile("smile")
                                                     # squat_status = False
 
                                                     if len(goodCnt) >= 6:
@@ -891,6 +917,7 @@ def my_link(name):
                                                         squatCnt.append(1)
                                                         fix = "Good"
                                                         feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                                        emoticonFile("smile")
                                                         if fix not in self.squatSummaryList:
                                                             self.squatSummaryList.append(fix)
                                                         print("hip count ========================================>>>> ",len(right_HipCnt))
@@ -902,6 +929,7 @@ def my_link(name):
                                                     hip_status = True
                                                     print("Bad!")
                                                     feedbackFile("자세가 바르지 않아요.")
+                                                    emoticonFile("cry")
                                                     print("오른쪽 빵댕이 각도 {0}".format(Right_Hip_angle))
 
                                                     # 허리를 좀 더 세워주세요
@@ -909,6 +937,7 @@ def my_link(name):
                                                         print("허리를 좀 더 세워주세요 ")
                                                         fix = "Bar is not in line with feet"
                                                         feedbackFile("허리를 조금 더 세워주세요.")
+                                                        emoticonFile("cry")
                                                         if fix not in self.squatSummaryList:
                                                             self.squatSummaryList.append(fix)
 
@@ -917,11 +946,13 @@ def my_link(name):
                                                         print("오른쪽 엉덩이를 더 높이 올리세요")
                                                         fix = "Knee came too forward"
                                                         feedbackFile("오른쪽 엉덩이를 더 높이 올리세요.")
+                                                        emoticonFile("cry")
                                                         if fix not in self.squatSummaryList:
                                                             self.squatSummaryList.append(fix)
 
                                 else:
                                     feedbackFile("운동이 인식되기 위해 손을 올려주세요.")
+                                    emoticonFile("cry")
 
                 self.draw_squatSummaryPage()
 
@@ -957,6 +988,7 @@ def my_link(name):
             exercisestepFile("● ● ●")
             cntsavedFile(str(len(squatCnt)))
             feedbackFile("런지 운동 시작하세요.")
+            emoticonFile("muscle")
             time.sleep(3)
 
             # -------- Main Program Loop -----------
@@ -1069,6 +1101,7 @@ def my_link(name):
 
                                 else:
                                     feedbackFile("운동이 인식되기 위해 손을 올려주세요.")
+                                    emoticonFile("cry")
 
                                 if len(self.wristXList) != 0 and len(self.wristYList) != 0 and len(self.kneeYList) != 0 and len(self.kneeXList) != 0 and len(self.feetList) != 0 and len(self.hipYList) != 0 and (abs(leftWristY -spineBaseY) >= 0.3):
                                     (self.minWristX, self.maxWristX) = min(self.wristXList), max(self.wristXList)
@@ -1082,6 +1115,7 @@ def my_link(name):
                                         if Left_Knee_angle >= 160 :
                                             print("start left lunge !!")
                                             feedbackFile("왼쪽 다리 런지 운동하세요.")
+                                            emoticonFile("cry")
 
                                         else :
                                             if (abs(self.feetList[0] - self.maxKneeX)) <= 0.8 and 70.0 <= Left_Knee_angle <= 120.0 and abs(headX-spineBaseX) <= 0.2 and abs(headZ-spineBaseZ) <= 0.2:
@@ -1089,6 +1123,7 @@ def my_link(name):
                                                     goodCnt.append(1)
                                                 print("good cnt > ",len(goodCnt))
                                                 feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                                emoticonFile("smile")
                                                 # squat_status = False
 
                                                 if len(goodCnt) >= 7:
@@ -1097,6 +1132,7 @@ def my_link(name):
                                                     squatCnt.append(1)
                                                     fix = "Good"
                                                     feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                                    emoticonFile("smile")
                                                     if fix not in self.squatSummaryList:
                                                         self.squatSummaryList.append(fix)
                                                     print("left lunge count ========================================>>>> ",len(leftlungeCnt))
@@ -1108,12 +1144,14 @@ def my_link(name):
                                                 squat_status = True
                                                 print("Bad!")
                                                 feedbackFile("자세가 바르지 않아요.")
+                                                emoticonFile("cry")
 
                                                 # 앞무릎을 더 굽혀주세요
                                                 if 70.0 > Left_Knee_angle or Left_Knee_angle > 120.0 :
                                                     print("왼무릎을 더 굽혀주세요")
                                                     fix = "Partial rep"
                                                     feedbackFile("왼쪽 무릎을 더 굽혀주세요.")
+                                                    emoticonFile("cry")
                                                     if fix not in self.squatSummaryList:
                                                         self.squatSummaryList.append(fix)
 
@@ -1130,6 +1168,7 @@ def my_link(name):
                                                     print("무릎이 발끝을 너무 많이 넘었어요")
                                                     fix = "Knee came too forward"
                                                     feedbackFile("무릎이 발끝을 너무 많이 넘었어요.")
+                                                    emoticonFile("cry")
                                                     if fix not in self.squatSummaryList:
                                                         self.squatSummaryList.append(fix)
 
@@ -1138,11 +1177,13 @@ def my_link(name):
                                                     print("허리를 좀 더 세워주세요 ")
                                                     fix = "Bar is not in line with feet"
                                                     feedbackFile("허리를 조금 더 세워주세요.")
+                                                    emoticonFile("cry")
                                                     if fix not in self.squatSummaryList:
                                                         self.squatSummaryList.append(fix)
 
                                     # 오른쪽 다리 앞으로
                                     if(len(leftlungeCnt) >= 1):
+                                        emoticonFile("muscle")
                                         feedbackFile("오른쪽 다리 런지 운동하세요.")
                                         f = open("static/video_name.txt", 'w')
                                         f.write("lungeRight")
@@ -1156,6 +1197,7 @@ def my_link(name):
                                             if Right_Knee_angle >= 160 :
                                                 print("start right lunge !!")
                                                 feedbackFile("오른쪽 다리 런지 운동하세요.")
+                                                emoticonFile("cry")
 
                                             else :
                                                 if (abs(self.feetList[0] - self.maxKneeX)) <= 0.8 and 70.0 <= Right_Knee_angle <= 120.0 and abs(headX-spineBaseX) <= 0.2 and abs(headZ-spineBaseZ) <= 0.2:
@@ -1163,6 +1205,7 @@ def my_link(name):
                                                         goodCnt.append(1)
                                                     print("good cnt > ",len(goodCnt))
                                                     feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                                    emoticonFile("smile")
                                                     # squat_status = False
 
                                                     if len(goodCnt) >= 7:
@@ -1171,6 +1214,7 @@ def my_link(name):
                                                         squatCnt.append(1)
                                                         fix = "Good"
                                                         feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                                        emoticonFile("smile")
                                                         if fix not in self.squatSummaryList:
                                                             self.squatSummaryList.append(fix)
                                                         print("right lunge count ========================================>>>> ",len(rightlungeCnt))
@@ -1182,12 +1226,14 @@ def my_link(name):
                                                     squat_status = True
                                                     print("Bad!")
                                                     feedbackFile("자세가 바르지 않아요.")
+                                                    emoticonFile("cry")
 
                                                     # 앞무릎을 더 굽혀주세요
                                                     if 70.0 > Right_Knee_angle or Right_Knee_angle > 120.0 :
                                                         print("오른무릎을 더 굽혀주세요")
                                                         fix = "Partial rep"
                                                         feedbackFile("오른쪽 무릎을 더 굽혀주세요.")
+                                                        emoticonFile("cry")
                                                         if fix not in self.squatSummaryList:
                                                             self.squatSummaryList.append(fix)
 
@@ -1204,6 +1250,7 @@ def my_link(name):
                                                         print("무릎이 발끝을 너무 많이 넘었어요")
                                                         fix = "Knee came too forward"
                                                         feedbackFile("무릎이 발끝을 너무 많이 넘었어요.")
+                                                        emoticonFile("cry")
                                                         if fix not in self.squatSummaryList:
                                                             self.squatSummaryList.append(fix)
 
@@ -1212,6 +1259,7 @@ def my_link(name):
                                                         print("허리를 좀 더 세워주세요 ")
                                                         fix = "Bar is not in line with feet"
                                                         feedbackFile("허리를 조금 더 세워주세요.")
+                                                        emoticonFile("cry")
                                                         if fix not in self.squatSummaryList:
                                                             self.squatSummaryList.append(fix)
 
@@ -1243,7 +1291,7 @@ def my_link(name):
             print("상체운동 시작 시간 : ", starttime)
 
             global runSub
-            runSub = "상체운동1"
+            runSub = "상체운동"
 
             feedbackFile("")
 
@@ -2175,7 +2223,7 @@ def my_link(name):
             print("전신운동 시작 시간 : ", starttime)
 
             global runSub
-            runSub = "전신운동1"
+            runSub = "전신운동"
 
             feedbackFile("")
 
@@ -3118,7 +3166,7 @@ def my_link(name):
             print("요가운동 시작 시간 : ", starttime)
 
             global runSub
-            runSub = "요가운동1"
+            runSub = "요가운동"
 
             feedbackFile("")
             self.startScreen = False

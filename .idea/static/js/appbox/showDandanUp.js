@@ -2,6 +2,7 @@ function showDandanUp(){
 
     $("#div_main").hide();
 
+    $("#emoticon").show();
     $("#step").show();
     $("#data").show();
     $("#feedback").show();
