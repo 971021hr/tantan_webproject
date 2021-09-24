@@ -1,6 +1,7 @@
 function showDandanWhole(){
 
     $("#div_main").hide();
+    $("#div_dandan").show();
 
     $("#emoticon").show();
     $("#step").show();

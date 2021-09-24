@@ -1,6 +1,7 @@
 function showDandanList(){
 
     $("#div_main").hide();
+    $("#div_dandan").show();
 
     $("#exerciselist").show();
     $("#connect").hide();
