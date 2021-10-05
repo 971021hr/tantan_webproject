@@ -70,6 +70,13 @@
                             document.getElementById("emoticon").innerHTML = "<img src='static/img/" + emoticon_name + ".png'" + " width='30' height='30'></img>";
                         });
                     }, 1000);
+
+                    var refreshId4 = setInterval(function() {
+                        $("#yoga").load("static/yoga_name.txt", function(response) {
+                            var yoga_name = response
+                            document.getElementById("yoga").innerHTML = "<img src='static/img/" + yoga_name + ".png'" + " width='780' height='780'></img>";
+                        });
+                    }, 3000);
                     $.ajaxSetup({ cache: false });
                 });
                 //
@@ -205,6 +212,7 @@
                     <div id="emoticon" style="display: none; margin-top: -3px;"></div>
                 </div>
                 <br><br>
+                <div id="yoga" style="display: none;"></div>
                 <div id="realvideo" style="display: none;"></div>
             </div>
 

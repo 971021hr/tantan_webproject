@@ -1294,6 +1294,8 @@ def my_link(name):
             runSub = "상체운동"
 
             feedbackFile("")
+            emoticonFile("muscle")
+            exercisestepFile("○ ○ ○")
 
             self.startScreen = False
             self.mainScreen = True
@@ -1569,7 +1571,7 @@ def my_link(name):
 
         def run_lpd(self):
             f = open("static/video_name.txt", 'w')
-            f.write("lpd")
+            f.write("letpulldown")
             f.close()
 
             squat_status = True
@@ -1579,11 +1581,13 @@ def my_link(name):
             nextRoutine = False
             global endtime
 
+            exercisestepFile("○ ○ ●")
             f = open("static/cnt_saved.txt", 'w')
             f.write("count : " + str(len(lpdCnt)))
             f.close()
 
             feedbackFile("렛풀다운 운동 시작하세요.")
+            emoticonFile("muscle")
 
             # -------- Main Program Loop -----------
             while not self._done:
@@ -1685,6 +1689,7 @@ def my_link(name):
                                 else:
                                     self.moveDetected = False
                                     feedbackFile("운동이 인식되기 위해 손을 올려주세요.")
+                                    emoticonFile("cry")
 
 
                                 # 손목 배열이 잘 들어가고 & 손목 Y가 머리 Y보다 낮을 경우 운동 시작
@@ -1696,6 +1701,7 @@ def my_link(name):
                                     if (leftWristY < headY and rightWristY < headY) :
                                         print("start latPullDown !!")
                                         feedbackFile("렛풀다운 운동하세요.")
+                                        emoticonFile("cry")
 
                                     else :
                                         print("겨드랑이 각도 >> ", Left_Armpit_angle)
@@ -1706,6 +1712,7 @@ def my_link(name):
                                                 goodCnt.append(1)
                                             print("good cnt > ",len(goodCnt))
                                             feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                            emoticonFile("smile")
                                             # squat_status = False
 
                                             if len(goodCnt) >= 10:
@@ -1719,6 +1726,7 @@ def my_link(name):
                                                 f.write("count : " + str(len(lpdCnt)))
                                                 f.close()
                                                 feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                                emoticonFile("smile")
                                                 squat_status = False
 
                                         else:
@@ -1726,9 +1734,11 @@ def my_link(name):
                                             squat_status = True
                                             print("Bad!")
                                             feedbackFile("자세가 바르지 않아요.")
+                                            emoticonFile("cry")
 
                                             # 허리를 좀 더 세워주세요
                                             if abs(headX-spineBaseX) > 0.2 or abs(headZ-spineBaseZ) > 0.2 :
+                                                emoticonFile("cry")
                                                 print("허리를 좀 더 세워주세요 ")
                                                 fix = "Bar is not in line with feet"
                                                 feedbackFile("허리를 조금 더 세워주세요.")
@@ -1737,6 +1747,7 @@ def my_link(name):
 
                                             # 겨드랑이 간격을 벌려야합니다.
                                             if Left_Armpit_angle <= 30.0 :
+                                                emoticonFile("cry")
                                                 print("겨드랑이 간격을 벌려야합니다.")
                                                 fix = "Armpits should be spaced apart"
                                                 feedbackFile("겨드랑이 간격을 벌려야합니다.")
@@ -1765,7 +1776,7 @@ def my_link(name):
             self.currPress = "KickBack"
 
             f = open("static/video_name.txt", 'w')
-            f.write("kb")
+            f.write("kickback")
             f.close()
 
             squat_status = True
@@ -1775,11 +1786,13 @@ def my_link(name):
 
             lpdCnt.clear()
             goodCnt = []
+            exercisestepFile("○ ● ●")
             f = open("static/cnt_saved.txt", 'w')
             f.write("count : " + str(len(lpdCnt)))
             f.close()
 
             feedbackFile("킥백 운동 시작하세요.")
+            emoticonFile("muscle")
 
             # -------- Main Program Loop -----------
             while not self._done:
@@ -1883,6 +1896,7 @@ def my_link(name):
                                     self.wristYList.append(self.curY[0])
                                 else:
                                     feedbackFile("운동이 인식되기 위해 팔꿈치를 뒤로 밀어주세요.")
+                                    emoticonFile("cry")
 
                                 # 손목 배열이 잘 들어가고, moveetected가 true인 경우 시작
                                 # Elbow각도가 180정도 펴져있으면 cnt
@@ -1893,6 +1907,7 @@ def my_link(name):
                                     if (leftElbowX < spinMidX and rightElbowX > spinMidX) :
                                         print("start KickBack !!")
                                         feedbackFile("킥백 운동하세요.")
+                                        emoticonFile("cry")
 
                                     else :
                                         print("left elbow x >> ", round(leftElbowX,2))
@@ -1905,6 +1920,7 @@ def my_link(name):
                                                 goodCnt.append(1)
                                             print("good cnt > ",len(goodCnt))
                                             feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                            emoticonFile("smile")
                                             # squat_status = False
 
                                             if len(goodCnt) >= 10:
@@ -1918,16 +1934,19 @@ def my_link(name):
                                                 f.write("count : " + str(len(lpdCnt)))
                                                 f.close()
                                                 feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                                emoticonFile("smile")
                                                 squat_status = False
 
                                         else:
                                             goodCnt = []
                                             squat_status = True
                                             print("Bad!")
+                                            emoticonFile("cry")
                                             feedbackFile("자세가 바르지 않아요.")
 
                                             # 허리를 좀 더 세워주세요
                                             if abs(headX-spineBaseX) > 0.2 or abs(headZ-spineBaseZ) > 0.2 :
+                                                emoticonFile("cry")
                                                 print("허리를 좀 더 세워주세요 ")
                                                 fix = "Bar is not in line with feet"
                                                 feedbackFile("허리를 조금 더 세워주세요.")
@@ -1936,6 +1955,7 @@ def my_link(name):
 
                                             # 팔꿈치를 더 펴야합니다.
                                             if Left_Elbow_angle <= 150.0 :
+                                                emoticonFile("cry")
                                                 print("왼쪽 팔꿈치를 더 펴야합니다.")
                                                 fix = "You need to extend your left elbows more."
                                                 feedbackFile("왼쪽 팔꿈치를 더 펴주세요.")
@@ -1943,6 +1963,7 @@ def my_link(name):
                                                     self.latPullDownSummaryList.append(fix)
 
                                             if Right_Elbow_angle <= 150.0 :
+                                                emoticonFile("cry")
                                                 print("오른쪽 팔꿈치를 더 펴야합니다.")
                                                 fix = "You need to extend your right elbows more."
                                                 feedbackFile("오른쪽 팔꿈치를 더 펴주세요.")
@@ -1971,7 +1992,7 @@ def my_link(name):
             self.currPress = "SideLateralRaise"
 
             f = open("static/video_name.txt", 'w')
-            f.write("slr")
+            f.write("srl")
             f.close()
 
             global squat_status
@@ -1981,10 +2002,12 @@ def my_link(name):
 
             lpdCnt.clear()
             goodCnt = []
+            exercisestepFile("● ● ●")
             f = open("static/cnt_saved.txt", 'w')
             f.write("count : " + str(len(lpdCnt)))
             f.close()
 
+            emoticonFile("muscle")
             feedbackFile("사이드레터럴레이즈 운동 시작하세요.")
 
             # -------- Main Program Loop -----------
@@ -2098,6 +2121,7 @@ def my_link(name):
                                     if Left_inArm_angle < 150 or Right_inArm_angle < 150 :
                                         print("start SideLateralRaise !!")
                                         feedbackFile("사이드레터럴레이즈 운동하세요.")
+                                        emoticonFile("cry")
 
                                     else :
 
@@ -2107,6 +2131,7 @@ def my_link(name):
                                                 goodCnt.append(1)
                                             print("good cnt > ",len(goodCnt))
                                             feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                            emoticonFile("smile")
                                             # squat_status = False
 
                                             if len(goodCnt) >= 7:
@@ -2120,6 +2145,7 @@ def my_link(name):
                                                 f.write("count : " + str(len(lpdCnt)))
                                                 f.close()
                                                 feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                                emoticonFile("smile")
                                                 squat_status = False
 
                                             print("Good!")
@@ -2129,9 +2155,11 @@ def my_link(name):
                                             squat_status = True
                                             print("Bad!")
                                             feedbackFile("자세가 바르지 않아요.")
+                                            emoticonFile("cry")
 
                                             # 왼쪽 팔을 더 올려주세요
                                             if 155 > Left_inArm_angle :
+                                                emoticonFile("cry")
                                                 print("왼쪽 팔을 더 올려주세요")
                                                 fix = "Left Arm Up"
                                                 feedbackFile("왼쪽 팔을 더 올려주세요.")
@@ -2140,6 +2168,7 @@ def my_link(name):
 
                                             # 왼쪽 팔을 조금 내려주세요
                                             if Left_inArm_angle > 180 :
+                                                emoticonFile("cry")
                                                 print("왼쪽 팔을 조금 내려주세요")
                                                 fix = "Left Arm Down"
                                                 feedbackFile("왼쪽 팔을 조금 내려주세요.")
@@ -2148,6 +2177,7 @@ def my_link(name):
 
                                             # 오른쪽 팔을 더 올려주세요
                                             if 155 > Right_inArm_angle :
+                                                emoticonFile("cry")
                                                 print("오른쪽 팔을 더 올려주세요")
                                                 fix = "Right Arm Up"
                                                 feedbackFile("오른쪽 팔을 더 올려주세요.")
@@ -2156,6 +2186,7 @@ def my_link(name):
 
                                             # 오른쪽 팔을 조금 내려주세요
                                             if Right_inArm_angle > 180 :
+                                                emoticonFile("cry")
                                                 print("오른쪽 팔을 조금 내려주세요")
                                                 fix = "Right Arm Down"
                                                 feedbackFile("오른쪽 팔을 조금 내려주세요.")
@@ -2164,6 +2195,7 @@ def my_link(name):
 
                                             # 왼쪽 팔을 펴주세요
                                             if 155 > Left_outArm_angle :
+                                                emoticonFile("cry")
                                                 print("왼쪽 팔을 펴주세요")
                                                 fix = "Left Arm Unfold"
                                                 feedbackFile("왼쪽 팔을 펴주세요.")
@@ -2172,6 +2204,7 @@ def my_link(name):
 
                                             # 오른쪽 팔을 펴주세요
                                             if 155 > Right_outArm_angle :
+                                                emoticonFile("cry")
                                                 print("오른쪽 팔을 펴주세요")
                                                 fix = "Right Arm Unfold"
                                                 feedbackFile("오른쪽 팔을 펴주세요.")
@@ -2180,6 +2213,7 @@ def my_link(name):
 
                                             # 팔이 앞으로/뒤로 너무 나왔어요
                                             if abs(leftWristZ - spineBaseZ) > 0.2 or abs(rightWristZ - spineBaseZ) > 0.2:
+                                                emoticonFile("cry")
                                                 print("팔이 앞으로/뒤로 너무 나왔어요")
                                                 fix = "Arm Pos"
                                                 feedbackFile("팔이 앞으로/뒤로 너무 나왔어요.")
@@ -2188,6 +2222,7 @@ def my_link(name):
 
                                             # 허리를 좀 더 세워주세요
                                             if abs(headX-spineBaseX) > 0.2 or abs(headZ-spineBaseZ) > 0.2 :
+                                                emoticonFile("cry")
                                                 print("허리를 좀 더 세워주세요 ")
                                                 fix = "Bar is not in line with feet"
                                                 feedbackFile("허리를 조금 더 세워주세요.")
@@ -2196,6 +2231,7 @@ def my_link(name):
 
                                 else:
                                     feedbackFile("운동이 인식되기 위해 팔을 올려주세요.")
+                                    emoticonFile("cry")
 
                 self.draw_latPullDownSummaryPage()
 
@@ -2226,6 +2262,8 @@ def my_link(name):
             runSub = "전신운동"
 
             feedbackFile("")
+            emoticonFile("muscle")
+            exercisestepFile("○ ○ ○")
 
             self.startScreen = False
             self.mainScreen = True
@@ -2483,12 +2521,14 @@ def my_link(name):
             global endtime
 
             f = open("static/video_name.txt", 'w')
-            f.write("hip")
+            f.write("sideleft")
             f.close()
             f = open("static/cnt_saved.txt", 'w')
             f.write("count : " + str(len(sidebamCnt)))
             f.close()
 
+            emoticonFile("muscle")
+            exercisestepFile("○ ○ ●")
             feedbackFile("사이드밤 운동 시작하세요.")
 
             exCnt = ""
@@ -2618,6 +2658,7 @@ def my_link(name):
                                         if Left_Arms_angle > 110 and Right_Arms_angle > 110 and Left_Knee_angle > 160 and Right_Knee_angle > 160:
                                             print("start left side bam !!")
                                             feedbackFile("왼쪽 사이드밤 운동하세요.")
+                                            emoticonFile("cry")
 
                                         else :
 
@@ -2628,6 +2669,7 @@ def my_link(name):
                                                     goodCnt.append(1)
                                                 print("good cnt > ",len(goodCnt))
                                                 feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                                emoticonFile("smile")
 
                                                 if len(goodCnt) >= 7:
                                                     goodCnt = []
@@ -2641,6 +2683,7 @@ def my_link(name):
                                                     f.write("count : " + str(len(sidebamCnt)))
                                                     f.close()
                                                     feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                                    emoticonFile("smile")
                                                     side_status = False
 
                                             else:
@@ -2650,61 +2693,80 @@ def my_link(name):
                                                 print("왼쪽 실패 왼팔 각도 {0}".format(Left_Arms_angle))
                                                 print("왼쪽 실패 오른무릎 각도 {0}".format(Left_Knee_angle))
                                                 feedbackFile("자세가 바르지 않아요.")
+                                                emoticonFile("cry")
 
                                                 # 무릎을 더 높게 올려주세요
                                                 if leftKneeY < spineBaseY:
+                                                    emoticonFile("cry")
                                                     print("무릎을 더 높게 올려주세요")
                                                     fix = "Knee came too forward"
                                                     feedbackFile("무릎을 더 높게 올려주세요.")
                                                     if fix not in self.squatSummaryList:
                                                         self.squatSummaryList.append(fix)
 
-                                    else :
-                                        if Left_Arms_angle > 110 and Right_Arms_angle > 110 and Left_Knee_angle > 160 and Right_Knee_angle > 160:
-                                            print("start right side bam !!")
-                                            feedbackFile("오른쪽 사이드밤 운동하세요.")
+                                    if (len(left_handCnt) >= 1):
+                                        emoticonFile("muscle")
+                                        feedbackFile("오른쪽 사이드밤 운동하세요.")
+                                        f = open("static/video_name.txt", 'w')
+                                        f.write("sideright")
+                                        f.close()
+
+                                        if(len(left_handCnt) == 1):
+                                            time.sleep(3)
+                                            left_handCnt.append(1)
 
                                         else :
-                                            #오른쪽 사이드 밤 성공조건
-                                            if (Left_Arms_angle <= 105 and Right_Arms_angle <= 105 and Right_Knee_angle <= 100 and Left_Knee_angle >= 160 and rightKneeY > spineBaseY) :
+                                            if Left_Arms_angle > 110 and Right_Arms_angle > 110 and Left_Knee_angle > 160 and Right_Knee_angle > 160:
+                                                print("start right side bam !!")
+                                                feedbackFile("오른쪽 사이드밤 운동하세요.")
+                                                emoticonFile("cry")
 
-                                                if side_status == True:
-                                                    goodCnt.append(1)
-                                                    feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
-                                                print("good cnt > ",len(goodCnt))
+                                            else :
+                                                #오른쪽 사이드 밤 성공조건
+                                                if (Left_Arms_angle <= 105 and Right_Arms_angle <= 105 and Right_Knee_angle <= 100 and Left_Knee_angle >= 160 and rightKneeY > spineBaseY) :
 
-                                                if len(goodCnt) >= 7:
+                                                    if side_status == True:
+                                                        goodCnt.append(1)
+                                                        feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                                        emoticonFile("smile")
+                                                    print("good cnt > ",len(goodCnt))
+
+                                                    if len(goodCnt) >= 7:
+                                                        goodCnt = []
+                                                        sidebamCnt.append(1)
+                                                        right_handCnt.append(1)
+                                                        fix = "Good"
+                                                        if fix not in self.squatSummaryList:
+                                                            self.squatSummaryList.append(fix)
+                                                        print("right side count ========================================>>>> ",len(right_handCnt))
+                                                        f = open("static/cnt_saved.txt", 'w')
+                                                        f.write("count : " + str(len(sidebamCnt)))
+                                                        f.close()
+                                                        feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                                        emoticonFile("smile")
+                                                        side_status = False
+
+                                                else:
                                                     goodCnt = []
-                                                    sidebamCnt.append(1)
-                                                    right_handCnt.append(1)
-                                                    fix = "Good"
-                                                    if fix not in self.squatSummaryList:
-                                                        self.squatSummaryList.append(fix)
-                                                    print("right side count ========================================>>>> ",len(right_handCnt))
-                                                    f = open("static/cnt_saved.txt", 'w')
-                                                    f.write("count : " + str(len(sidebamCnt)))
-                                                    f.close()
-                                                    feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
-                                                    side_status = False
+                                                    side_status = True
+                                                    emoticonFile("cry")
+                                                    print("Bad!")
+                                                    print("오른쪽 실패 오른팔 각도 {0}".format(Right_Arms_angle))
+                                                    print("오른쪽 실패 왼무릎 각도 {0}".format(Left_Knee_angle))
+                                                    feedbackFile("자세가 바르지 않아요.")
 
-                                            else:
-                                                goodCnt = []
-                                                side_status = True
-                                                print("Bad!")
-                                                print("오른쪽 실패 오른팔 각도 {0}".format(Right_Arms_angle))
-                                                print("오른쪽 실패 왼무릎 각도 {0}".format(Left_Knee_angle))
-                                                feedbackFile("자세가 바르지 않아요.")
-
-                                                # 무릎을 더 높게 올려주세요
-                                                if abs(rightKneeY) < abs(spineBaseY):
-                                                    print("무릎을 더 높게 올려주세요")
-                                                    fix = "Knee came too forward"
-                                                    feedbackFile("무릎을 더 높게 올려주세요.")
-                                                    if fix not in self.squatSummaryList:
-                                                        self.squatSummaryList.append(fix)
+                                                    # 무릎을 더 높게 올려주세요
+                                                    if abs(rightKneeY) < abs(spineBaseY):
+                                                        emoticonFile("cry")
+                                                        print("무릎을 더 높게 올려주세요")
+                                                        fix = "Knee came too forward"
+                                                        feedbackFile("무릎을 더 높게 올려주세요.")
+                                                        if fix not in self.squatSummaryList:
+                                                            self.squatSummaryList.append(fix)
 
                                 else:
                                     feedbackFile("운동이 인식되기 위해 손을 올려주세요.")
+                                    emoticonFile("cry")
 
 
                 self.draw_squatSummaryPage()
@@ -2728,7 +2790,7 @@ def my_link(name):
             self.currPress = "KneeKick"
 
             f = open("static/video_name.txt", 'w')
-            f.write("kb")
+            f.write("kneeright")
             f.close()
 
             global goodCnt
@@ -2739,6 +2801,9 @@ def my_link(name):
             left_handCnt.clear()
 
             sidebamCnt.clear()
+
+            emoticonFile("muscle")
+            exercisestepFile("○ ● ●")
             f = open("static/cnt_saved.txt", 'w')
             f.write("count : " + str(len(sidebamCnt)))
             f.close()
@@ -2849,85 +2914,107 @@ def my_link(name):
                                     self.kneeYList.append(leftKneeY)
                                 else:
                                     feedbackFile("운동이 인식되기 위해 손을 올려주세요.")
+                                    emoticonFile("cry")
 
-                                if len(self.kneeYList) != 0 and len(self.kneeXList) != 0 and (abs(leftWristY -spineBaseY) >= 0.3):
-                                    (self.minKneeX, self.maxKneeX) = min(self.kneeXList), max(self.kneeXList)
-                                    (self.minKneeY, self.maxKneeY) = min(self.kneeYList), max(self.kneeYList)
+                                if(len(left_handCnt) < 1):
+
+                                    if len(self.kneeYList) != 0 and len(self.kneeXList) != 0 and (abs(leftWristY -spineBaseY) >= 0.3):
+                                        (self.minKneeX, self.maxKneeX) = min(self.kneeXList), max(self.kneeXList)
+                                        (self.minKneeY, self.maxKneeY) = min(self.kneeYList), max(self.kneeYList)
 
 
-                                    if right_knee_angle >= 160 :
-                                        print("오른쪽 무릎 각도")
-                                        print("start right KneeKick !!")
-                                        feedbackFile("오른쪽 니킥 운동하세요.")
+                                        if right_knee_angle >= 160 :
+                                            print("오른쪽 무릎 각도")
+                                            print("start right KneeKick !!")
+                                            feedbackFile("오른쪽 니킥 운동하세요.")
+                                            emoticonFile("cry")
 
-                                    else :
-                                        print("success 무릎 - 팔꿈치 : ", abs(rightKneeY - leftElbowY))
-                                        if (abs(rightKneeY - leftElbowY)) <= 0.3 :
-                                            if squat_status == True:
-                                                goodCnt.append(1)
-                                            print("good cnt > ",len(goodCnt))
-                                            feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
-
-                                            if len(goodCnt) >= 5:
-                                                goodCnt = []
-                                                sidebamCnt.append(1)
-                                                left_handCnt.append(1)
-                                                fix = "Good"
-                                                if fix not in self.SquatSummaryList:
-                                                    self.SquatSummaryList.append(fix)
-                                                print("KneeKick count ========================================>>>> ",len(left_handCnt))
-                                                f = open("static/cnt_saved.txt", 'w')
-                                                f.write("count : " + str(len(sidebamCnt)))
-                                                f.close()
+                                        else :
+                                            print("success 무릎 - 팔꿈치 : ", abs(rightKneeY - leftElbowY))
+                                            if (abs(rightKneeY - leftElbowY)) <= 0.3 :
+                                                if squat_status == True:
+                                                    goodCnt.append(1)
+                                                print("good cnt > ",len(goodCnt))
                                                 feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
-                                                squat_status = False
+                                                emoticonFile("smile")
 
-                                        else:
-                                            goodCnt = []
-                                            squat_status = True
-                                            print("Bad!")
-                                            print("fail 무릎 - 팔꿈치 : ", abs(rightKneeY - leftElbowY))
-                                            feedbackFile("자세가 바르지 않아요.")
+                                                if len(goodCnt) >= 5:
+                                                    goodCnt = []
+                                                    sidebamCnt.append(1)
+                                                    left_handCnt.append(1)
+                                                    fix = "Good"
+                                                    if fix not in self.SquatSummaryList:
+                                                        self.SquatSummaryList.append(fix)
+                                                    print("KneeKick count ========================================>>>> ",len(left_handCnt))
+                                                    f = open("static/cnt_saved.txt", 'w')
+                                                    f.write("count : " + str(len(sidebamCnt)))
+                                                    f.close()
+                                                    feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                                    emoticonFile("smile")
+                                                    squat_status = False
 
-
-                                if len(self.kneeYList) != 0 and len(self.kneeXList) != 0 and (abs(rightWristY -spineBaseY) >= 0.3):
-                                    (self.minKneeX, self.maxKneeX) = min(self.kneeXList), max(self.kneeXList)
-                                    (self.minKneeY, self.maxKneeY) = min(self.kneeYList), max(self.kneeYList)
-
-
-                                    if Left_Knee_angle >= 160 :
-                                        print("왼쪽 무릎 각도")
-                                        print("start left KneeKick !!")
-                                        feedbackFile("왼쪽 니킥 운동하세요.")
-
-                                    else :
-                                        print("success 무릎 - 팔꿈치 : ", abs(leftKneeY - rightElbowY))
-                                        if (abs(leftKneeY - rightElbowY)) <= 0.3 :
-                                            if squat_status == True:
-                                                goodCnt.append(1)
-                                            print("good cnt > ",len(goodCnt))
-                                            feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
-
-                                            if len(goodCnt) >= 5:
+                                            else:
                                                 goodCnt = []
-                                                sidebamCnt.append(1)
-                                                right_handCnt.append(1)
-                                                fix = "Good"
-                                                if fix not in self.SquatSummaryList:
-                                                    self.SquatSummaryList.append(fix)
-                                                print("KneeKick count ========================================>>>> ",len(right_handCnt))
-                                                f = open("static/cnt_saved.txt", 'w')
-                                                f.write("count : " + str(len(sidebamCnt)))
-                                                f.close()
-                                                feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
-                                                squat_status = False
+                                                squat_status = True
+                                                emoticonFile("cry")
+                                                print("Bad!")
+                                                print("fail 무릎 - 팔꿈치 : ", abs(rightKneeY - leftElbowY))
+                                                feedbackFile("자세가 바르지 않아요.")
 
-                                        else:
-                                            goodCnt = []
-                                            squat_status = True
-                                            print("Bad!")
-                                            print("fail 무릎 - 팔꿈치 : ", abs(leftKneeY - rightElbowY))
-                                            feedbackFile("자세가 바르지 않아요.")
+                                if(len(left_handCnt) >= 1):
+                                    emoticonFile("muscle")
+                                    feedbackFile("왼쪽 니킥 운동하세요.")
+                                    f = open("static/video_name.txt", 'w')
+                                    f.write("kneeleft")
+                                    f.close()
+
+                                    if(len(left_handCnt) == 1):
+                                        time.sleep(3)
+                                        left_handCnt.append(1)
+
+                                    else:
+                                        if len(self.kneeYList) != 0 and len(self.kneeXList) != 0 and (abs(rightWristY -spineBaseY) >= 0.3):
+                                            (self.minKneeX, self.maxKneeX) = min(self.kneeXList), max(self.kneeXList)
+                                            (self.minKneeY, self.maxKneeY) = min(self.kneeYList), max(self.kneeYList)
+
+
+                                            if Left_Knee_angle >= 160 :
+                                                print("왼쪽 무릎 각도")
+                                                print("start left KneeKick !!")
+                                                feedbackFile("왼쪽 니킥 운동하세요.")
+                                                emoticonFile("cry")
+
+                                            else :
+                                                print("success 무릎 - 팔꿈치 : ", abs(leftKneeY - rightElbowY))
+                                                if (abs(leftKneeY - rightElbowY)) <= 0.3 :
+                                                    if squat_status == True:
+                                                        goodCnt.append(1)
+                                                    print("good cnt > ",len(goodCnt))
+                                                    feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                                    emoticonFile("smile")
+
+                                                    if len(goodCnt) >= 5:
+                                                        goodCnt = []
+                                                        sidebamCnt.append(1)
+                                                        right_handCnt.append(1)
+                                                        fix = "Good"
+                                                        if fix not in self.SquatSummaryList:
+                                                            self.SquatSummaryList.append(fix)
+                                                        print("KneeKick count ========================================>>>> ",len(right_handCnt))
+                                                        f = open("static/cnt_saved.txt", 'w')
+                                                        f.write("count : " + str(len(sidebamCnt)))
+                                                        f.close()
+                                                        feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                                        emoticonFile("smile")
+                                                        squat_status = False
+
+                                                else:
+                                                    goodCnt = []
+                                                    squat_status = True
+                                                    emoticonFile("cry")
+                                                    print("Bad!")
+                                                    print("fail 무릎 - 팔꿈치 : ", abs(leftKneeY - rightElbowY))
+                                                    feedbackFile("자세가 바르지 않아요.")
 
 
                 self.draw_squatSummaryPage()
@@ -2951,7 +3038,7 @@ def my_link(name):
             self.currPress = "WideSquat"
 
             f = open("static/video_name.txt", 'w')
-            f.write("lpd")
+            f.write("widesquat")
             f.close()
 
             global exCnt
@@ -2966,6 +3053,8 @@ def my_link(name):
             f.write("count : " + str(len(sidebamCnt)))
             f.close()
 
+            emoticonFile("muscle")
+            exercisestepFile("● ● ●")
             feedbackFile("와이드스쿼트 운동 시작하세요.")
 
             # -------- Main Program Loop -----------
@@ -3075,6 +3164,7 @@ def my_link(name):
                                     self.kneeYList.append(leftKneeY)
                                 else:
                                     feedbackFile("운동이 인식되기 위해 손을 올려주세요.")
+                                    emoticonFile("cry")
 
                                 if len(self.wristXList) != 0 and len(self.wristYList) != 0 and len(self.kneeYList) != 0 and len(self.kneeXList) != 0 and len(self.feetList) != 0 and len(self.hipYList) != 0 and (abs(leftWristY -spineBaseY) >= 0.3):
                                     (self.minWristX, self.maxWristX) = min(self.wristXList), max(self.wristXList)
@@ -3086,6 +3176,7 @@ def my_link(name):
                                     if Left_Knee_angle >= 160 :
                                         print("start squat !!")
                                         feedbackFile("와이드스쿼트 운동하세요.")
+                                        emoticonFile("cry")
 
                                     else :
 
@@ -3093,6 +3184,7 @@ def my_link(name):
                                             if squat_status == True:
                                                 goodCnt.append(1)
                                                 feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                                emoticonFile("smile")
 
                                             if len(goodCnt) >= 10:
                                                 goodCnt = []
@@ -3105,11 +3197,13 @@ def my_link(name):
                                                 f.write("count : " + str(len(squatCnt)))
                                                 f.close()
                                                 feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                                emoticonFile("smile")
                                                 squat_status = False
 
                                         else:
                                             goodCnt = []
                                             squat_status = True
+                                            emoticonFile("cry")
                                             print("Bad!")
                                             print("발끝 - 무릎 위치 : ", abs(self.feetList[0] - self.maxKneeX))
                                             print("왼 빵댕이 각도 {0}".format(Left_Hip_angle))
@@ -3118,6 +3212,7 @@ def my_link(name):
 
                                             # 무릎을 더 굽혀주세요
                                             if Left_Knee_angle >= 115.0 :
+                                                emoticonFile("cry")
                                                 print("무릎을 더 굽혀주세요")
                                                 fix = "Partial rep"
                                                 feedbackFile("무릎을 더 굽혀주세요.")
@@ -3126,6 +3221,7 @@ def my_link(name):
 
                                             # 무릎이 발끝을 너무 많이 넘었어요
                                             if (abs(self.feetList[0] - self.maxKneeX)) > 0.3 :
+                                                emoticonFile("cry")
                                                 print("무릎이 발끝을 너무 많이 넘었어요")
                                                 fix = "Knee came too forward"
                                                 feedbackFile("무릎이 발끝을 너무 많이 넘었어요.")
@@ -3134,6 +3230,7 @@ def my_link(name):
 
                                             # 허리를 좀 더 세워주세요
                                             if Left_Hip_angle < 70.0 :
+                                                emoticonFile("cry")
                                                 print("허리를 좀 더 세워주세요 ")
                                                 fix = "Bar is not in line with feet"
                                                 feedbackFile("허리를 조금 더 세워주세요.")
@@ -3169,6 +3266,9 @@ def my_link(name):
             runSub = "요가운동"
 
             feedbackFile("")
+            emoticonFile("muscle")
+            exercisestepFile("○ ○ ○")
+
             self.startScreen = False
             self.mainScreen = True
             self.time = time.strftime("%H:%M") + " " + time.strftime("%d/%m/%Y")
@@ -3413,10 +3513,12 @@ def my_link(name):
 
             nextRoutine = True
 
-            f = open("static/video_name.txt", 'w')
-            f.write("standside")
+            f = open("static/yoga_name.txt", 'w')
+            f.write("yoga_standsideleft")
             f.close()
-            feedbackFile("운동을 시작합니다.")
+            feedbackFile("요가 스탠드사이드 시작하세요.")
+            exercisestepFile("○ ○ ●")
+            emoticonFile("muscle")
 
             # -------- Main Program Loop -----------
             while not self._done:
@@ -3532,7 +3634,8 @@ def my_link(name):
                                     if(len(left_YStandCnt) < 1) :
                                         if Left_Knee_angle > 160 and Right_Knee_angle > 160:
                                             print("start left yoga stand side !!")
-                                            feedbackFile("움직이세요")
+                                            feedbackFile("왼쪽 스탠드사이드 요가 운동하세요.")
+                                            emoticonFile("cry")
 
                                         else :
                                             # start = time.time()
@@ -3543,25 +3646,29 @@ def my_link(name):
 
                                                 if (90 < Left_Knee_angle < 150 and Right_Knee_angle > 150):
                                                     print("good")
-                                                    feedbackFile("good baby")
+                                                    feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                                    emoticonFile("smile")
                                                     sec = sec-1
 
                                                 else:
+                                                    emoticonFile("cry")
                                                     print("bad")
                                                     feedbackFile("자세가 바르지 않아요!")
 
                                                     # 무릎을 더 굽혀주세요
                                                     if Left_Knee_angle >= 150:
+                                                        emoticonFile("cry")
                                                         print("무릎을 더 굽혀주세요")
-                                                        fix = "무릎을 더 굽혀주세요"
+                                                        fix = "무릎을 더 굽혀주세요."
                                                         feedbackFile(fix)
                                                         if fix not in self.squatSummaryList:
                                                             self.squatSummaryList.append(fix)
 
                                                     # 허리를 일자로 세워주세요
                                                     if abs(headX - spineBaseX) > 0.1 and abs(headZ - spineBaseZ) > 0.1:
+                                                        emoticonFile("cry")
                                                         print("허리를 일자로 세워주세요")
-                                                        fix = "허리를 일자로 세워주세요"
+                                                        fix = "허리를 일자로 세워주세요."
                                                         feedbackFile(fix)
                                                         if fix not in self.squatSummaryList:
                                                             self.squatSummaryList.append(fix)
@@ -3569,49 +3676,61 @@ def my_link(name):
                                     if (sec == 100) :
                                         left_YStandCnt.append(1)
                                         feedbackFile("오른쪽 자세로 넘어가세요.")
+                                        emoticonFile("muscle")
+                                        f = open("static/yoga_name.txt", 'w')
+                                        f.write("yoga_standsideright")
+                                        f.close()
                                         time.sleep(3)
                                         sec -= 1
 
                                     if(len(left_YStandCnt) >= 1) and (sec > 0):
                                         if Left_Knee_angle > 160 and Right_Knee_angle > 160:
                                             print("start right yoga stand side !!")
-                                            feedbackFile("오른쪽 요가 스탠드 운동하세요.")
+                                            feedbackFile("오른쪽 스탠드사이드 요가 운동하세요.")
+                                            emoticonFile("cry")
 
                                         else :
                                             #오른쪽 스탠드 사이드 성공조건
                                             if (90 < Right_Knee_angle < 150 and Left_Knee_angle > 150) :
                                                 sec = sec-1
-                                                feedbackFile("오른쪽 자세가 좋아요.")
+                                                feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                                emoticonFile("smile")
 
                                             else:
+                                                emoticonFile("cry")
                                                 print("right Bad!")
                                                 feedbackFile("오른쪽 자세가 바르지 않아요.")
 
                                                 # 무릎을 더 굽혀주세요
                                                 if Right_Knee_angle >= 150:
+                                                    emoticonFile("cry")
                                                     print("오른쪽 무릎을 더 굽혀주세요")
-                                                    fix = "오른쪽 무릎을 더 굽혀주세요"
+                                                    fix = "오른쪽 무릎을 더 굽혀주세요."
                                                     feedbackFile(fix)
                                                     if fix not in self.squatSummaryList:
                                                         self.squatSummaryList.append(fix)
 
                                                 # 허리를 일자로 세워주세요
                                                 if abs(headX - spineBaseX) > 0.1 and abs(headZ - spineBaseZ) > 0.1:
+                                                    emoticonFile("cry")
                                                     print("허리를 일자로 세워주세요")
-                                                    fix = "오른쪽 허리를 일자로 세워주세요"
+                                                    fix = "오른쪽 허리를 일자로 세워주세요."
                                                     feedbackFile(fix)
                                                     if fix not in self.squatSummaryList:
                                                         self.squatSummaryList.append(fix)
                                     if (sec <= 0) :
                                         sec = 0
                                         feedbackFile("다음 자세로 넘어갑니다.")
+                                        emoticonFile("muscle")
 
                                 else:
+                                    emoticonFile("cry")
                                     feedbackFile("운동이 인식되기 위해 손을 올려주세요.")
                                     if 90 < Right_Knee_angle < 150 or 90 < Left_Knee_angle < 150:
                                         fix = "손 드세요"
                                         feedbackFile(fix)
                                     if (sec <= 0):
+                                        emoticonFile("muscle")
                                         feedbackFile("다음 자세로 넘어갑니다.")
 
                 self.draw_squatSummaryPage()
@@ -3646,11 +3765,13 @@ def my_link(name):
             left_YStandCnt.clear()
             right_YStandCnt.clear()
 
-            f = open("static/video_name.txt", 'w')
-            f.write("stand")
+            f = open("static/yoga_name.txt", 'w')
+            f.write("yoga_standleft")
             f.close()
-            feedbackFile("요가 스탠드 시작하세요.")
 
+            feedbackFile("요가 스탠드 시작하세요.")
+            exercisestepFile("○ ● ●")
+            emoticonFile("muscle")
 
             # -------- Main Program Loop -----------
             while not self._done:
@@ -3772,7 +3893,8 @@ def my_link(name):
                                     if(len(left_YStandCnt) < 1) :
                                         if Left_Knee_angle > 150 and Right_Knee_angle > 150:
                                             print("start left stand yoga !!")
-                                            feedbackFile("왼쪽 스탠드 요가 운동하세요")
+                                            feedbackFile("왼쪽 스탠드 요가 운동하세요.")
+                                            emoticonFile("cry")
 
                                         else :
                                             # start = time.time()
@@ -3785,14 +3907,17 @@ def my_link(name):
 
                                                     print("good")
                                                     sec = sec-1
-                                                    feedbackFile("왼쪽 자세가 좋아요.")
+                                                    feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                                    emoticonFile("smile")
 
                                                 else:
+                                                    emoticonFile("cry")
                                                     print("bad")
                                                     feedbackFile("왼쪽 자세가 바르지 않아요!")
 
                                                     # 무릎을 더 굽혀주세요
                                                     if Left_Knee_angle >= 100:
+                                                        emoticonFile("cry")
                                                         print("왼쪽 무릎을 더 굽혀주세요.")
                                                         fix = "왼쪽 무릎을 더 굽혀주세요."
                                                         feedbackFile(fix)
@@ -3801,6 +3926,7 @@ def my_link(name):
 
                                                     # 허리를 일자로 세워주세요
                                                     if abs(headX - spineBaseX) > 0.1 and abs(headZ - spineBaseZ) > 0.1:
+                                                        emoticonFile("cry")
                                                         print("허리를 일자로 세워주세요.")
                                                         fix = "왼쪽 허리를 일자로 세워주세요."
                                                         feedbackFile(fix)
@@ -3818,6 +3944,10 @@ def my_link(name):
                                     if (sec == 100) :
                                         left_YStandCnt.append(1)
                                         feedbackFile("오른쪽 자세로 넘어갑니다.")
+                                        emoticonFile("muscle")
+                                        f = open("static/yoga_name.txt", 'w')
+                                        f.write("yoga_standright")
+                                        f.close()
                                         time.sleep(3)
                                         sec -= 1
 
@@ -3825,19 +3955,23 @@ def my_link(name):
                                         if Left_Knee_angle > 170 and Right_Knee_angle > 170:
                                             print("start right yoga stand !!")
                                             feedbackFile("오른쪽 스탠드 요가 운동하세요.")
+                                            emoticonFile("cry")
 
                                         else :
                                             #오른쪽 스탠드 성공조건
                                             if (Right_Knee_angle < 100 and Left_Knee_angle > 150 and leftKneeY <= rightankleY) :
                                                 sec = sec-1
-                                                feedbackFile("오른쪽 자세가 좋아요.")
+                                                feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                                emoticonFile("smile")
 
                                             else:
+                                                emoticonFile("cry")
                                                 print("right Bad!")
                                                 feedbackFile("오른쪽 자세가 바르지 않아요!")
 
                                                 # 무릎을 더 굽혀주세요
                                                 if Right_Knee_angle >= 100:
+                                                    emoticonFile("cry")
                                                     print("오른쪽 무릎을 더 굽혀주세요")
                                                     fix = "오른쪽 무릎을 더 굽혀주세요."
                                                     feedbackFile(fix)
@@ -3846,6 +3980,7 @@ def my_link(name):
 
                                                 # 허리를 일자로 세워주세요
                                                 if abs(headX - spineBaseX) > 0.1 and abs(headZ - spineBaseZ) > 0.1:
+                                                    emoticonFile("cry")
                                                     print("허리를 일자로 세워주세요")
                                                     fix = "오른쪽 허리를 일자로 세워주세요."
                                                     feedbackFile(fix)
@@ -3854,21 +3989,25 @@ def my_link(name):
 
                                                 # 손을 명치쪽으로 올려주세요. (손을 가운데에 위치하게 하기위함)
                                                 if leftWristY < spineMidY and rightWristY < spineMidY:
+                                                    emoticonFile("cry")
                                                     print("손을 명치쪽으로 올려주세요")
-                                                fix = "손을 명치쪽으로 올려주세요"
-                                                feedbackFile(fix)
-                                                if fix not in self.squatSummaryList:
-                                                    self.squatSummaryList.append(fix)
+                                                    fix = "손을 명치쪽으로 올려주세요."
+                                                    feedbackFile(fix)
+                                                    if fix not in self.squatSummaryList:
+                                                        self.squatSummaryList.append(fix)
 
                                     if (sec < 0) :
                                         sec = 0
                                         right_YStandCnt.append(1)
                                         feedbackFile("다음 자세로 넘어갑니다.")
+                                        emoticonFile("muscle")
                                 else:
                                     if (sec > 0) :
                                         feedbackFile("손을 가슴쪽으로 놔주세요.")
+                                        emoticonFile("cry")
                                     else :
                                         feedbackFile("다음 자세로 넘어갑니다.")
+                                        emoticonFile("muscle")
 
 
                 self.draw_squatSummaryPage()
@@ -3903,10 +4042,12 @@ def my_link(name):
             left_YStandCnt.clear()
             right_YStandCnt.clear()
 
-            f = open("static/video_name.txt", 'w')
-            f.write("side")
+            f = open("static/yoga_name.txt", 'w')
+            f.write("yoga_sideleft")
             f.close()
-            feedbackFile("요가 사이드 운동을 시작합니다.")
+            feedbackFile("요가 사이드 시작하세요.")
+            exercisestepFile("● ● ●")
+            emoticonFile("muscle")
 
             # -------- Main Program Loop -----------
             while not self._done:
@@ -4023,7 +4164,8 @@ def my_link(name):
                                     if(len(left_YStandCnt) < 1) :
                                         if (Left_Knee_angle > 160 and Right_Knee_angle > 160 and leftHandY < spineBaseY and rightHandY < spineBaseY):
                                             print("start yoga ]eft side!!")
-                                            feedbackFile("왼쪽 요가 사이드 운동하세요")
+                                            feedbackFile("왼쪽 요가 사이드 운동하세요.")
+                                            emoticonFile("cry")
 
                                         else :
                                             #while은 반복문으로 sec가 0이 되면 반복을 멈춰라
@@ -4033,14 +4175,17 @@ def my_link(name):
                                                 if (Left_Knee_angle >= 160 and Right_Knee_angle >= 160 and leftWristY <= spineBaseY and rightWristY >= headY and spineBaseX - headX > 0.05):
                                                     sec = sec - 1
                                                     print("good")
-                                                    feedbackFile("왼쪽 자세가 좋아요.")
+                                                    feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                                    emoticonFile("smile")
 
                                                 else:
+                                                    emoticonFile("cry")
                                                     print("bad")
                                                     feedbackFile("왼쪽 자세가 바르지 않아요!")
 
                                                     # 무릎을 더 펴주세요
                                                     if Left_Knee_angle < 160 and Right_Knee_angle < 160:
+                                                        emoticonFile("cry")
                                                         print("왼쪽 무릎을 더 펴주세요.")
                                                         fix = "왼쪽 무릎을 더 펴주세요."
                                                         feedbackFile(fix)
@@ -4049,6 +4194,7 @@ def my_link(name):
 
                                                     # 허리를 더 숙여주세요
                                                     if abs(abs(headX) - spineBaseX) < 0.1:
+                                                        emoticonFile("cry")
                                                         print("왼쪽 허리를 더 숙여주세요.")
                                                         fix = "왼쪽 허리를 더 숙여주세요."
                                                         feedbackFile(fix)
@@ -4058,6 +4204,10 @@ def my_link(name):
                                     if (sec == 100) :
                                         left_YStandCnt.append(1)
                                         feedbackFile("오른쪽 자세로 넘어갑니다.")
+                                        emoticonFile("muscle")
+                                        f = open("static/yoga_name.txt", 'w')
+                                        f.write("yoga_sideright")
+                                        f.close()
                                         time.sleep(3)
                                         sec -= 1
 
@@ -4065,20 +4215,24 @@ def my_link(name):
                                         if Left_Knee_angle > 170 and Right_Knee_angle > 170:
                                             print("start yoga right side !!")
                                             feedbackFile("오른쪽 요가 사이드 운동하세요.")
+                                            emoticonFile("cry")
 
                                         else :
                                             #오른쪽 사이드 밤 성공조건
                                             if (Left_Knee_angle >= 160 and Right_Knee_angle >= 160 and rightWristY <= spineBaseY and leftWristY >= headY and headX - spineBaseX > 0.05) :
                                                 sec = sec-1
                                                 print("right good!")
-                                                feedbackFile("오른쪽 자세가 좋아요.")
+                                                feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
+                                                emoticonFile("smile")
 
                                             else:
+                                                emoticonFile("cry")
                                                 print("right Bad!")
                                                 feedbackFile("오른쪽 자세가 바르지 않아요!")
 
                                                 # 무릎을 더 굽혀주세요
                                                 if Left_Knee_angle < 160 and Right_Knee_angle < 160:
+                                                    emoticonFile("cry")
                                                     print("오른쪽 무릎을 더 굽혀주세요.")
                                                     fix = "오른쪽 무릎을 더 굽혀주세요."
                                                     feedbackFile(fix)
@@ -4087,6 +4241,7 @@ def my_link(name):
 
                                                 # 허리를 더 숙여주세요
                                                 if abs(abs(headX) - spineBaseX) < 0.1:
+                                                    emoticonFile("cry")
                                                     print("오른쪽 허리를 더 숙여주세요.")
                                                     fix = "오른쪽 허리를 더 숙여주세요."
                                                     feedbackFile(fix)
@@ -4096,11 +4251,14 @@ def my_link(name):
                                         sec = 0
                                         right_YStandCnt.append(1)
                                         feedbackFile("요가 운동을 마칩니다.")
+                                        emoticonFile("smile")
                                 else:
                                     if (sec > 0) :
                                         feedbackFile("운동 인식안됩니다.")
+                                        emoticonFile("cry")
                                     else :
                                         feedbackFile("요가 운동을 마칩니다.")
+                                        emoticonFile("smile")
 
                 self.draw_squatSummaryPage()
 
@@ -4151,6 +4309,10 @@ def my_link(name):
         game.run_side()
     elif name == "요가":
         print("요가루틴을 실행합니다.")
+        game = GameRuntime_yoga()
+        game.run_standside()
+    elif name == "종료":
+        print("운동을 종료합니다..")
         game = GameRuntime_yoga()
         game.run_standside()
 

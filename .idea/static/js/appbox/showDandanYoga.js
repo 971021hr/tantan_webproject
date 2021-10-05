@@ -7,7 +7,8 @@ function showDandanYoga(){
     $("#step").show();
     $("#data").show();
     $("#feedback").show();
-    $("#realvideo").show();
+    $("#yoga").show();
+    $("#realvideo").hide();
     $("#exerciselist").hide();
     $("#div_calendar").hide();
     $("#div_subway").hide();

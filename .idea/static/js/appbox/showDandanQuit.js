@@ -1,6 +1,7 @@
 function showDandanQuit(){
 
     $("#div_main").hide();
+    $("#div_dandan").hide();
 
     $("#exerciselist").hide();
     $("#div_calendar").hide();
