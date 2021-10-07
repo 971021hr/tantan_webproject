@@ -79,15 +79,6 @@
                     }, 3000);
                     $.ajaxSetup({ cache: false });
                 });
-                //
-                // $(document).ready(function() {
-                //     // $("#data").load("static/cnt_saved.txt");
-                //     var refreshId = setInterval(function() {
-                //         $("#data").load("static/cnt_saved.txt");
-                //         $("#feedback").load("static/feedback.txt");
-                //     }, 100);
-                //     $.ajaxSetup({ cache: false });
-                // });
 
             </script>
         </div>
@@ -124,7 +115,6 @@
                                     <div class="td_weather" id="dust_dobong" style="text-align: left">미세먼지 : </div>
                                 </td>
                             </tr>
-
 
                         </table>
                     </div>
@@ -188,18 +178,6 @@
         </div>
 
         <div id="div_dandan">
-            <!--                <img src="img/squat.png" width="780" height="780"/>-->
-            <!--                <a href="my-link/">Click me</a>-->
-
-<!--            <div style="display: flex; justify-content: center; width: 100%; height: 200px; border: 1px solid #000">-->
-<!--                <div id="emoticon" style="display: none; width: 50%; float: left; box-sizing: border-box;"></div>-->
-<!--                <p id="name" style="display: none"></p>-->
-<!--                <div style="width: 50%; float: right; box-sizing: border-box;">-->
-<!--                    <p id="step" style="display: none; font-size: 20px; text-align: right;">○ ○ ○</p>-->
-<!--                    <p id="data" style="display: none; margin-top: -10px; font-size: 30px; text-align: right;">0/10회</p>-->
-<!--                    <p id="feedback" style="display: none; height: 25px; margin-top: -30px; font-size: 30px; text-align: right;">Start!</p>-->
-<!--                </div>-->
-<!--            </div>-->
 
             <div style="flex-direction: column;">
                 <p id="name" style="display: none;"></p>
@@ -236,6 +214,25 @@
                 <span>{{ variable[5] }}</span>
             </p>
 
+        </div>
+
+        <div id="showEndPage" style="display: none">
+            <span>{{ ex_result[0] }}</span><p>이 끝났습니다!!</p>
+            <p>총 시간 : </p> <span>{{ ex_result[1] }}</span>:<span>{{ ex_result[2] }}</span>
+            <p>총 운동 : </p><span>{{ ex_result[3] }}</span>
+            <p>자세 점수 : </p><span id="v0">{{ ex_result[4] }}</span>
+            <script>
+                var x = document.getElementById("showEndPage");
+                var y = document.getElementById("v0").innerText;
+                alert(y)
+                if (y == 0) {
+                    alert("none");
+                    x.style.display = 'none';
+                } else {
+                    alert("inline");
+                    x.style.display = 'inline';
+                }
+            </script>
         </div>
 
         <div id="div_dandan_squat" style="display: none">

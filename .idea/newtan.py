@@ -37,6 +37,11 @@ new_pw_len = 6
 new_pw = ""
 userEmail = ""
 sec = 200
+variable = 000000
+ex_result = ["", 0, 0, "", 0]
+ex_total_time = ""
+good_score=[]
+bad_score=[]
 
 #mysql 연동
 host = "database-1.cj61bbiht7nz.us-east-2.rds.amazonaws.com"
@@ -58,8 +63,7 @@ def connect_RDS(host,port,username,password,database):
 
 @app.route('/')
 def index():
-    variable = 000000
-    return render_template('index.html', variable=variable)
+    return render_template('index.html', variable=variable, ex_result=ex_result)
 
 @app.route('/connect')
 def connect():
@@ -81,7 +85,7 @@ def connect():
     conn.commit()
     conn.close()
 
-    return render_template('index.html', variable=new_pw)
+    return render_template('index.html', variable=new_pw, ex_result=ex_result)
 
 @app.route('/my-link/<name>')
 def my_link(name):
@@ -156,14 +160,17 @@ def my_link(name):
 
     #add_run===========================
     def addrun(variable):
+        runTime_m, runTime_s =  time_calculate()
+        ex_result[1] = runTime_m
+        ex_result[2] = runTime_s
+
         if variable != "":
             conn, cursor = connect_RDS(host,port,username,password,database)
 
             global userEmail, runSub
-            runTime_h, runTime_m =  time_calculate()
 
             sql = """INSERT INTO tantanDB.addRunTB (runDate, runTime_h, runMain, runSub, userEmail, runTime_m) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}');
-            """.format(date.today().isoformat(), runTime_h, '스마트미러', runSub, userEmail, runTime_m)
+            """.format(date.today().isoformat(), runTime_m, '스마트미러', runSub, userEmail, runTime_s)
 
             cursor.execute(sql)
 
@@ -244,14 +251,14 @@ def my_link(name):
         times = str(datetime.timedelta(seconds=sec)).split(".")
         times = times[0]
         times = times.split(":")
-        times_h = times[0]
         times_m = times[1]
-        if times_m[0] == "0":
-            times_m = times_m[1]
-        print("운동 시 : ", times_h)
+        times_s = times[2]
+        # if times_m[0] == "0":
+        #     times_m = times_m[1]
         print("운동 분 : ", times_m)
+        print("운동 초 : ", times_s)
         print(date.today().isoformat())
-        return times_h, times_m
+        return times_m, times_s
 
     class GameRuntime_leg_routine(object):
         def __init__(self):
@@ -263,10 +270,13 @@ def my_link(name):
 
             global runSub
             runSub = "하체운동"
+            ex_result[0]=runSub
+            print("운동이름 : " + runSub)
 
             feedbackFile("")
             emoticonFile("muscle")
             exercisestepFile("○ ○ ○")
+            ex_result[3] = "0 / 3"
 
             self.startScreen = False
             self.mainScreen = True
@@ -506,6 +516,7 @@ def my_link(name):
             feedbackFile("스쿼트 운동 시작하세요.")
             exercisestepFile("○ ○ ●")
             emoticonFile("muscle")
+            ex_result[3] = "1 / 3"
 
             exCnt = ""
             goodCnt = []
@@ -642,6 +653,7 @@ def my_link(name):
                                             if squat_status == True:
                                                 goodCnt.append(1)
                                             print("good cnt > ",len(goodCnt))
+                                            good_score.append(5)
                                             feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                             emoticonFile("smile")
                                             # squat_status = False
@@ -650,6 +662,7 @@ def my_link(name):
                                                 goodCnt = []
                                                 squatCnt.append(1)
                                                 fix = "Good"
+                                                good_score.append(5)
                                                 feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                 emoticonFile("smile")
                                                 if fix not in self.squatSummaryList:
@@ -662,6 +675,7 @@ def my_link(name):
                                             goodCnt = []
                                             squat_status = True
                                             print("Bad!")
+                                            bad_score.append(1)
                                             feedbackFile("자세가 바르지 않습니다.")
                                             emoticonFile("cry")
                                             print("발끝 - 무릎 위치 : ", abs(self.feetList[0] - self.maxKneeX))
@@ -730,6 +744,7 @@ def my_link(name):
             cntsavedFile(str(len(squatCnt)))
             feedbackFile("힙 운동 시작하세요.")
             emoticonFile("muscle")
+            ex_result[3] = "2 / 3"
             time.sleep(3)
 
             # -------- Main Program Loop -----------
@@ -841,6 +856,7 @@ def my_link(name):
                                                     goodCnt.append(1)
                                                 print("good cnt > ",len(goodCnt))
                                                 print("왼쪽 성공 빵댕이 각도 {0}".format(Left_Hip_angle))
+                                                good_score.append(5)
                                                 feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                 emoticonFile("smile")
 
@@ -849,6 +865,7 @@ def my_link(name):
                                                     left_HipCnt.append(1)
                                                     squatCnt.append(1)
                                                     fix = "Good"
+                                                    good_score.append(5)
                                                     feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                     emoticonFile("smile")
                                                     if fix not in self.squatSummaryList:
@@ -861,6 +878,7 @@ def my_link(name):
                                                 goodCnt = []
                                                 hip_status = True
                                                 print("Bad!")
+                                                bad_score.append(1)
                                                 print("왼쪽 빵댕이 각도 {0}".format(Left_Hip_angle))
                                                 feedbackFile("자세가 바르지 않아요.")
                                                 emoticonFile("cry")
@@ -907,6 +925,7 @@ def my_link(name):
                                                         goodCnt.append(1)
                                                     print("good cnt > ",len(goodCnt))
                                                     print("오른쪽 성공 빵댕이 각도 {0}".format(Right_Hip_angle))
+                                                    good_score.append(5)
                                                     feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                     emoticonFile("smile")
                                                     # squat_status = False
@@ -916,6 +935,7 @@ def my_link(name):
                                                         right_HipCnt.append(1)
                                                         squatCnt.append(1)
                                                         fix = "Good"
+                                                        good_score.append(5)
                                                         feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                         emoticonFile("smile")
                                                         if fix not in self.squatSummaryList:
@@ -928,6 +948,7 @@ def my_link(name):
                                                     goodCnt = []
                                                     hip_status = True
                                                     print("Bad!")
+                                                    bad_score.append(1)
                                                     feedbackFile("자세가 바르지 않아요.")
                                                     emoticonFile("cry")
                                                     print("오른쪽 빵댕이 각도 {0}".format(Right_Hip_angle))
@@ -989,6 +1010,7 @@ def my_link(name):
             cntsavedFile(str(len(squatCnt)))
             feedbackFile("런지 운동 시작하세요.")
             emoticonFile("muscle")
+            ex_result[3] = "3 / 3"
             time.sleep(3)
 
             # -------- Main Program Loop -----------
@@ -1122,6 +1144,7 @@ def my_link(name):
                                                 if squat_status == True:
                                                     goodCnt.append(1)
                                                 print("good cnt > ",len(goodCnt))
+                                                good_score.append(5)
                                                 feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                 emoticonFile("smile")
                                                 # squat_status = False
@@ -1131,6 +1154,7 @@ def my_link(name):
                                                     leftlungeCnt.append(1)
                                                     squatCnt.append(1)
                                                     fix = "Good"
+                                                    good_score.append(5)
                                                     feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                     emoticonFile("smile")
                                                     if fix not in self.squatSummaryList:
@@ -1143,6 +1167,7 @@ def my_link(name):
                                                 goodCnt = []
                                                 squat_status = True
                                                 print("Bad!")
+                                                bad_score.append(1)
                                                 feedbackFile("자세가 바르지 않아요.")
                                                 emoticonFile("cry")
 
@@ -1204,6 +1229,7 @@ def my_link(name):
                                                     if squat_status == True:
                                                         goodCnt.append(1)
                                                     print("good cnt > ",len(goodCnt))
+                                                    good_score.append(5)
                                                     feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                     emoticonFile("smile")
                                                     # squat_status = False
@@ -1213,6 +1239,7 @@ def my_link(name):
                                                         rightlungeCnt.append(1)
                                                         squatCnt.append(1)
                                                         fix = "Good"
+                                                        good_score.append(5)
                                                         feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                         emoticonFile("smile")
                                                         if fix not in self.squatSummaryList:
@@ -1225,6 +1252,7 @@ def my_link(name):
                                                     goodCnt = []
                                                     squat_status = True
                                                     print("Bad!")
+                                                    bad_score.append(1)
                                                     feedbackFile("자세가 바르지 않아요.")
                                                     emoticonFile("cry")
 
@@ -1277,6 +1305,12 @@ def my_link(name):
 
                 self.draw_display()
 
+                score = round(((len(good_score)/(len(good_score)+len(bad_score)))*100)*2)
+                if(score >= 100) :
+                    ex_result[4] = 100
+                else :
+                    ex_result[4] = score
+
             self._kinect.close()
             pygame.quit()
 
@@ -1292,10 +1326,13 @@ def my_link(name):
 
             global runSub
             runSub = "상체운동"
+            ex_result[0]=runSub
+            print("운동이름 : " + ex_result[0])
 
             feedbackFile("")
             emoticonFile("muscle")
             exercisestepFile("○ ○ ○")
+            ex_result[3] = "0 / 3"
 
             self.startScreen = False
             self.mainScreen = True
@@ -1582,6 +1619,7 @@ def my_link(name):
             global endtime
 
             exercisestepFile("○ ○ ●")
+            ex_result[3] = "1 / 3"
             f = open("static/cnt_saved.txt", 'w')
             f.write("count : " + str(len(lpdCnt)))
             f.close()
@@ -1711,6 +1749,7 @@ def my_link(name):
                                             if squat_status == True:
                                                 goodCnt.append(1)
                                             print("good cnt > ",len(goodCnt))
+                                            good_score.append(5)
                                             feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                             emoticonFile("smile")
                                             # squat_status = False
@@ -1725,6 +1764,7 @@ def my_link(name):
                                                 f = open("static/cnt_saved.txt", 'w')
                                                 f.write("count : " + str(len(lpdCnt)))
                                                 f.close()
+                                                good_score.append(5)
                                                 feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                 emoticonFile("smile")
                                                 squat_status = False
@@ -1733,6 +1773,7 @@ def my_link(name):
                                             goodCnt = []
                                             squat_status = True
                                             print("Bad!")
+                                            bad_score.append(1)
                                             feedbackFile("자세가 바르지 않아요.")
                                             emoticonFile("cry")
 
@@ -1787,6 +1828,7 @@ def my_link(name):
             lpdCnt.clear()
             goodCnt = []
             exercisestepFile("○ ● ●")
+            ex_result[3] = "2 / 3"
             f = open("static/cnt_saved.txt", 'w')
             f.write("count : " + str(len(lpdCnt)))
             f.close()
@@ -1919,6 +1961,7 @@ def my_link(name):
                                             if squat_status == True:
                                                 goodCnt.append(1)
                                             print("good cnt > ",len(goodCnt))
+                                            good_score.append(5)
                                             feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                             emoticonFile("smile")
                                             # squat_status = False
@@ -1933,6 +1976,7 @@ def my_link(name):
                                                 f = open("static/cnt_saved.txt", 'w')
                                                 f.write("count : " + str(len(lpdCnt)))
                                                 f.close()
+                                                good_score.append(5)
                                                 feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                 emoticonFile("smile")
                                                 squat_status = False
@@ -1941,6 +1985,7 @@ def my_link(name):
                                             goodCnt = []
                                             squat_status = True
                                             print("Bad!")
+                                            bad_score.append(1)
                                             emoticonFile("cry")
                                             feedbackFile("자세가 바르지 않아요.")
 
@@ -2003,6 +2048,7 @@ def my_link(name):
             lpdCnt.clear()
             goodCnt = []
             exercisestepFile("● ● ●")
+            ex_result[3] = "3 / 3"
             f = open("static/cnt_saved.txt", 'w')
             f.write("count : " + str(len(lpdCnt)))
             f.close()
@@ -2130,6 +2176,7 @@ def my_link(name):
                                             if squat_status == True:
                                                 goodCnt.append(1)
                                             print("good cnt > ",len(goodCnt))
+                                            good_score.append(5)
                                             feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                             emoticonFile("smile")
                                             # squat_status = False
@@ -2144,6 +2191,7 @@ def my_link(name):
                                                 f = open("static/cnt_saved.txt", 'w')
                                                 f.write("count : " + str(len(lpdCnt)))
                                                 f.close()
+                                                good_score.append(5)
                                                 feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                 emoticonFile("smile")
                                                 squat_status = False
@@ -2154,6 +2202,7 @@ def my_link(name):
                                             goodCnt = []
                                             squat_status = True
                                             print("Bad!")
+                                            bad_score.append(1)
                                             feedbackFile("자세가 바르지 않아요.")
                                             emoticonFile("cry")
 
@@ -2246,6 +2295,12 @@ def my_link(name):
 
                 self.draw_display()
 
+                score = round(((len(good_score)/(len(good_score)+len(bad_score)))*100)*2)
+                if(score >= 100) :
+                    ex_result[4] = 100
+                else :
+                    ex_result[4] = score
+
             # Close our Kinect sensor, close the window and quit.
             self._kinect.close()
             pygame.quit()
@@ -2260,10 +2315,13 @@ def my_link(name):
 
             global runSub
             runSub = "전신운동"
+            ex_result[0]=runSub
+            print("운동이름 : " + ex_result[0])
 
             feedbackFile("")
             emoticonFile("muscle")
             exercisestepFile("○ ○ ○")
+            ex_result[3] = "0 / 3"
 
             self.startScreen = False
             self.mainScreen = True
@@ -2528,6 +2586,7 @@ def my_link(name):
             f.close()
 
             emoticonFile("muscle")
+            ex_result[3] = "1 / 3"
             exercisestepFile("○ ○ ●")
             feedbackFile("사이드밤 운동 시작하세요.")
 
@@ -2668,6 +2727,7 @@ def my_link(name):
                                                 if side_status == True:
                                                     goodCnt.append(1)
                                                 print("good cnt > ",len(goodCnt))
+                                                good_score.append(5)
                                                 feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                 emoticonFile("smile")
 
@@ -2682,6 +2742,7 @@ def my_link(name):
                                                     f = open("static/cnt_saved.txt", 'w')
                                                     f.write("count : " + str(len(sidebamCnt)))
                                                     f.close()
+                                                    good_score.append(5)
                                                     feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                     emoticonFile("smile")
                                                     side_status = False
@@ -2690,6 +2751,7 @@ def my_link(name):
                                                 goodCnt = []
                                                 side_status = True
                                                 print("Bad!")
+                                                bad_score.append(1)
                                                 print("왼쪽 실패 왼팔 각도 {0}".format(Left_Arms_angle))
                                                 print("왼쪽 실패 오른무릎 각도 {0}".format(Left_Knee_angle))
                                                 feedbackFile("자세가 바르지 않아요.")
@@ -2727,6 +2789,7 @@ def my_link(name):
 
                                                     if side_status == True:
                                                         goodCnt.append(1)
+                                                        good_score.append(5)
                                                         feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                         emoticonFile("smile")
                                                     print("good cnt > ",len(goodCnt))
@@ -2742,6 +2805,7 @@ def my_link(name):
                                                         f = open("static/cnt_saved.txt", 'w')
                                                         f.write("count : " + str(len(sidebamCnt)))
                                                         f.close()
+                                                        good_score.append(5)
                                                         feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                         emoticonFile("smile")
                                                         side_status = False
@@ -2751,6 +2815,7 @@ def my_link(name):
                                                     side_status = True
                                                     emoticonFile("cry")
                                                     print("Bad!")
+                                                    bad_score.append(1)
                                                     print("오른쪽 실패 오른팔 각도 {0}".format(Right_Arms_angle))
                                                     print("오른쪽 실패 왼무릎 각도 {0}".format(Left_Knee_angle))
                                                     feedbackFile("자세가 바르지 않아요.")
@@ -2803,6 +2868,7 @@ def my_link(name):
             sidebamCnt.clear()
 
             emoticonFile("muscle")
+            ex_result[3] = "2 / 3"
             exercisestepFile("○ ● ●")
             f = open("static/cnt_saved.txt", 'w')
             f.write("count : " + str(len(sidebamCnt)))
@@ -2935,6 +3001,7 @@ def my_link(name):
                                                 if squat_status == True:
                                                     goodCnt.append(1)
                                                 print("good cnt > ",len(goodCnt))
+                                                good_score.append(5)
                                                 feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                 emoticonFile("smile")
 
@@ -2949,6 +3016,7 @@ def my_link(name):
                                                     f = open("static/cnt_saved.txt", 'w')
                                                     f.write("count : " + str(len(sidebamCnt)))
                                                     f.close()
+                                                    good_score.append(5)
                                                     feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                     emoticonFile("smile")
                                                     squat_status = False
@@ -2958,6 +3026,7 @@ def my_link(name):
                                                 squat_status = True
                                                 emoticonFile("cry")
                                                 print("Bad!")
+                                                bad_score.append(1)
                                                 print("fail 무릎 - 팔꿈치 : ", abs(rightKneeY - leftElbowY))
                                                 feedbackFile("자세가 바르지 않아요.")
 
@@ -2990,6 +3059,7 @@ def my_link(name):
                                                     if squat_status == True:
                                                         goodCnt.append(1)
                                                     print("good cnt > ",len(goodCnt))
+                                                    good_score.append(5)
                                                     feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                     emoticonFile("smile")
 
@@ -3004,6 +3074,7 @@ def my_link(name):
                                                         f = open("static/cnt_saved.txt", 'w')
                                                         f.write("count : " + str(len(sidebamCnt)))
                                                         f.close()
+                                                        good_score.append(5)
                                                         feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                         emoticonFile("smile")
                                                         squat_status = False
@@ -3013,6 +3084,7 @@ def my_link(name):
                                                     squat_status = True
                                                     emoticonFile("cry")
                                                     print("Bad!")
+                                                    bad_score.append(1)
                                                     print("fail 무릎 - 팔꿈치 : ", abs(leftKneeY - rightElbowY))
                                                     feedbackFile("자세가 바르지 않아요.")
 
@@ -3055,6 +3127,7 @@ def my_link(name):
 
             emoticonFile("muscle")
             exercisestepFile("● ● ●")
+            ex_result[3] = "3 / 3"
             feedbackFile("와이드스쿼트 운동 시작하세요.")
 
             # -------- Main Program Loop -----------
@@ -3183,6 +3256,7 @@ def my_link(name):
                                         if (abs(self.feetList[0] - self.maxKneeX)) <= 0.8 and 70.0 < Left_Knee_angle < 140.0 and 70.0 < Left_Hip_angle:
                                             if squat_status == True:
                                                 goodCnt.append(1)
+                                                good_score.append(5)
                                                 feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                 emoticonFile("smile")
 
@@ -3196,6 +3270,7 @@ def my_link(name):
                                                 f = open("static/cnt_saved.txt", 'w')
                                                 f.write("count : " + str(len(squatCnt)))
                                                 f.close()
+                                                good_score.append(5)
                                                 feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                 emoticonFile("smile")
                                                 squat_status = False
@@ -3205,6 +3280,7 @@ def my_link(name):
                                             squat_status = True
                                             emoticonFile("cry")
                                             print("Bad!")
+                                            bad_score.append(1)
                                             print("발끝 - 무릎 위치 : ", abs(self.feetList[0] - self.maxKneeX))
                                             print("왼 빵댕이 각도 {0}".format(Left_Hip_angle))
                                             print("왼쪽 무릎 각도 {0}".format(Left_Knee_angle))
@@ -3250,6 +3326,12 @@ def my_link(name):
 
                 self.draw_display()
 
+                score = round(((len(good_score)/(len(good_score)+len(bad_score)))*100)*2)
+                if(score >= 100) :
+                    ex_result[4] = 100
+                else :
+                    ex_result[4] = score
+
             # Close our Kinect sensor, close the window and quit.
             self._kinect.close()
             pygame.quit()
@@ -3264,10 +3346,13 @@ def my_link(name):
 
             global runSub
             runSub = "요가운동"
+            ex_result[0]=runSub
+            print("운동이름 : " + ex_result[0])
 
             feedbackFile("")
             emoticonFile("muscle")
             exercisestepFile("○ ○ ○")
+            ex_result[3] = "0 / 3"
 
             self.startScreen = False
             self.mainScreen = True
@@ -3519,6 +3604,7 @@ def my_link(name):
             feedbackFile("요가 스탠드사이드 시작하세요.")
             exercisestepFile("○ ○ ●")
             emoticonFile("muscle")
+            ex_result[3] = "1 / 3"
 
             # -------- Main Program Loop -----------
             while not self._done:
@@ -3646,6 +3732,7 @@ def my_link(name):
 
                                                 if (90 < Left_Knee_angle < 150 and Right_Knee_angle > 150):
                                                     print("good")
+                                                    good_score.append(5)
                                                     feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                     emoticonFile("smile")
                                                     sec = sec-1
@@ -3653,6 +3740,7 @@ def my_link(name):
                                                 else:
                                                     emoticonFile("cry")
                                                     print("bad")
+                                                    bad_score.append(1)
                                                     feedbackFile("자세가 바르지 않아요!")
 
                                                     # 무릎을 더 굽혀주세요
@@ -3693,12 +3781,14 @@ def my_link(name):
                                             #오른쪽 스탠드 사이드 성공조건
                                             if (90 < Right_Knee_angle < 150 and Left_Knee_angle > 150) :
                                                 sec = sec-1
+                                                good_score.append(5)
                                                 feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                 emoticonFile("smile")
 
                                             else:
                                                 emoticonFile("cry")
                                                 print("right Bad!")
+                                                bad_score.append(1)
                                                 feedbackFile("오른쪽 자세가 바르지 않아요.")
 
                                                 # 무릎을 더 굽혀주세요
@@ -3772,6 +3862,7 @@ def my_link(name):
             feedbackFile("요가 스탠드 시작하세요.")
             exercisestepFile("○ ● ●")
             emoticonFile("muscle")
+            ex_result[3] = "2 / 3"
 
             # -------- Main Program Loop -----------
             while not self._done:
@@ -3907,12 +3998,14 @@ def my_link(name):
 
                                                     print("good")
                                                     sec = sec-1
+                                                    good_score.append(5)
                                                     feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                     emoticonFile("smile")
 
                                                 else:
                                                     emoticonFile("cry")
                                                     print("bad")
+                                                    bad_score.append(1)
                                                     feedbackFile("왼쪽 자세가 바르지 않아요!")
 
                                                     # 무릎을 더 굽혀주세요
@@ -3961,12 +4054,14 @@ def my_link(name):
                                             #오른쪽 스탠드 성공조건
                                             if (Right_Knee_angle < 100 and Left_Knee_angle > 150 and leftKneeY <= rightankleY) :
                                                 sec = sec-1
+                                                good_score.append(5)
                                                 feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                 emoticonFile("smile")
 
                                             else:
                                                 emoticonFile("cry")
                                                 print("right Bad!")
+                                                bad_score.append(1)
                                                 feedbackFile("오른쪽 자세가 바르지 않아요!")
 
                                                 # 무릎을 더 굽혀주세요
@@ -4048,6 +4143,7 @@ def my_link(name):
             feedbackFile("요가 사이드 시작하세요.")
             exercisestepFile("● ● ●")
             emoticonFile("muscle")
+            ex_result[3] = "3 / 3"
 
             # -------- Main Program Loop -----------
             while not self._done:
@@ -4175,12 +4271,14 @@ def my_link(name):
                                                 if (Left_Knee_angle >= 160 and Right_Knee_angle >= 160 and leftWristY <= spineBaseY and rightWristY >= headY and spineBaseX - headX > 0.05):
                                                     sec = sec - 1
                                                     print("good")
+                                                    good_score.append(5)
                                                     feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                     emoticonFile("smile")
 
                                                 else:
                                                     emoticonFile("cry")
                                                     print("bad")
+                                                    bad_score.append(1)
                                                     feedbackFile("왼쪽 자세가 바르지 않아요!")
 
                                                     # 무릎을 더 펴주세요
@@ -4222,12 +4320,14 @@ def my_link(name):
                                             if (Left_Knee_angle >= 160 and Right_Knee_angle >= 160 and rightWristY <= spineBaseY and leftWristY >= headY and headX - spineBaseX > 0.05) :
                                                 sec = sec-1
                                                 print("right good!")
+                                                good_score.append(5)
                                                 feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                 emoticonFile("smile")
 
                                             else:
                                                 emoticonFile("cry")
                                                 print("right Bad!")
+                                                bad_score.append(1)
                                                 feedbackFile("오른쪽 자세가 바르지 않아요!")
 
                                                 # 무릎을 더 굽혀주세요
@@ -4273,6 +4373,12 @@ def my_link(name):
 
                 self.draw_display()
 
+                score = round(((len(good_score)/(len(good_score)+len(bad_score)))*100)*2)
+                if(score >= 100) :
+                    ex_result[4] = 100
+                else :
+                    ex_result[4] = score
+
             # Close our Kinect sensor, close the window and quit.
             self._kinect.close()
             pygame.quit()
@@ -4316,7 +4422,7 @@ def my_link(name):
         game = GameRuntime_yoga()
         game.run_standside()
 
-    return redirect("/")
+    return render_template('index.html', variable=variable, ex_result = ex_result)
 
 if __name__ == '__main__':
     # server = Server(app.wsgi_app)
