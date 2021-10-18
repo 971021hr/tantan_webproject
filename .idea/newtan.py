@@ -61,9 +61,41 @@ def connect_RDS(host,port,username,password,database):
 
     return conn,curcor
 
+#login=============================
+def login(variable):
+    if variable != "":
+        conn, cursor = connect_RDS(host,port,username,password,database)
+
+        global userEmail
+
+        sql = "SELECT userEmail FROM tantanDB.connectTB WHERE randomNum =" + variable # 실행할 SQL문
+
+        cursor.execute(sql)
+        result = cursor.fetchone()
+        userEmail = result[0]
+
+        print("\n유저 이메일", userEmail)
+        print("\n생성된 랜덤 비밀번호", variable)
+
+        conn.commit()
+        conn.close()
+
 @app.route('/')
 def index():
-    return render_template('index.html', variable=variable, ex_result=ex_result)
+    conn, cursor = connect_RDS(host,port,username,password,database)
+
+    global new_pw, userEmail
+    ex_result[4] = 0
+
+    if(new_pw != ""):
+        sql = "SELECT userEmail FROM tantanDB.connectTB WHERE randomNum =" + new_pw # 실행할 SQL문
+        cursor.execute(sql)
+        result = cursor.fetchone()
+        userEmail = result[0]
+        conn.commit()
+        conn.close()
+
+    return render_template('index.html', variable=variable, ex_result=ex_result, userEmail=userEmail)
 
 @app.route('/connect')
 def connect():
@@ -71,21 +103,28 @@ def connect():
 
     print("랜덤 숫자", string.digits)
 
-    global new_pw
-    new_pw = ""
-    for i in range(new_pw_len):
-        new_pw += random.choice(string.digits)
+    global new_pw, userEmail
+
+    if(new_pw == ""):
+        for i in range(new_pw_len):
+            new_pw += random.choice(string.digits)
+
+        query = """INSERT INTO tantanDB.connectTB (randomNum,userEmail) VALUES ('{0}','{1}');
+            """.format(new_pw, '')
+        cursor.execute(query)
+        conn.commit()
+
+    # else:
+    #     sql = "SELECT userEmail FROM tantanDB.connectTB WHERE randomNum =" + new_pw # 실행할 SQL문
+    #     cursor.execute(sql)
+    #     result = cursor.fetchone()
+    #     userEmail = result[0]
+    #     conn.commit()
 
     print("\n생성된 랜덤 비밀번호", new_pw)
-
-    query = """INSERT INTO tantanDB.connectTB (randomNum,userEmail) VALUES ('{0}','{1}');
-            """.format(new_pw, '')
-
-    cursor.execute(query)
-    conn.commit()
     conn.close()
 
-    return render_template('index.html', variable=new_pw, ex_result=ex_result)
+    return render_template('index.html', variable=new_pw, ex_result=ex_result, userEmail=userEmail)
 
 @app.route('/my-link/<name>')
 def my_link(name):
@@ -135,28 +174,6 @@ def my_link(name):
                         pygame.color.THECOLORS["purple"],
                         pygame.color.THECOLORS["yellow"],
                         pygame.color.THECOLORS["violet"]]
-
-    #login=============================
-    def login(variable):
-        if variable != "":
-            conn, cursor = connect_RDS(host,port,username,password,database)
-
-            global userEmail
-            # select_pw = ""
-            # for i in variable(0,6) :
-            #     select_pw = variable[i]
-
-            sql = "SELECT userEmail FROM tantanDB.connectTB WHERE randomNum =" + variable # 실행할 SQL문
-
-            cursor.execute(sql)
-            result = cursor.fetchone()
-            userEmail = result[0]
-
-            print("\n유저 이메일", userEmail)
-            print("\n생성된 랜덤 비밀번호", variable)
-
-            conn.commit()
-            conn.close()
 
     #add_run===========================
     def addrun(variable):
@@ -227,8 +244,12 @@ def my_link(name):
 
     def cntsavedFile(contents):
         with open("static/cnt_saved.txt", "wt", encoding="UTF-8") as f:
-            f.write(contents + "/10회")
-            f.close()
+            if (ex_result[0] == "요가운동"):
+                f.write(contents + "/100%")
+                f.close()
+            else:
+                f.write(contents + "/10회")
+                f.close()
 
     def feedbackFile(contents):
         with open("static/feedback.txt", "wt", encoding="UTF-8") as f:
@@ -523,6 +544,7 @@ def my_link(name):
             global endtime
             squat_status = True
             nextRoutine = False
+            time.sleep(3)
 
             # -------- Main Program Loop -----------
             while not self._done:
@@ -615,6 +637,10 @@ def my_link(name):
                                     print("start run_hip")
                                     txtCnt = "1st>> " + str(len(squatCnt)) + " / "
                                     exCnt += txtCnt
+                                    self.run_hip()
+
+                                if len(squatCnt) == 10 :
+                                    time.sleep(3)
                                     self.run_hip()
 
                                 if len(squatCnt) > 0 :
@@ -721,6 +747,15 @@ def my_link(name):
                         self.draw_moveScr()
 
                 self.draw_display()
+
+                if (len(good_score) + len(bad_score) > 0):
+                    score = round(((len(good_score)/(len(good_score)+len(bad_score)))*100)*2)
+                    if(score >= 100) :
+                        ex_result[4] = 100
+                    else :
+                        ex_result[4] = score
+                else:
+                    ex_result[4] = 100
 
             # Close our Kinect sensor, close the window and quit.
             self._kinect.close()
@@ -830,9 +865,19 @@ def my_link(name):
                                 self.curY = (leftWristY, leftFootX)
 
                                 if (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) and (nextRoutine == False):
-                                    print("start run_lunge")
-                                    txtCnt = "2nd>> " + str(len(squatCnt)) + " / "
-                                    # exCnt += txtCnt
+                                    if len(right_HipCnt) > 0:
+                                        print("start run_lunge")
+                                        txtCnt = "2nd>> " + str(len(squatCnt)) + " / "
+                                        # exCnt += txtCnt
+                                        self.run_lunge()
+
+                                if (len(left_HipCnt) > 0) and (len(right_HipCnt) == 0) and (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) :
+                                    while (len(left_HipCnt) < 10):
+                                        left_HipCnt.append(1)
+                                    print("start right hip")
+
+                                if len(right_HipCnt) >= 10 :
+                                    time.sleep(3)
                                     self.run_lunge()
 
                                 if (abs(leftWristY - spineMidY) <= 0.2):
@@ -843,7 +888,9 @@ def my_link(name):
                                     if (len(left_HipCnt)>0) and (len(right_HipCnt)>0) :
                                         nextRoutine = False
 
-                                    if(len(left_HipCnt) < 2) :
+
+                                    if(len(left_HipCnt) < 10) :
+
                                         if 85 <= Left_Hip_angle <= 95 :
                                             print("start left hip !!")
                                             feedbackFile("왼쪽 힙 운동하세요.")
@@ -901,16 +948,17 @@ def my_link(name):
                                                     if fix not in self.squatSummaryList:
                                                         self.squatSummaryList.append(fix)
 
-                                    if(len(left_HipCnt) >= 2):
+                                    if(len(left_HipCnt) >= 10):
                                         feedbackFile("오른쪽 힙 운동하세요.")
                                         emoticonFile("muscle")
                                         f = open("static/video_name.txt", 'w')
                                         f.write("hipRight")
                                         f.close()
 
-                                        if(len(left_HipCnt) == 2):
+                                        if(len(left_HipCnt) == 10):
                                             time.sleep(3)
                                             left_HipCnt.append(1)
+                                            cntsavedFile(str(len(right_HipCnt)))
 
                                         else:
                                             if 85 <= Right_Hip_angle <= 95 :
@@ -941,7 +989,7 @@ def my_link(name):
                                                         if fix not in self.squatSummaryList:
                                                             self.squatSummaryList.append(fix)
                                                         print("hip count ========================================>>>> ",len(right_HipCnt))
-                                                        cntsavedFile(str(len(squatCnt)))
+                                                        cntsavedFile(str(len(right_HipCnt)))
                                                         hip_status = False
 
                                                 else:
@@ -987,6 +1035,15 @@ def my_link(name):
                         self.draw_moveScr()
 
                 self.draw_display()
+
+                if (len(good_score) + len(bad_score) > 0):
+                    score = round(((len(good_score)/(len(good_score)+len(bad_score)))*100)*2)
+                    if(score >= 100) :
+                        ex_result[4] = 100
+                    else :
+                        ex_result[4] = score
+                else:
+                    ex_result[4] = 0
 
             # # Close our Kinect sensor, close the window and quit.
             self._kinect.close()
@@ -1101,11 +1158,19 @@ def my_link(name):
                                 self.curY = (leftWristY, leftFootX)
 
                                 # leg routine ending
-                                if (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) and (nextRoutine == True):
+                                if (len(rightlungeCnt) > 0) and (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) and (nextRoutine == True):
                                     print("Last routine")
-                                    txtCnt = "3rd>> " + str(len(squatCnt))
-                                    #exCnt += txtCnt
-                                    # sys.exit()
+                                    self._done = True # Flag that we are done so we exit this loop
+                                    endtime = time.time()
+                                    print("런지 끝 시간 : ", endtime)
+                                    login(new_pw)
+                                    addrun(userEmail)
+                                    print("런지에서 데이터 입력")
+                                    pygame.quit()
+                                if (len(leftlungeCnt) > 0) and (len(rightlungeCnt) == 0) and (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) :
+                                    while (len(leftlungeCnt) < 10):
+                                        leftlungeCnt.append(1)
+                                    print("start right lunge")
 
                                 if len(leftlungeCnt) > 0 or len(rightlungeCnt) > 0 :
                                     nextRoutine = True
@@ -1132,8 +1197,18 @@ def my_link(name):
                                     (self.minKneeY, self.maxKneeY) = min(self.kneeYList), max(self.kneeYList)
                                     (self.minHipY, self.maxHipY) = min(self.hipYList), max(self.hipYList)
 
+                                    #끝나면 종료하기
+                                    if(len(rightlungeCnt) >= 10):
+                                        self._done = True # Flag that we are done so we exit this loop
+                                        endtime = time.time()
+                                        print("런지 끝 시간 : ", endtime)
+                                        login(new_pw)
+                                        addrun(userEmail)
+                                        print("런지에서 데이터 입력")
+                                        pygame.quit()
+
                                     # 왼쪽 다리 앞으로
-                                    if (len(leftlungeCnt) < 1):
+                                    if (len(leftlungeCnt) < 10):
                                         if Left_Knee_angle >= 160 :
                                             print("start left lunge !!")
                                             feedbackFile("왼쪽 다리 런지 운동하세요.")
@@ -1207,16 +1282,17 @@ def my_link(name):
                                                         self.squatSummaryList.append(fix)
 
                                     # 오른쪽 다리 앞으로
-                                    if(len(leftlungeCnt) >= 1):
+                                    if(len(leftlungeCnt) >= 10):
                                         emoticonFile("muscle")
                                         feedbackFile("오른쪽 다리 런지 운동하세요.")
                                         f = open("static/video_name.txt", 'w')
                                         f.write("lungeRight")
                                         f.close()
 
-                                        if(len(leftlungeCnt) == 1):
+                                        if(len(leftlungeCnt) == 10):
                                             time.sleep(3)
                                             leftlungeCnt.append(1)
+                                            cntsavedFile(str(len(rightlungeCnt)))
 
                                         else :
                                             if Right_Knee_angle >= 160 :
@@ -1245,7 +1321,7 @@ def my_link(name):
                                                         if fix not in self.squatSummaryList:
                                                             self.squatSummaryList.append(fix)
                                                         print("right lunge count ========================================>>>> ",len(rightlungeCnt))
-                                                        cntsavedFile(str(len(squatCnt)))
+                                                        cntsavedFile(str(len(rightlungeCnt)))
                                                         squat_status = False
 
                                                 else:
@@ -1305,11 +1381,14 @@ def my_link(name):
 
                 self.draw_display()
 
-                score = round(((len(good_score)/(len(good_score)+len(bad_score)))*100)*2)
-                if(score >= 100) :
-                    ex_result[4] = 100
-                else :
-                    ex_result[4] = score
+                if (len(good_score) + len(bad_score) > 0):
+                    score = round(((len(good_score)/(len(good_score)+len(bad_score)))*100)*2)
+                    if(score >= 100) :
+                        ex_result[4] = 100
+                    else :
+                        ex_result[4] = score
+                else:
+                    ex_result[4] = 0
 
             self._kinect.close()
             pygame.quit()
@@ -1620,12 +1699,11 @@ def my_link(name):
 
             exercisestepFile("○ ○ ●")
             ex_result[3] = "1 / 3"
-            f = open("static/cnt_saved.txt", 'w')
-            f.write("count : " + str(len(lpdCnt)))
-            f.close()
 
             feedbackFile("렛풀다운 운동 시작하세요.")
+            cntsavedFile(str(len(lpdCnt)))
             emoticonFile("muscle")
+            time.sleep(3)
 
             # -------- Main Program Loop -----------
             while not self._done:
@@ -1712,13 +1790,18 @@ def my_link(name):
                                 self.curY = (leftWristY, leftFootX)
 
                                 if (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) and (nextRoutine == True) :
-                                    print("start run_kickback")
-                                    txtCnt = "1st>> " + str(len(lpdCnt)) + " / "
-                                    exCnt += txtCnt
-                                    self.run_kickBack()
+                                    if len(lpdCnt) > 0:
+                                        print("start run_kickback")
+                                        txtCnt = "1st>> " + str(len(lpdCnt)) + " / "
+                                        exCnt += txtCnt
+                                        self.run_kickBack()
 
                                 if len(lpdCnt) > 0 :
                                     nextRoutine = True
+
+                                if len(lpdCnt) >= 10:
+                                    time.sleep(3)
+                                    self.run_kickBack()
 
                                 # start point
                                 # 왼쪽 손목과 오른쪽 손목이 spineBase Y보다 높을 경우 moveDetected를 True로 변경
@@ -1754,16 +1837,14 @@ def my_link(name):
                                             emoticonFile("smile")
                                             # squat_status = False
 
-                                            if len(goodCnt) >= 10:
+                                            if len(goodCnt) >= 6:
                                                 goodCnt = []
                                                 lpdCnt.append(1)
                                                 fix = "Good"
                                                 if fix not in self.latPullDownSummaryList:
                                                     self.latPullDownSummaryList.append(fix)
                                                 print("latPullDown count ========================================>>>> ",len(lpdCnt))
-                                                f = open("static/cnt_saved.txt", 'w')
-                                                f.write("count : " + str(len(lpdCnt)))
-                                                f.close()
+                                                cntsavedFile(str(len(lpdCnt)))
                                                 good_score.append(5)
                                                 feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                 emoticonFile("smile")
@@ -1809,6 +1890,15 @@ def my_link(name):
 
                 self.draw_display()
 
+                if (len(good_score) + len(bad_score) > 0):
+                    score = round(((len(good_score)/(len(good_score)+len(bad_score)))*100)*2)
+                    if(score >= 100) :
+                        ex_result[4] = 100
+                    else :
+                        ex_result[4] = score
+                else:
+                    ex_result[4] = 0
+
             # Close our Kinect sensor, close the window and quit.
             self._kinect.close()
             # pygame.quit()
@@ -1829,12 +1919,11 @@ def my_link(name):
             goodCnt = []
             exercisestepFile("○ ● ●")
             ex_result[3] = "2 / 3"
-            f = open("static/cnt_saved.txt", 'w')
-            f.write("count : " + str(len(lpdCnt)))
-            f.close()
+            cntsavedFile(str(len(lpdCnt)))
 
             feedbackFile("킥백 운동 시작하세요.")
             emoticonFile("muscle")
+            time.sleep(3)
 
             # -------- Main Program Loop -----------
             while not self._done:
@@ -1921,13 +2010,18 @@ def my_link(name):
                                 self.curY = (leftWristY, leftFootX)
 
                                 if (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) and (nextRoutine == False) :
-                                    print("start run_slr")
-                                    txtCnt = "2nd>> " + str(len(lpdCnt)) + " / "
-                                    # exCnt += txtCnt
-                                    self.run_slr()
+                                    if (len(lpdCnt) > 0):
+                                        print("start run_slr")
+                                        txtCnt = "2nd>> " + str(len(lpdCnt)) + " / "
+                                        # exCnt += txtCnt
+                                        self.run_slr()
 
                                 if len(lpdCnt) > 0 :
                                     nextRoutine = False
+
+                                if len(lpdCnt) >= 10:
+                                    time.sleep(3)
+                                    self.run_slr()
 
                                 # start point
                                 # 양쪽 팔꿈치가 spinMid보다 뒤에 있는 경우 운동 시작
@@ -1973,9 +2067,7 @@ def my_link(name):
                                                 if fix not in self.latPullDownSummaryList:
                                                     self.latPullDownSummaryList.append(fix)
                                                 print("KickBack count ========================================>>>> ",len(lpdCnt))
-                                                f = open("static/cnt_saved.txt", 'w')
-                                                f.write("count : " + str(len(lpdCnt)))
-                                                f.close()
+                                                cntsavedFile(str(len(lpdCnt)))
                                                 good_score.append(5)
                                                 feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                 emoticonFile("smile")
@@ -2029,6 +2121,15 @@ def my_link(name):
 
                 self.draw_display()
 
+                if (len(good_score) + len(bad_score) > 0):
+                    score = round(((len(good_score)/(len(good_score)+len(bad_score)))*100)*2)
+                    if(score >= 100) :
+                        ex_result[4] = 100
+                    else :
+                        ex_result[4] = score
+                else:
+                    ex_result[4] = 0
+
             # Close our Kinect sensor, close the window and quit.
             self._kinect.close()
             # pygame.quit()
@@ -2040,7 +2141,7 @@ def my_link(name):
             f.write("srl")
             f.close()
 
-            global squat_status
+            squat_status = True
             nextRoutine = False
             global exCnt
             global endtime
@@ -2049,12 +2150,11 @@ def my_link(name):
             goodCnt = []
             exercisestepFile("● ● ●")
             ex_result[3] = "3 / 3"
-            f = open("static/cnt_saved.txt", 'w')
-            f.write("count : " + str(len(lpdCnt)))
-            f.close()
+            cntsavedFile(str(len(lpdCnt)))
 
             emoticonFile("muscle")
             feedbackFile("사이드레터럴레이즈 운동 시작하세요.")
+            time.sleep(3)
 
             # -------- Main Program Loop -----------
             while not self._done:
@@ -2151,13 +2251,28 @@ def my_link(name):
                                 self.curY = (leftWristY, leftFootX)
 
                                 if (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) and (nextRoutine == True) :
-                                    print("Last routine")
-                                    txtCnt = "3rd>> " + str(len(lpdCnt))
-                                    # exCnt += txtCnt
-                                    # sys.exit()
+                                    if (len(lpdCnt) > 0):
+                                        print("Last routine")
+                                        self._done = True # Flag that we are done so we exit this loop
+                                        endtime = time.time()
+                                        print("slr 끝 시간 : ", endtime)
+                                        login(new_pw)
+                                        addrun(userEmail)
+                                        print("slr에서 데이터 입력")
+                                        pygame.quit()
 
                                 if len(lpdCnt) > 0 :
                                     nextRoutine = True
+
+                                # 끝나면 종료하기
+                                if len(lpdCnt) >= 10:
+                                    self._done = True # Flag that we are done so we exit this loop
+                                    endtime = time.time()
+                                    print("slr 끝 시간 : ", endtime)
+                                    login(new_pw)
+                                    addrun(userEmail)
+                                    print("slr에서 데이터 입력")
+                                    pygame.quit()
 
                                 # if abs(leftelbowY - leftWristY) <= 0.16 :
                                 if Left_inArm_angle > 140 or Right_inArm_angle > 140 :
@@ -2188,9 +2303,7 @@ def my_link(name):
                                                 if fix not in self.latPullDownSummaryList:
                                                     self.latPullDownSummaryList.append(fix)
                                                 print("slr count ========================================>>>> ",len(lpdCnt))
-                                                f = open("static/cnt_saved.txt", 'w')
-                                                f.write("count : " + str(len(lpdCnt)))
-                                                f.close()
+                                                cntsavedFile(str(len(lpdCnt)))
                                                 good_score.append(5)
                                                 feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                 emoticonFile("smile")
@@ -2295,11 +2408,14 @@ def my_link(name):
 
                 self.draw_display()
 
-                score = round(((len(good_score)/(len(good_score)+len(bad_score)))*100)*2)
-                if(score >= 100) :
-                    ex_result[4] = 100
-                else :
-                    ex_result[4] = score
+                if (len(good_score) + len(bad_score) > 0):
+                    score = round(((len(good_score)/(len(good_score)+len(bad_score)))*100)*2)
+                    if(score >= 100) :
+                        ex_result[4] = 100
+                    else :
+                        ex_result[4] = score
+                else:
+                    ex_result[4] = 0
 
             # Close our Kinect sensor, close the window and quit.
             self._kinect.close()
@@ -2581,14 +2697,13 @@ def my_link(name):
             f = open("static/video_name.txt", 'w')
             f.write("sideleft")
             f.close()
-            f = open("static/cnt_saved.txt", 'w')
-            f.write("count : " + str(len(sidebamCnt)))
-            f.close()
+            cntsavedFile(str(len(sidebamCnt)))
 
             emoticonFile("muscle")
             ex_result[3] = "1 / 3"
             exercisestepFile("○ ○ ●")
             feedbackFile("사이드밤 운동 시작하세요.")
+            time.sleep(3)
 
             exCnt = ""
             # -------- Main Program Loop -----------
@@ -2696,14 +2811,23 @@ def my_link(name):
                                 self.curX = (leftWristX, leftKneeX)
                                 self.curY = (leftWristY, leftFootX)
 
-                                if (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) and (nextRoutine == True) :
+                                if (len(right_handCnt) > 0) and (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) and (nextRoutine == True) :
                                     print("start run_kneekick")
                                     txtCnt = "1st>> " + str(len(left_handCnt)) + ", " + str(len(right_handCnt)) + " / "
                                     exCnt += txtCnt
                                     self.run_kneekick()
 
+                                if (len(left_handCnt) > 0) and (len(right_handCnt) == 0) and (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) :
+                                    while (len(left_handCnt) < 10):
+                                        left_handCnt.append(1)
+                                    print("start right side")
+
                                 if len(left_handCnt) > 0 :
                                     nextRoutine = True
+
+                                if len(right_handCnt) >= 10:
+                                    time.sleep(3)
+                                    self.run_kneekick()
 
                                 # start point
                                 # 왼쪽 손목과 오른쪽 손목이 spineShould Y보다 높을 경우 moveDetected를 True로 변경
@@ -2713,7 +2837,7 @@ def my_link(name):
                                         self.wristXList.append(self.curX[0])
                                     self.wristYList.append(self.curY[0])
 
-                                    if(len(left_handCnt) < 1) :
+                                    if(len(left_handCnt) < 10) :
                                         if Left_Arms_angle > 110 and Right_Arms_angle > 110 and Left_Knee_angle > 160 and Right_Knee_angle > 160:
                                             print("start left side bam !!")
                                             feedbackFile("왼쪽 사이드밤 운동하세요.")
@@ -2739,9 +2863,7 @@ def my_link(name):
                                                     if fix not in self.squatSummaryList:
                                                         self.squatSummaryList.append(fix)
                                                     print("left side count ========================================>>>> ",len(left_handCnt))
-                                                    f = open("static/cnt_saved.txt", 'w')
-                                                    f.write("count : " + str(len(sidebamCnt)))
-                                                    f.close()
+                                                    cntsavedFile(str(len(sidebamCnt)))
                                                     good_score.append(5)
                                                     feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                     emoticonFile("smile")
@@ -2766,16 +2888,17 @@ def my_link(name):
                                                     if fix not in self.squatSummaryList:
                                                         self.squatSummaryList.append(fix)
 
-                                    if (len(left_handCnt) >= 1):
+                                    if (len(left_handCnt) >= 10):
                                         emoticonFile("muscle")
                                         feedbackFile("오른쪽 사이드밤 운동하세요.")
                                         f = open("static/video_name.txt", 'w')
                                         f.write("sideright")
                                         f.close()
 
-                                        if(len(left_handCnt) == 1):
+                                        if(len(left_handCnt) == 10):
                                             time.sleep(3)
                                             left_handCnt.append(1)
+                                            cntsavedFile(str(len(right_handCnt)))
 
                                         else :
                                             if Left_Arms_angle > 110 and Right_Arms_angle > 110 and Left_Knee_angle > 160 and Right_Knee_angle > 160:
@@ -2802,9 +2925,7 @@ def my_link(name):
                                                         if fix not in self.squatSummaryList:
                                                             self.squatSummaryList.append(fix)
                                                         print("right side count ========================================>>>> ",len(right_handCnt))
-                                                        f = open("static/cnt_saved.txt", 'w')
-                                                        f.write("count : " + str(len(sidebamCnt)))
-                                                        f.close()
+                                                        cntsavedFile(str(len(right_handCnt)))
                                                         good_score.append(5)
                                                         feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                         emoticonFile("smile")
@@ -2847,6 +2968,15 @@ def my_link(name):
 
                 self.draw_display()
 
+                if (len(good_score) + len(bad_score) > 0):
+                    score = round(((len(good_score)/(len(good_score)+len(bad_score)))*100)*2)
+                    if(score >= 100) :
+                        ex_result[4] = 100
+                    else :
+                        ex_result[4] = score
+                else:
+                    ex_result[4] = 0
+
             # Close our Kinect sensor, close the window and quit.
             self._kinect.close()
             pygame.quit()
@@ -2870,11 +3000,10 @@ def my_link(name):
             emoticonFile("muscle")
             ex_result[3] = "2 / 3"
             exercisestepFile("○ ● ●")
-            f = open("static/cnt_saved.txt", 'w')
-            f.write("count : " + str(len(sidebamCnt)))
-            f.close()
+            cntsavedFile(str(len(sidebamCnt)))
 
             feedbackFile("니킥 운동 시작하세요.")
+            time.sleep(3)
 
             # -------- Main Program Loop -----------
             while not self._done:
@@ -2964,14 +3093,23 @@ def my_link(name):
                                 self.curX = (leftWristX, leftKneeX)
                                 self.curY = (leftWristY, leftFootX)
 
-                                if (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) and (nextRoutine == False) :
+                                if (len(right_handCnt) > 0) and (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) and (nextRoutine == False) :
                                     print("start run_squat")
                                     txtCnt = "2nd>> " + str(len(left_handCnt)) + ", " + str(len(right_handCnt)) + " / "
                                     exCnt += txtCnt
                                     self.run_squat()
 
+                                if (len(left_handCnt) > 0) and (len(right_handCnt) == 0) and (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) :
+                                    while (len(left_handCnt) < 10):
+                                        left_handCnt.append(1)
+                                    print("start right kneekick")
+
                                 if len(left_handCnt) > 0 or len(right_handCnt) > 0:
                                     nextRoutine = False
+
+                                if len(right_handCnt) >= 10:
+                                    self.run_squat()
+                                    time.sleep(3)
 
                                 if (abs(leftWristY -spineBaseY) >= 0.3):
                                     self.moveDetected = True
@@ -2982,7 +3120,7 @@ def my_link(name):
                                     feedbackFile("운동이 인식되기 위해 손을 올려주세요.")
                                     emoticonFile("cry")
 
-                                if(len(left_handCnt) < 1):
+                                if(len(left_handCnt) < 10):
 
                                     if len(self.kneeYList) != 0 and len(self.kneeXList) != 0 and (abs(leftWristY -spineBaseY) >= 0.3):
                                         (self.minKneeX, self.maxKneeX) = min(self.kneeXList), max(self.kneeXList)
@@ -3013,9 +3151,7 @@ def my_link(name):
                                                     if fix not in self.SquatSummaryList:
                                                         self.SquatSummaryList.append(fix)
                                                     print("KneeKick count ========================================>>>> ",len(left_handCnt))
-                                                    f = open("static/cnt_saved.txt", 'w')
-                                                    f.write("count : " + str(len(sidebamCnt)))
-                                                    f.close()
+                                                    cntsavedFile(str(len(sidebamCnt)))
                                                     good_score.append(5)
                                                     feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                     emoticonFile("smile")
@@ -3030,16 +3166,17 @@ def my_link(name):
                                                 print("fail 무릎 - 팔꿈치 : ", abs(rightKneeY - leftElbowY))
                                                 feedbackFile("자세가 바르지 않아요.")
 
-                                if(len(left_handCnt) >= 1):
+                                if(len(left_handCnt) >= 10):
                                     emoticonFile("muscle")
                                     feedbackFile("왼쪽 니킥 운동하세요.")
                                     f = open("static/video_name.txt", 'w')
                                     f.write("kneeleft")
                                     f.close()
 
-                                    if(len(left_handCnt) == 1):
+                                    if(len(left_handCnt) == 10):
                                         time.sleep(3)
                                         left_handCnt.append(1)
+                                        cntsavedFile(str(len(right_handCnt)))
 
                                     else:
                                         if len(self.kneeYList) != 0 and len(self.kneeXList) != 0 and (abs(rightWristY -spineBaseY) >= 0.3):
@@ -3071,9 +3208,7 @@ def my_link(name):
                                                         if fix not in self.SquatSummaryList:
                                                             self.SquatSummaryList.append(fix)
                                                         print("KneeKick count ========================================>>>> ",len(right_handCnt))
-                                                        f = open("static/cnt_saved.txt", 'w')
-                                                        f.write("count : " + str(len(sidebamCnt)))
-                                                        f.close()
+                                                        cntsavedFile(str(len(right_handCnt)))
                                                         good_score.append(5)
                                                         feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                         emoticonFile("smile")
@@ -3102,6 +3237,15 @@ def my_link(name):
 
                 self.draw_display()
 
+                if (len(good_score) + len(bad_score) > 0):
+                    score = round(((len(good_score)/(len(good_score)+len(bad_score)))*100)*2)
+                    if(score >= 100) :
+                        ex_result[4] = 100
+                    else :
+                        ex_result[4] = score
+                else:
+                    ex_result[4] = 0
+
             # Close our Kinect sensor, close the window and quit.
             self._kinect.close()
             pygame.quit()
@@ -3121,14 +3265,13 @@ def my_link(name):
             goodCnt = []
             squatCnt = []
             sidebamCnt = []
-            f = open("static/cnt_saved.txt", 'w')
-            f.write("count : " + str(len(sidebamCnt)))
-            f.close()
+            cntsavedFile(str(len(squatCnt)))
 
             emoticonFile("muscle")
             exercisestepFile("● ● ●")
             ex_result[3] = "3 / 3"
             feedbackFile("와이드스쿼트 운동 시작하세요.")
+            time.sleep(3)
 
             # -------- Main Program Loop -----------
             while not self._done:
@@ -3216,14 +3359,27 @@ def my_link(name):
                                 self.curX = (leftWristX, leftKneeX)
                                 self.curY = (leftWristY, leftFootX)
 
-                                if (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) and (nextRoutine == True):
+                                if (len(squatCnt) > 0) and (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) and (nextRoutine == True):
                                     print("Last routine")
-                                    txtCnt = "3rd>> " + str(len(squatCnt))
-                                    exCnt += txtCnt
-                                    sys.exit(exCnt)
+                                    self._done = True # Flag that we are done so we exit this loop
+                                    endtime = time.time()
+                                    print("squat 끝 시간 : ", endtime)
+                                    login(new_pw)
+                                    addrun(userEmail)
+                                    print("squat에서 데이터 입력")
+                                    pygame.quit()
 
                                 if len(squatCnt) > 0 :
                                     nextRoutine = True
+
+                                if len(squatCnt) >= 10:
+                                    self._done = True # Flag that we are done so we exit this loop
+                                    endtime = time.time()
+                                    print("squat 끝 시간 : ", endtime)
+                                    login(new_pw)
+                                    addrun(userEmail)
+                                    print("squat에서 데이터 입력")
+                                    pygame.quit()
 
                                 if (abs(leftWristY -spineBaseY) >= 0.3):
                                     self.moveDetected = True
@@ -3267,9 +3423,7 @@ def my_link(name):
                                                 if fix not in self.squatSummaryList:
                                                     self.squatSummaryList.append(fix)
                                                 print("squat count ========================================>>>> ",len(squatCnt))
-                                                f = open("static/cnt_saved.txt", 'w')
-                                                f.write("count : " + str(len(squatCnt)))
-                                                f.close()
+                                                cntsavedFile(str(len(squatCnt)))
                                                 good_score.append(5)
                                                 feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                 emoticonFile("smile")
@@ -3326,11 +3480,14 @@ def my_link(name):
 
                 self.draw_display()
 
-                score = round(((len(good_score)/(len(good_score)+len(bad_score)))*100)*2)
-                if(score >= 100) :
-                    ex_result[4] = 100
-                else :
-                    ex_result[4] = score
+                if (len(good_score) + len(bad_score) > 0):
+                    score = round(((len(good_score)/(len(good_score)+len(bad_score)))*100)*2)
+                    if(score >= 100) :
+                        ex_result[4] = 100
+                    else :
+                        ex_result[4] = score
+                else:
+                    ex_result[4] = 0
 
             # Close our Kinect sensor, close the window and quit.
             self._kinect.close()
@@ -3590,7 +3747,7 @@ def my_link(name):
             right_YStandCnt = []
 
             global sec
-            sec = 200
+            sec = 0
 
             global nextRoutine
             global endtime
@@ -3599,12 +3756,14 @@ def my_link(name):
             nextRoutine = True
 
             f = open("static/yoga_name.txt", 'w')
-            f.write("yoga_standsideleft")
+            f.write("yoga_sideleft")
             f.close()
             feedbackFile("요가 스탠드사이드 시작하세요.")
             exercisestepFile("○ ○ ●")
             emoticonFile("muscle")
             ex_result[3] = "1 / 3"
+            cntsavedFile(str(sec))
+            time.sleep(3)
 
             # -------- Main Program Loop -----------
             while not self._done:
@@ -3705,8 +3864,10 @@ def my_link(name):
                                 # next routine
                                 if (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) and (nextRoutine == True):
                                     print("start yoga_stand")
-                                    #txtCnt = "1st>> O / "
-                                    #exCnt += txtCnt
+                                    self.run_stand()
+
+                                if len(right_YStandCnt) >= 1:
+                                    print("start run_side")
                                     self.run_stand()
 
                                 # start point
@@ -3728,14 +3889,15 @@ def my_link(name):
                                             #왼쪽 스탠드 사이드 성공조건
 
                                             #while은 반복문으로 sec가 0이 되면 반복을 멈춰라
-                                            if (sec > 100):
+                                            if (sec < 100):
 
                                                 if (90 < Left_Knee_angle < 150 and Right_Knee_angle > 150):
                                                     print("good")
                                                     good_score.append(5)
                                                     feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                     emoticonFile("smile")
-                                                    sec = sec-1
+                                                    sec = sec+1
+                                                    cntsavedFile(str(round(sec/2)))
 
                                                 else:
                                                     emoticonFile("cry")
@@ -3765,13 +3927,14 @@ def my_link(name):
                                         left_YStandCnt.append(1)
                                         feedbackFile("오른쪽 자세로 넘어가세요.")
                                         emoticonFile("muscle")
+                                        cntsavedFile(str(round(sec/2)))
                                         f = open("static/yoga_name.txt", 'w')
-                                        f.write("yoga_standsideright")
+                                        f.write("yoga_sideright")
                                         f.close()
                                         time.sleep(3)
-                                        sec -= 1
+                                        sec += 1
 
-                                    if(len(left_YStandCnt) >= 1) and (sec > 0):
+                                    if(len(left_YStandCnt) >= 1) and (sec > 100):
                                         if Left_Knee_angle > 160 and Right_Knee_angle > 160:
                                             print("start right yoga stand side !!")
                                             feedbackFile("오른쪽 스탠드사이드 요가 운동하세요.")
@@ -3780,10 +3943,11 @@ def my_link(name):
                                         else :
                                             #오른쪽 스탠드 사이드 성공조건
                                             if (90 < Right_Knee_angle < 150 and Left_Knee_angle > 150) :
-                                                sec = sec-1
+                                                sec = sec+1
                                                 good_score.append(5)
                                                 feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                 emoticonFile("smile")
+                                                cntsavedFile(str(round(sec/2)))
 
                                             else:
                                                 emoticonFile("cry")
@@ -3808,10 +3972,14 @@ def my_link(name):
                                                     feedbackFile(fix)
                                                     if fix not in self.squatSummaryList:
                                                         self.squatSummaryList.append(fix)
-                                    if (sec <= 0) :
-                                        sec = 0
+
+                                    if (sec >= 200) :
+                                        sec = 200
+                                        right_YStandCnt.append(1)
+                                        cntsavedFile(str(round(sec/2)))
                                         feedbackFile("다음 자세로 넘어갑니다.")
                                         emoticonFile("muscle")
+                                        time.sleep(3)
 
                                 else:
                                     emoticonFile("cry")
@@ -3819,7 +3987,8 @@ def my_link(name):
                                     if 90 < Right_Knee_angle < 150 or 90 < Left_Knee_angle < 150:
                                         fix = "손 드세요"
                                         feedbackFile(fix)
-                                    if (sec <= 0):
+                                    if (sec >= 200):
+                                        cntsavedFile(str(round(sec/2)))
                                         emoticonFile("muscle")
                                         feedbackFile("다음 자세로 넘어갑니다.")
 
@@ -3836,6 +4005,15 @@ def my_link(name):
 
                 self.draw_display()
 
+                if (len(good_score) + len(bad_score) > 0):
+                    score = round(((len(good_score)/(len(good_score)+len(bad_score)))*100)*2)
+                    if(score >= 100) :
+                        ex_result[4] = 100
+                    else :
+                        ex_result[4] = score
+                else:
+                    ex_result[4] = 0
+
             # Close our Kinect sensor, close the window and quit.
             self._kinect.close()
             pygame.quit()
@@ -3851,7 +4029,7 @@ def my_link(name):
             global endtime
 
             global sec
-            sec = 200
+            sec = 0
             left_YStandCnt.clear()
             right_YStandCnt.clear()
 
@@ -3863,6 +4041,8 @@ def my_link(name):
             exercisestepFile("○ ● ●")
             emoticonFile("muscle")
             ex_result[3] = "2 / 3"
+            cntsavedFile(str(sec))
+            time.sleep(3)
 
             # -------- Main Program Loop -----------
             while not self._done:
@@ -3966,12 +4146,14 @@ def my_link(name):
                                 # next routine
                                 if (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) and (nextRoutine == False) :
                                     print("start run_side")
-                                    # txtCnt = "2st>> O / "
-                                    # exCnt += txtCnt
                                     self.run_side()
 
                                 if sec < 199 :
                                     nextRoutine = False
+
+                                if len(right_YStandCnt) >= 1:
+                                    print("start run_side")
+                                    self.run_side()
 
                                 # start point
                                 # 왼쪽 손목과 오른쪽 손목이 어깨보다 아래에 있을 때 moveDetected = True
@@ -3991,14 +4173,15 @@ def my_link(name):
                                             # start = time.time()
 
                                             #while은 반복문으로 sec가 0이 되면 반복을 멈춰라
-                                            if (sec > 100):
+                                            if (sec < 100):
 
                                                 #왼쪽 스탠드 성공조건
                                                 if (Left_Knee_angle < 100 and Right_Knee_angle > 150 and rightKneeY <= leftankleY and leftWristY > spineBaseY and rightWristY > spineBaseY) :
 
                                                     print("good")
-                                                    sec = sec-1
+                                                    sec = sec+1
                                                     good_score.append(5)
+                                                    cntsavedFile(str(round(sec/2)))
                                                     feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                     emoticonFile("smile")
 
@@ -4041,10 +4224,11 @@ def my_link(name):
                                         f = open("static/yoga_name.txt", 'w')
                                         f.write("yoga_standright")
                                         f.close()
+                                        cntsavedFile(str(round(sec/2)))
                                         time.sleep(3)
-                                        sec -= 1
+                                        sec += 1
 
-                                    if(len(left_YStandCnt) >= 1) and (sec > 0):
+                                    if(len(left_YStandCnt) >= 1) and (sec > 100):
                                         if Left_Knee_angle > 170 and Right_Knee_angle > 170:
                                             print("start right yoga stand !!")
                                             feedbackFile("오른쪽 스탠드 요가 운동하세요.")
@@ -4053,8 +4237,9 @@ def my_link(name):
                                         else :
                                             #오른쪽 스탠드 성공조건
                                             if (Right_Knee_angle < 100 and Left_Knee_angle > 150 and leftKneeY <= rightankleY) :
-                                                sec = sec-1
+                                                sec = sec+1
                                                 good_score.append(5)
+                                                cntsavedFile(str(round(sec/2)))
                                                 feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                 emoticonFile("smile")
 
@@ -4091,16 +4276,20 @@ def my_link(name):
                                                     if fix not in self.squatSummaryList:
                                                         self.squatSummaryList.append(fix)
 
-                                    if (sec < 0) :
-                                        sec = 0
+                                    if (sec >= 200) :
+                                        sec = 200
                                         right_YStandCnt.append(1)
+                                        cntsavedFile(str(round(sec/2)))
                                         feedbackFile("다음 자세로 넘어갑니다.")
                                         emoticonFile("muscle")
+                                        time.sleep(3)
                                 else:
-                                    if (sec > 0) :
+                                    if (0 <= sec < 200) :
                                         feedbackFile("손을 가슴쪽으로 놔주세요.")
                                         emoticonFile("cry")
                                     else :
+                                        sec = 200
+                                        cntsavedFile(str(round(sec/2)))
                                         feedbackFile("다음 자세로 넘어갑니다.")
                                         emoticonFile("muscle")
 
@@ -4118,6 +4307,15 @@ def my_link(name):
 
                 self.draw_display()
 
+                if (len(good_score) + len(bad_score) > 0):
+                    score = round(((len(good_score)/(len(good_score)+len(bad_score)))*100)*2)
+                    if(score >= 100) :
+                        ex_result[4] = 100
+                    else :
+                        ex_result[4] = score
+                else:
+                    ex_result[4] = 0
+
             # Close our Kinect sensor, close the window and quit.
             self._kinect.close()
             pygame.quit()
@@ -4133,17 +4331,19 @@ def my_link(name):
             global endtime
 
             global sec
-            sec = 200
+            sec = 0
             left_YStandCnt.clear()
             right_YStandCnt.clear()
 
             f = open("static/yoga_name.txt", 'w')
-            f.write("yoga_sideleft")
+            f.write("yoga_standsideleft")
             f.close()
             feedbackFile("요가 사이드 시작하세요.")
             exercisestepFile("● ● ●")
             emoticonFile("muscle")
             ex_result[3] = "3 / 3"
+            cntsavedFile(str(sec))
+            time.sleep(3)
 
             # -------- Main Program Loop -----------
             while not self._done:
@@ -4245,12 +4445,25 @@ def my_link(name):
                                 # Last routine
                                 if (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) and (nextRoutine == True):
                                     print("Last routine")
-                                    # txtCnt = "3rd>> O"
-                                    #exCnt += txtCnt
-                                    #sys.exit(exCnt)
+                                    self._done = True # Flag that we are done so we exit this loop
+                                    endtime = time.time()
+                                    print("side 끝 시간 : ", endtime)
+                                    login(new_pw)
+                                    addrun(userEmail)
+                                    print("side에서 데이터 입력")
+                                    pygame.quit()
 
                                 if sec < 199 :
                                     nextRoutine = True
+
+                                if len(right_YStandCnt) >= 1:
+                                    self._done = True # Flag that we are done so we exit this loop
+                                    endtime = time.time()
+                                    print("side 끝 시간 : ", endtime)
+                                    login(new_pw)
+                                    addrun(userEmail)
+                                    print("side에서 데이터 입력")
+                                    pygame.quit()
 
                                 # start point
                                 # 오른쪽 무릎과 왼쪽 무릎 거리가 10cm 이상 일때 moveDetected = True
@@ -4266,12 +4479,13 @@ def my_link(name):
                                         else :
                                             #while은 반복문으로 sec가 0이 되면 반복을 멈춰라
 
-                                            if (sec > 100):
+                                            if (sec < 100):
 
                                                 if (Left_Knee_angle >= 160 and Right_Knee_angle >= 160 and leftWristY <= spineBaseY and rightWristY >= headY and spineBaseX - headX > 0.05):
-                                                    sec = sec - 1
+                                                    sec = sec + 1
                                                     print("good")
                                                     good_score.append(5)
+                                                    cntsavedFile(str(round(sec/2)))
                                                     feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                     emoticonFile("smile")
 
@@ -4304,12 +4518,13 @@ def my_link(name):
                                         feedbackFile("오른쪽 자세로 넘어갑니다.")
                                         emoticonFile("muscle")
                                         f = open("static/yoga_name.txt", 'w')
-                                        f.write("yoga_sideright")
+                                        f.write("yoga_standsideright")
                                         f.close()
+                                        cntsavedFile(str(round(sec/2)))
                                         time.sleep(3)
-                                        sec -= 1
+                                        sec += 1
 
-                                    if(len(left_YStandCnt) >= 1) and (sec > 0) :
+                                    if(len(left_YStandCnt) >= 1) and (sec > 100) :
                                         if Left_Knee_angle > 170 and Right_Knee_angle > 170:
                                             print("start yoga right side !!")
                                             feedbackFile("오른쪽 요가 사이드 운동하세요.")
@@ -4318,9 +4533,10 @@ def my_link(name):
                                         else :
                                             #오른쪽 사이드 밤 성공조건
                                             if (Left_Knee_angle >= 160 and Right_Knee_angle >= 160 and rightWristY <= spineBaseY and leftWristY >= headY and headX - spineBaseX > 0.05) :
-                                                sec = sec-1
+                                                sec = sec+1
                                                 print("right good!")
                                                 good_score.append(5)
+                                                cntsavedFile(str(round(sec/2)))
                                                 feedbackFile("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ좋아요!")
                                                 emoticonFile("smile")
 
@@ -4347,16 +4563,20 @@ def my_link(name):
                                                     feedbackFile(fix)
                                                     if fix not in self.squatSummaryList:
                                                         self.squatSummaryList.append(fix)
-                                    if (sec <= 0) :
-                                        sec = 0
+                                    if (sec >= 200) :
+                                        sec = 200
                                         right_YStandCnt.append(1)
+                                        cntsavedFile(str(round(sec/2)))
                                         feedbackFile("요가 운동을 마칩니다.")
                                         emoticonFile("smile")
+                                        time.sleep(3)
                                 else:
-                                    if (sec > 0) :
+                                    if (0 <= sec < 200) :
                                         feedbackFile("운동 인식안됩니다.")
                                         emoticonFile("cry")
                                     else :
+                                        sec = 200
+                                        cntsavedFile(str(round(sec/2)))
                                         feedbackFile("요가 운동을 마칩니다.")
                                         emoticonFile("smile")
 
@@ -4373,11 +4593,14 @@ def my_link(name):
 
                 self.draw_display()
 
-                score = round(((len(good_score)/(len(good_score)+len(bad_score)))*100)*2)
-                if(score >= 100) :
-                    ex_result[4] = 100
-                else :
-                    ex_result[4] = score
+                if (len(good_score) + len(bad_score) > 0):
+                    score = round(((len(good_score)/(len(good_score)+len(bad_score)))*100)*2)
+                    if(score >= 100) :
+                        ex_result[4] = 100
+                    else :
+                        ex_result[4] = score
+                else:
+                    ex_result[4] = 0
 
             # Close our Kinect sensor, close the window and quit.
             self._kinect.close()
@@ -4418,11 +4641,11 @@ def my_link(name):
         game = GameRuntime_yoga()
         game.run_standside()
     elif name == "종료":
-        print("운동을 종료합니다..")
+        print("운동을 종료합니다.")
         game = GameRuntime_yoga()
         game.run_standside()
 
-    return render_template('index.html', variable=variable, ex_result = ex_result)
+    return render_template('index.html', variable=variable, ex_result = ex_result, userEmail=userEmail)
 
 if __name__ == '__main__':
     # server = Server(app.wsgi_app)

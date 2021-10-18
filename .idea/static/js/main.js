@@ -147,6 +147,8 @@ $(document).ready(function (){
             showDandanWhole();
         }else if (string.endsWith('요가')){
             showDandanYoga();
+        }else if (string.endsWith('메인') || string.endsWith('메잉')) {
+            showMain();
         }
     }
 

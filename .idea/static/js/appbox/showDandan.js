@@ -21,7 +21,6 @@ function showDandan(){
     <!--21.04.15 speech test end-->
 }
 
-
 function page_squat(){
     location.href="/my-link/하체";
 }

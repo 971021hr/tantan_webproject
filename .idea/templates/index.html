@@ -23,9 +23,17 @@
     <script type="text/javascript" src="{{ url_for('static', filename='js/appbox/showDandanWhole.js') }}" > </script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/appbox/showDandanYoga.js') }}" > </script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/appbox/showConnect.js') }}" > </script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/appbox/showMain.js') }}" > </script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/circle-progress.js') }}" > </script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
+        .m_secore { text-align:center; }
+        .m_secore .tx { position:relative; top:-100px; left:0; right:0; font-size:40px; color:#ae97ff; font-weight:700; }
+        .m_secore .tx span { font-size:20px; color:#e1e1e1; font-weight:normal; margin-left:5px; }
+
+
     </style>
 </head>
 
@@ -77,9 +85,9 @@
                             document.getElementById("yoga").innerHTML = "<img src='static/img/" + yoga_name + ".png'" + " width='780' height='780'></img>";
                         });
                     }, 3000);
+
                     $.ajaxSetup({ cache: false });
                 });
-
             </script>
         </div>
 
@@ -125,7 +133,7 @@
         <div id="boxApp">
             <button onclick="showSubway()" id="btn_subway" class="btn_left"><i class="fas fa-subway fa-2x"></i></button>
             <button onclick="showConnect()" id="btn_calendar" class="btn_left"><i class="fas fa-calendar-alt fa-2x"></i></button>
-            <button onclick="showDandan()" id="btn_dandan" class="btn_left"><i class="fas fa-running fa-2x"></i></button>
+            <button onclick="showDandanYoga()" id="btn_dandan" class="btn_left"><i class="fas fa-running fa-2x"></i></button>
             <!--<button onclick="showDandanSquat()" id="btn_dandan_squat" class="btn_left"><i class="fas fa-dumbbell fa-2x"></i></button>-->
 
 
@@ -194,6 +202,7 @@
                 <div id="realvideo" style="display: none;"></div>
             </div>
 
+            <br><br><br><br>
             <div id="exerciselist" style="display: none">
                 <div style="display: flex; justify-content: center; margin-top: 40px">
                     <div id="circle1">상체</div>
@@ -217,21 +226,39 @@
         </div>
 
         <div id="showEndPage" style="display: none">
-            <span>{{ ex_result[0] }}</span><p>이 끝났습니다!!</p>
-            <p>총 시간 : </p> <span>{{ ex_result[1] }}</span>:<span>{{ ex_result[2] }}</span>
-            <p>총 운동 : </p><span>{{ ex_result[3] }}</span>
-            <p>자세 점수 : </p><span id="v0">{{ ex_result[4] }}</span>
+            <p style="font-size: 60px;"><span>{{ ex_result[0] }}</span>이 끝났습니다!!</p>
+            <div id="final_box" style="width: 100%;">
+                <div style="width: 50%; float: left; box-sizing: border-box;">
+                    <p style="font-size: 40px;">총 시간 <span>{{ ex_result[1] }}</span>분 <span>{{ ex_result[2] }}</span>초</p>
+                    <p style="font-size: 40px;">총 운동 <span>{{ ex_result[3] }}</span></p>
+                </div>
+                <div style="width: 50%; float: right; box-sizing: border-box;">
+                    <p style="font-size: 40px;">자세 점수<span id="v0" style="display: none;">{{ ex_result[4] }}</span></p>
+                    <div class="m_secore" id="m_secore" data-thickness="13">
+                        <div class="tx"></div>
+                    </div>
+                </div>
+            </div>
+
             <script>
                 var x = document.getElementById("showEndPage");
                 var y = document.getElementById("v0").innerText;
-                alert(y)
                 if (y == 0) {
-                    alert("none");
                     x.style.display = 'none';
                 } else {
-                    alert("inline");
                     x.style.display = 'inline';
                 }
+
+                $('#m_secore').circleProgress({
+                    value: y/100,
+                    size: 141.0,
+                    startAngle: -Math.PI / 6 * 3,
+                    fill: {
+                        gradient: ['#a646db', '#667eff']
+                    },
+                }).on('circle-animation-progress', function(event, progress) {
+                    $(this).find('.tx').html(parseInt(y * progress) + '<span>점</span>');
+                });
             </script>
         </div>
 
