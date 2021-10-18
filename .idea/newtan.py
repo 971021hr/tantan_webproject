@@ -3756,7 +3756,7 @@ def my_link(name):
             nextRoutine = True
 
             f = open("static/yoga_name.txt", 'w')
-            f.write("yoga_sideleft")
+            f.write("yoga_sideright")
             f.close()
             feedbackFile("요가 스탠드사이드 시작하세요.")
             exercisestepFile("○ ○ ●")
@@ -3867,7 +3867,7 @@ def my_link(name):
                                     self.run_stand()
 
                                 if len(right_YStandCnt) >= 1:
-                                    print("start run_side")
+                                    print("start yoga_stand")
                                     self.run_stand()
 
                                 # start point
@@ -3929,7 +3929,7 @@ def my_link(name):
                                         emoticonFile("muscle")
                                         cntsavedFile(str(round(sec/2)))
                                         f = open("static/yoga_name.txt", 'w')
-                                        f.write("yoga_sideright")
+                                        f.write("yoga_sideleft")
                                         f.close()
                                         time.sleep(3)
                                         sec += 1
@@ -4034,7 +4034,7 @@ def my_link(name):
             right_YStandCnt.clear()
 
             f = open("static/yoga_name.txt", 'w')
-            f.write("yoga_standleft")
+            f.write("yoga_standright")
             f.close()
 
             feedbackFile("요가 스탠드 시작하세요.")
@@ -4222,7 +4222,7 @@ def my_link(name):
                                         feedbackFile("오른쪽 자세로 넘어갑니다.")
                                         emoticonFile("muscle")
                                         f = open("static/yoga_name.txt", 'w')
-                                        f.write("yoga_standright")
+                                        f.write("yoga_standleft")
                                         f.close()
                                         cntsavedFile(str(round(sec/2)))
                                         time.sleep(3)
@@ -4336,7 +4336,7 @@ def my_link(name):
             right_YStandCnt.clear()
 
             f = open("static/yoga_name.txt", 'w')
-            f.write("yoga_standsideleft")
+            f.write("yoga_standsideright")
             f.close()
             feedbackFile("요가 사이드 시작하세요.")
             exercisestepFile("● ● ●")
@@ -4518,7 +4518,7 @@ def my_link(name):
                                         feedbackFile("오른쪽 자세로 넘어갑니다.")
                                         emoticonFile("muscle")
                                         f = open("static/yoga_name.txt", 'w')
-                                        f.write("yoga_standsideright")
+                                        f.write("yoga_standsideleft")
                                         f.close()
                                         cntsavedFile(str(round(sec/2)))
                                         time.sleep(3)
