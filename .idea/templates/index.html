@@ -16,13 +16,13 @@
     <script type="text/javascript" src="{{ url_for('static', filename='js/appbox/showSubway.js') }}" > </script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/appbox/showCalendar.js') }}" > </script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/appbox/showDandan.js') }}" > </script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/appbox/showDandanSquat.js') }}" > </script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/appbox/showDandanUp.js') }}" > </script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/appbox/showDandanList.js') }}" > </script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/appbox/showDandanQuit.js') }}" > </script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/appbox/showDandanWhole.js') }}" > </script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/appbox/showDandanYoga.js') }}" > </script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/appbox/showConnect.js') }}" > </script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/appbox/showLogout.js') }}" > </script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/appbox/showMain.js') }}" > </script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/circle-progress.js') }}" > </script>
@@ -147,6 +147,18 @@
 
         </div>
         <br>
+        <p id="welcome" style="display: none;">
+            <span id="userEmail">{{ userEmail }}</span>님 환영합니다.
+        </p>
+        <script>
+            var x = document.getElementById("welcome");
+            var y = document.getElementById("userEmail").innerText;
+            if (y == "") {
+                x.style.display = 'none';
+            } else {
+                x.style.display = 'inline';
+            }
+        </script>
 
         <button id="btn_speech">speech</button>
     </div>
@@ -185,6 +197,17 @@
             </table>
         </div>
 
+        <div id="exerciselist" style="display: none;">
+            <div style="display: flex; justify-content: center; margin-top: 100px">
+                <button onclick="showDandanUp()" id="circle1" style="color: #ffffff; font-family: 'Jua', sans-serif;">상체</button>
+                <button onclick="showDandan()" id="circle1" style="color: #ffffff; font-family: 'Jua', sans-serif;">하체</button>
+            </div>
+            <div style="display: flex; justify-content: center;">
+                <button onclick="showDandanWhole()" id="circle1" style="color: #ffffff; font-family: 'Jua', sans-serif;">전신</button>
+                <button onclick="showDandanYoga()" id="circle1" style="color: #ffffff; font-family: 'Jua', sans-serif;">요가</button>
+            </div>
+        </div>
+
         <div id="div_dandan">
 
             <div style="flex-direction: column;">
@@ -202,19 +225,7 @@
                 <div id="realvideo" style="display: none;"></div>
             </div>
 
-            <br><br><br><br>
-            <div id="exerciselist" style="display: none">
-                <div style="display: flex; justify-content: center; margin-top: 40px">
-                    <div id="circle1">상체</div>
-                    <div id="circle1">하체</div>
-                </div>
-                <div style="display: flex; justify-content: center;">
-                    <div id="circle1">전신</div>
-                    <div id="circle1">요가</div>
-                </div>
-            </div>
-
-            <p id="connect" style="font-size: 30px; margin-top: 20px;">
+            <p id="connect" style="display: none; font-size: 30px; margin-top: 20px;">
                 <span>{{ variable[0] }}</span>
                 <span>{{ variable[1] }}</span>
                 <span>{{ variable[2] }}</span>
@@ -222,6 +233,25 @@
                 <span>{{ variable[4] }}</span>
                 <span>{{ variable[5] }}</span>
             </p>
+            <p id="logoutask" style="display: none; font-size: 30px; margin-top: 20px;">
+                로그인되어있습니다. 로그아웃하시겠습니까?
+            </p>
+            <span id="logout_tf" style="display: none;">{{ ex_result[5] }}</span>
+            <script>
+                var x1 = document.getElementById("logoutask");
+                var x2 = document.getElementById("connect");
+                var y1 = document.getElementById("userEmail").innerText;
+                var y2 = document.getElementById("logout_tf").innerText;
+                if (y2 == "False") {
+                    if (y1 == "") {
+                        x1.style.display = 'none';
+                        x2.style.display = 'inline';
+                    } else {
+                        x1.style.display = 'inline';
+                        x2.style.display = 'none';
+                    }
+                }
+            </script>
 
         </div>
 
@@ -262,11 +292,6 @@
             </script>
         </div>
 
-        <div id="div_dandan_squat" style="display: none">
-            <!--              <video src="video/squat5.mp4" width="780" height="780" autoplay loop muted>-->
-            <!--              </video>-->
-            <!--                <a href="/my-link/">Click me</a>-->
-        </div>
 
         <!--21.04.15 speech test start-->
         <div id="div_speech" style="display: none">

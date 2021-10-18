@@ -38,7 +38,7 @@ new_pw = ""
 userEmail = ""
 sec = 200
 variable = 000000
-ex_result = ["", 0, 0, "", 0]
+ex_result = ["", 0, 0, "", 0, "True"]
 ex_total_time = ""
 good_score=[]
 bad_score=[]
@@ -86,9 +86,10 @@ def index():
 
     global new_pw, userEmail
     ex_result[4] = 0
+    ex_result[5] = "True"
 
     if(new_pw != ""):
-        sql = "SELECT userEmail FROM tantanDB.connectTB WHERE randomNum =" + new_pw # 실행할 SQL문
+        sql = "SELECT userEmail FROM tantanDB.connectTB WHERE randomNum = " + new_pw # 실행할 SQL문
         cursor.execute(sql)
         result = cursor.fetchone()
         userEmail = result[0]
@@ -104,6 +105,7 @@ def connect():
     print("랜덤 숫자", string.digits)
 
     global new_pw, userEmail
+    ex_result[5] = "False"
 
     if(new_pw == ""):
         for i in range(new_pw_len):
@@ -114,12 +116,36 @@ def connect():
         cursor.execute(query)
         conn.commit()
 
-    # else:
-    #     sql = "SELECT userEmail FROM tantanDB.connectTB WHERE randomNum =" + new_pw # 실행할 SQL문
-    #     cursor.execute(sql)
-    #     result = cursor.fetchone()
-    #     userEmail = result[0]
-    #     conn.commit()
+    else:
+        sql = "SELECT userEmail FROM tantanDB.connectTB WHERE randomNum =" + new_pw # 실행할 SQL문
+        cursor.execute(sql)
+        result = cursor.fetchone()
+        userEmail = result[0]
+        conn.commit()
+
+    print("\n생성된 랜덤 비밀번호", new_pw)
+    conn.close()
+
+    return render_template('index.html', variable=new_pw, ex_result=ex_result, userEmail=userEmail)
+
+@app.route('/logout')
+def logout():
+    conn, cursor = connect_RDS(host,port,username,password,database)
+
+    print("랜덤 숫자", string.digits)
+
+    global new_pw, userEmail
+    ex_result[5] = "False"
+    new_pw = ""
+    userEmail = ""
+
+    for i in range(new_pw_len):
+        new_pw += random.choice(string.digits)
+
+    query = """INSERT INTO tantanDB.connectTB (randomNum,userEmail) VALUES ('{0}','{1}');
+        """.format(new_pw, '')
+    cursor.execute(query)
+    conn.commit()
 
     print("\n생성된 랜덤 비밀번호", new_pw)
     conn.close()
@@ -165,6 +191,7 @@ def my_link(name):
     squat_status = True
 
     exCnt = ""
+    global game
 
     # colors for drawing different bodies
     SKELETON_COLORS = [pygame.color.THECOLORS["red"],
@@ -4642,8 +4669,9 @@ def my_link(name):
         game.run_standside()
     elif name == "종료":
         print("운동을 종료합니다.")
-        game = GameRuntime_yoga()
-        game.run_standside()
+        game._done = True
+        game._kinect.close()
+        pygame.quit()
 
     return render_template('index.html', variable=variable, ex_result = ex_result, userEmail=userEmail)
 

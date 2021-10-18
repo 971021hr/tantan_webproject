@@ -142,13 +142,15 @@ $(document).ready(function (){
         }else if (string.endsWith('상체') || string.endsWith('상태')){
             showDandanUp();
         }else if (string.endsWith('종료') || string.endsWith('종묘')){
-            // showDandanQuit();
+            showDandanQuit();
         }else if (string.endsWith('전신')){
             showDandanWhole();
         }else if (string.endsWith('요가')){
             showDandanYoga();
-        }else if (string.endsWith('메인') || string.endsWith('메잉')) {
+        }else if (string.endsWith('메인') || string.endsWith('메잉') || string.endsWith('아니')) {
             showMain();
+        }else if (string.endsWith('로그아웃')) {
+            showLogout();
         }
     }
 
