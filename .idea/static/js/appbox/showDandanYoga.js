@@ -1,6 +1,6 @@
 function showDandanYoga(){
 
-    $("#div_main").hide();
+    $("#div_main").show();
     $("#div_dandan").show();
 
     $("#emoticon").show();

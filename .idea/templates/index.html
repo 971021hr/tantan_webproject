@@ -62,8 +62,12 @@
                         $("#step").load("static/exercise_step.txt");
                         $("#name").load("static/video_name.txt", function(response) {
                             var videoname = response
-                            // var videoname = document.getElementById("name").value();
-                            document.getElementById("realvideo").innerHTML = "<video src='static/video/" + videoname + ".mp4'" + " width='780' height='780' autoplay loop muted></video>";
+                            if (videoname == 'info'){
+                                document.getElementById("realvideo").innerHTML = "<img src='static/img/" + videoname + ".png'" + " width='780' height='780'></img>";
+                            }else{
+                                // var videoname = document.getElementById("name").value();
+                                document.getElementById("realvideo").innerHTML = "<video src='static/video/" + videoname + ".mp4'" + " width='780' height='780' autoplay loop muted></video>";
+                            }
                         });
                     }, 3000);
 
@@ -164,8 +168,9 @@
     </div>
 
     <div id="boxCenter">
-        <div id="div_main">
-
+        <div id="div_main" style="display: none; font-family: 'Jua', sans-serif; font-size: 30px;">
+            <p>다음 운동으로 넘어가고 싶다면 머리 위에 X자 표시를 해주세요.</p>
+            <p>중간에 운동을 끝마치고 싶다면 '종료'라고 말해주세요.</p>
         </div>
 
         <div id="div_subway" style="display: none" class="div_subway">
@@ -198,6 +203,7 @@
         </div>
 
         <div id="exerciselist" style="display: none;">
+            <span id="mirror_2m" style="font-family: 'Jua', sans-serif; font-size: 30px; margin-top: 30px">거울에서 2미터 떨어진 상태에서 운동을 시작해주세요.</span>
             <div style="display: flex; justify-content: center; margin-top: 100px">
                 <button onclick="showDandanUp()" id="circle1" style="color: #ffffff; font-family: 'Jua', sans-serif;">상체</button>
                 <button onclick="showDandan()" id="circle1" style="color: #ffffff; font-family: 'Jua', sans-serif;">하체</button>
@@ -207,6 +213,16 @@
                 <button onclick="showDandanYoga()" id="circle1" style="color: #ffffff; font-family: 'Jua', sans-serif;">요가</button>
             </div>
         </div>
+        <span id="list_tf" style="display: none;">{{ ex_result[6] }}</span>
+        <script>
+            var x = document.getElementById("exerciselist");
+            var y = document.getElementById("list_tf").innerText;
+            if (y == "True") {
+                x.style.display = 'none';
+            } else {
+                x.style.display = 'inline';
+            }
+        </script>
 
         <div id="div_dandan">
 

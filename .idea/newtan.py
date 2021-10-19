@@ -38,7 +38,7 @@ new_pw = ""
 userEmail = ""
 sec = 200
 variable = 000000
-ex_result = ["", 0, 0, "", 0, "True"]
+ex_result = ["", 0, 0, "", 0, "True", "True"]
 ex_total_time = ""
 good_score=[]
 bad_score=[]
@@ -87,6 +87,7 @@ def index():
     global new_pw, userEmail
     ex_result[4] = 0
     ex_result[5] = "True"
+    ex_result[6] = "True"
 
     if(new_pw != ""):
         sql = "SELECT userEmail FROM tantanDB.connectTB WHERE randomNum = " + new_pw # 실행할 SQL문
@@ -98,6 +99,14 @@ def index():
 
     return render_template('index.html', variable=variable, ex_result=ex_result, userEmail=userEmail)
 
+@app.route('/list')
+def list():
+
+    ex_result[4] = 0
+    ex_result[6] = "False"
+
+    return render_template('index.html', variable=variable, ex_result=ex_result, userEmail=userEmail)
+
 @app.route('/connect')
 def connect():
     conn, cursor = connect_RDS(host,port,username,password,database)
@@ -106,6 +115,7 @@ def connect():
 
     global new_pw, userEmail
     ex_result[5] = "False"
+    ex_result[6] = "True"
 
     if(new_pw == ""):
         for i in range(new_pw_len):
@@ -136,6 +146,7 @@ def logout():
 
     global new_pw, userEmail
     ex_result[5] = "False"
+    ex_result[6] = "True"
     new_pw = ""
     userEmail = ""
 
@@ -192,6 +203,7 @@ def my_link(name):
 
     exCnt = ""
     global game
+    ex_result[6] = "True"
 
     # colors for drawing different bodies
     SKELETON_COLORS = [pygame.color.THECOLORS["red"],
@@ -553,6 +565,15 @@ def my_link(name):
                 pygame.display.update()
             except:
                 pass
+
+        def run_info(self):
+            f = open("static/video_name.txt", 'w')
+            f.write("info")
+            f.close()
+
+            time.sleep(3)
+
+            self.run_squat()
 
         def run_squat(self):
             self.currPress = "Squat"
@@ -1712,6 +1733,15 @@ def my_link(name):
             except:
                 pass
 
+        def run_info(self):
+            f = open("static/video_name.txt", 'w')
+            f.write("info")
+            f.close()
+
+            time.sleep(3)
+
+            self.run_lpd()
+
         def run_lpd(self):
             f = open("static/video_name.txt", 'w')
             f.write("letpulldown")
@@ -2712,6 +2742,14 @@ def my_link(name):
             except:
                 pass
 
+        def run_info(self):
+            f = open("static/video_name.txt", 'w')
+            f.write("info")
+            f.close()
+
+            time.sleep(3)
+
+            self.run_side()
 
         def run_side(self):
             right_handCnt.clear()
@@ -3768,6 +3806,15 @@ def my_link(name):
             except:
                 pass
 
+        def run_info(self):
+            f = open("static/yoga_name.txt", 'w')
+            f.write("info")
+            f.close()
+
+            time.sleep(3)
+
+            self.run_standside()
+
         #1
         def run_standside(self):
             left_YStandCnt = []
@@ -4654,21 +4701,27 @@ def my_link(name):
     if name == "하체" :
         print("하체루틴을 실행합니다.")
         game = GameRuntime_leg_routine()
-        game.run_squat()
+        game.run_info()
     elif name == "상체" :
         print("상체루틴을 실행합니다.")
         game = GameRuntime_upperBodyRoutine()
-        game.run_lpd()
+        game.run_info()
     elif name == "전신":
         print("전신루틴을 실행합니다.")
         game = GameRuntime_WholeBodyRoutine()
-        game.run_side()
+        game.run_info()
     elif name == "요가":
         print("요가루틴을 실행합니다.")
         game = GameRuntime_yoga()
-        game.run_standside()
+        game.run_info()
     elif name == "종료":
         print("운동을 종료합니다.")
+        f = open("static/video_name.txt", 'w')
+        f.write("info")
+        f.close()
+        f = open("static/yoga_name.txt", 'w')
+        f.write("info")
+        f.close()
         game._done = True
         game._kinect.close()
         pygame.quit()

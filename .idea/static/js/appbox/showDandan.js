@@ -1,7 +1,15 @@
 function showDandan(){
 
-    $("#div_main").hide();
+    $("#div_main").show();
     $("#div_dandan").show();
+
+    //운동 리스트 hide
+    $("#exerciselist").hide();
+    $("#circle1").hide();
+    $("#circle2").hide();
+    $("#circle3").hide();
+    $("#circle4").hide();
+    $("#mirror_2m").hide();
 
     $("#emoticon").show();
     $("#step").show();

@@ -14,7 +14,6 @@ function showConnect(){
     <!--21.04.15 speech test end-->
 }
 
-
 function page_connect(){
     location.href="/connect";
 }

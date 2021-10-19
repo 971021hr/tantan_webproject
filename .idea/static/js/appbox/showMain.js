@@ -1,6 +1,6 @@
 function showMain(){
 
-    $("#div_main").show();
+    $("#div_main").hide();
 
     //connect hide
     $("#connect").hide();

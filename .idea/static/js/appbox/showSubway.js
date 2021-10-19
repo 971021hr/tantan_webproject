@@ -58,4 +58,12 @@ function showSubway(){
     $("#div_dandan").hide();
     $("#div_speech").hide();
     $("#div_dandan_squat").hide();
+
+    //운동 리스트 hide
+    $("#exerciselist").hide();
+    $("#circle1").hide();
+    $("#circle2").hide();
+    $("#circle3").hide();
+    $("#circle4").hide();
+    $("#mirror_2m").hide();
 }
