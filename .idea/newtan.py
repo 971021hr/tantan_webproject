@@ -36,6 +36,7 @@ app = Flask(__name__)
 new_pw_len = 6
 new_pw = ""
 userEmail = ""
+userName = ""
 sec = 200
 variable = 000000
 ex_result = ["", 0, 0, "", 0, "True", "True"]
@@ -84,7 +85,7 @@ def login(variable):
 def index():
     conn, cursor = connect_RDS(host,port,username,password,database)
 
-    global new_pw, userEmail
+    global new_pw, userEmail, userName
     ex_result[4] = 0
     ex_result[5] = "True"
     ex_result[6] = "True"
@@ -95,9 +96,17 @@ def index():
         result = cursor.fetchone()
         userEmail = result[0]
         conn.commit()
-        conn.close()
 
-    return render_template('index.html', variable=variable, ex_result=ex_result, userEmail=userEmail)
+        if(userEmail != ""):
+            sql2 = "SELECT userName FROM tantanDB.userTB WHERE userEmail = '" + userEmail + "'"
+            cursor.execute(sql2)
+            result = cursor.fetchone()
+            userName = result[0]
+            conn.commit()
+
+    conn.close()
+
+    return render_template('index.html', variable=variable, ex_result=ex_result, userEmail=userEmail, userName=userName)
 
 @app.route('/list')
 def list():
@@ -106,7 +115,7 @@ def list():
     ex_result[5] = "True"
     ex_result[6] = "False"
 
-    return render_template('index.html', variable=variable, ex_result=ex_result, userEmail=userEmail)
+    return render_template('index.html', variable=variable, ex_result=ex_result, userEmail=userEmail, userName=userName)
 
 @app.route('/connect')
 def connect():
@@ -114,7 +123,7 @@ def connect():
 
     print("랜덤 숫자", string.digits)
 
-    global new_pw, userEmail
+    global new_pw, userEmail, userName
     ex_result[4] = 0
     ex_result[5] = "False"
     ex_result[6] = "True"
@@ -135,10 +144,17 @@ def connect():
         userEmail = result[0]
         conn.commit()
 
+        if(userEmail != ""):
+            sql2 = "SELECT userName FROM tantanDB.userTB WHERE userEmail = '" + userEmail + "'"
+            cursor.execute(sql2)
+            result = cursor.fetchone()
+            userName = result[0]
+            conn.commit()
+
     print("\n생성된 랜덤 비밀번호", new_pw)
     conn.close()
 
-    return render_template('index.html', variable=new_pw, ex_result=ex_result, userEmail=userEmail)
+    return render_template('index.html', variable=new_pw, ex_result=ex_result, userEmail=userEmail, userName=userName)
 
 @app.route('/logout')
 def logout():
@@ -152,6 +168,7 @@ def logout():
     ex_result[6] = "True"
     new_pw = ""
     userEmail = ""
+    userName = ""
 
     for i in range(new_pw_len):
         new_pw += random.choice(string.digits)
@@ -164,7 +181,7 @@ def logout():
     print("\n생성된 랜덤 비밀번호", new_pw)
     conn.close()
 
-    return render_template('index.html', variable=new_pw, ex_result=ex_result, userEmail=userEmail)
+    return render_template('index.html', variable=new_pw, ex_result=ex_result, userEmail=userEmail, userName=userName)
 
 @app.route('/my-link/<name>')
 def my_link(name):
@@ -4729,7 +4746,7 @@ def my_link(name):
         game._kinect.close()
         pygame.quit()
 
-    return render_template('index.html', variable=variable, ex_result = ex_result, userEmail=userEmail)
+    return render_template('index.html', variable=variable, ex_result = ex_result, userEmail=userEmail, userName=userName)
 
 if __name__ == '__main__':
     # server = Server(app.wsgi_app)
