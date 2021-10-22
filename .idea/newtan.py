@@ -103,6 +103,7 @@ def index():
 def list():
 
     ex_result[4] = 0
+    ex_result[5] = "True"
     ex_result[6] = "False"
 
     return render_template('index.html', variable=variable, ex_result=ex_result, userEmail=userEmail)
@@ -114,6 +115,7 @@ def connect():
     print("랜덤 숫자", string.digits)
 
     global new_pw, userEmail
+    ex_result[4] = 0
     ex_result[5] = "False"
     ex_result[6] = "True"
 
@@ -145,6 +147,7 @@ def logout():
     print("랜덤 숫자", string.digits)
 
     global new_pw, userEmail
+    ex_result[4] = 0
     ex_result[5] = "False"
     ex_result[6] = "True"
     new_pw = ""
