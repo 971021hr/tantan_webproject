@@ -43,7 +43,7 @@
 
 
 ## 프로젝트 구조
-![프로젝트 흐름도](https://user-images.githubusercontent.com/31493835/139018333-284b23c8-17b4-4f99-88de-598ae87060a6.png)
+![프로젝트 구조](https://user-images.githubusercontent.com/57987459/139219376-142b04fb-0c46-4f2f-a11a-f2bc3d37a85a.png)
 - 전체적인 프로젝트 흐름은 다음과 같습니다. 
 - 현재 깃은 스마트 미러 웹 페이지만 다루고 있으며 안드로이드와 관련한 깃은 하단 링크를 참조해주시길 바랍니다.
 > https://github.com/971021hr/dandan_app_final
