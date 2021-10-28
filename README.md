@@ -54,7 +54,7 @@
 ## 스마트미러 동작 영상
 
 ## API
-- 미세먼지 http://openapi.seoul.go.kr:8088/(개인 인증키)/json/RealtimeCityAir/1/99
+- 미세먼지 http://openapi.seoul.go.kr:8088/ (개인 인증키) /json/RealtimeCityAir/1/99
 - 지하철 http://swopenapi.seoul.go.kr/api/subway/
 - 구글 캘린더 
 - 음성인식 웹스피치API
