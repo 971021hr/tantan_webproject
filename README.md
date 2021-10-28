@@ -52,6 +52,7 @@
 ![스마트미러 설계도](https://user-images.githubusercontent.com/57987459/139213043-55874919-cc77-48f1-8fbc-73927d299621.png)
 
 ## 스마트미러 하드웨어
+![스마트미러 실제사진](https://user-images.githubusercontent.com/57987459/139213435-e129c327-698b-4d6a-a106-7e0e59e0bc26.png)
 
 ## 스마트미러 동작 영상
 
