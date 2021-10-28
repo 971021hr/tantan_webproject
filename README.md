@@ -55,6 +55,7 @@
 ![스마트미러 실제사진](https://user-images.githubusercontent.com/57987459/139213435-e129c327-698b-4d6a-a106-7e0e59e0bc26.png)
 
 ## 스마트미러 동작 영상
+[프로젝트 영상 보러가기](https://youtu.be/Zfjd85sxkeU)
 
 ## API
 - 미세먼지 http://openapi.seoul.go.kr:8088/ (개인 인증키) /json/RealtimeCityAir/1/99
