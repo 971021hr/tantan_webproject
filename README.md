@@ -48,6 +48,7 @@
 > https://github.com/971021hr/dandan_app_final
 
 ## 스마트미러 하드웨어 설계도
+![스마트미러 설계도](https://user-images.githubusercontent.com/57987459/139213043-55874919-cc77-48f1-8fbc-73927d299621.png)
 
 ## 스마트미러 하드웨어
 
