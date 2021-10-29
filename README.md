@@ -56,6 +56,8 @@
 
 ## 키넥트 관절 인식
 <img width="721" alt="키넥트_요가" src="https://user-images.githubusercontent.com/57987459/139360213-e8d9649f-4f0e-4972-b2e4-4a5cf7f659b9.png">
+키넥트 설치 참고 자료 : https://github.com/Kinect/PyKinect2
+키넥트 인식 참고 자료 : https://github.com/dondongwon/kinect-exercise-detection
 
 ## api
 - 미세먼지 http://openapi.seoul.go.kr:8088/ (개인 인증키) /json/RealtimeCityAir/1/99
