@@ -1,6 +1,19 @@
 #BodyGame from GitHub draws skeletons (https://github.com/Kinect/PyKinect2/blob/master/examples/PyKinectBodyGame.py)
 # -*- coding:UTF-8 -*-
 
+# 하체운동1 - 스쿼트
+# 하체운동2 - 힙
+# 하체운동3 - 런지
+# 상체운동1 - 렛풀다운
+# 상체운동2 - 킥백
+# 상체운동3 - 사이드레터럴레이즈
+# 전신운동1 - 사이드 킥
+# 전신운동2 - 니킥
+# 전신운동3 - 와이드 스쿼트
+# 요가1 - 스탠드 사이드
+# 요가2 - 스탠드 요가
+# 요가3 - 사이드 다운 요가
+
 from flask import Flask, render_template
 from numpy import arccos, double
 from numpy.lib import r_, select, setdiff1d
@@ -266,7 +279,8 @@ def my_link(name):
         Angle = np.arccos(temp)
         Angle = Angle*(180 / math.pi)
 
-        return Angle + 180 if Angle > 180 else Angle
+        # return Angle + 180 if Angle > 180 else Angle
+        return Angle
 
     def text_objects(text,font, color = (0,0,0)):
         textSurface = font.render(text, True, color)
@@ -340,6 +354,7 @@ def my_link(name):
         print(date.today().isoformat())
         return times_m, times_s
 
+    # 하체운동
     class GameRuntime_leg_routine(object):
         def __init__(self):
             pygame.init()
@@ -595,6 +610,7 @@ def my_link(name):
 
             self.run_squat()
 
+        # 하체운동1 - 스쿼트
         def run_squat(self):
             self.currPress = "Squat"
 
@@ -823,12 +839,13 @@ def my_link(name):
                     else :
                         ex_result[4] = score
                 else:
-                    ex_result[4] = 100
+                    ex_result[4] = 0
 
             # Close our Kinect sensor, close the window and quit.
             self._kinect.close()
             pygame.quit()
 
+        # 하체운동2 - 힙
         def run_hip(self):
             self.currPress = "Hip"
 
@@ -1117,6 +1134,7 @@ def my_link(name):
             self._kinect.close()
             pygame.quit()
 
+        # 하체운동3 - 런지
         def run_lunge(self):
             self.currPress = "Lunge"
 
@@ -1462,7 +1480,7 @@ def my_link(name):
             pygame.quit()
 
 
-
+    # 상체운동
     class GameRuntime_upperBodyRoutine(object):
         def __init__(self):
             pygame.init()
@@ -1762,6 +1780,7 @@ def my_link(name):
 
             self.run_lpd()
 
+        # 상체운동1 - 렛풀다운
         def run_lpd(self):
             f = open("static/video_name.txt", 'w')
             f.write("letpulldown")
@@ -1980,6 +1999,7 @@ def my_link(name):
             self._kinect.close()
             # pygame.quit()
 
+        # 상체운동2 - 킥백
         def run_kickBack(self):
             self.currPress = "KickBack"
 
@@ -2211,6 +2231,7 @@ def my_link(name):
             self._kinect.close()
             # pygame.quit()
 
+        # 상체운동3 - 사이드레터럴레이즈
         def run_slr(self):
             self.currPress = "SideLateralRaise"
 
@@ -2498,6 +2519,7 @@ def my_link(name):
             self._kinect.close()
             pygame.quit()
 
+    # 전신운동
     class GameRuntime_WholeBodyRoutine(object):
         def __init__(self):
             pygame.init()
@@ -2771,6 +2793,7 @@ def my_link(name):
 
             self.run_side()
 
+        # 전신운동1 - 사이드 킥
         def run_side(self):
             right_handCnt.clear()
             left_handCnt.clear()
@@ -2916,7 +2939,7 @@ def my_link(name):
 
                                 # start point
                                 # 왼쪽 손목과 오른쪽 손목이 spineShould Y보다 높을 경우 moveDetected를 True로 변경
-                                if (leftWristY > spineShouldY and rightWristY > spineShouldY):
+                                if (abs(leftElbowY -spineBaseY) >= 0.2):
                                     self.moveDetected = True
                                     if  abs(leftWristX - rightWristX) < 0.1:
                                         self.wristXList.append(self.curX[0])
@@ -2931,7 +2954,7 @@ def my_link(name):
                                         else :
 
                                             #왼쪽 사이드 밤 성공조건
-                                            if (Left_Arms_angle <= 105 and Right_Arms_angle <= 105 and Left_Knee_angle <= 100 and Right_Knee_angle >= 160 and leftKneeY > spineBaseY) :
+                                            if (Left_Arms_angle <= 105 and Right_Arms_angle <= 135 and Left_Knee_angle <= 120 and Right_Knee_angle >= 160 and abs(leftKneeY - spineBaseY) <= 0.2) :
 
                                                 if side_status == True:
                                                     goodCnt.append(1)
@@ -2965,7 +2988,7 @@ def my_link(name):
                                                 emoticonFile("cry")
 
                                                 # 무릎을 더 높게 올려주세요
-                                                if leftKneeY < spineBaseY:
+                                                if abs(leftKneeY - spineBaseY) > 0.2:
                                                     emoticonFile("cry")
                                                     print("무릎을 더 높게 올려주세요")
                                                     fix = "Knee came too forward"
@@ -2993,7 +3016,7 @@ def my_link(name):
 
                                             else :
                                                 #오른쪽 사이드 밤 성공조건
-                                                if (Left_Arms_angle <= 105 and Right_Arms_angle <= 105 and Right_Knee_angle <= 100 and Left_Knee_angle >= 160 and rightKneeY > spineBaseY) :
+                                                if (Left_Arms_angle <= 135 and Right_Arms_angle <= 105 and Right_Knee_angle <= 120 and Left_Knee_angle >= 160 and abs(rightKneeY - spineBaseY) <= 0.2) :
 
                                                     if side_status == True:
                                                         goodCnt.append(1)
@@ -3027,7 +3050,7 @@ def my_link(name):
                                                     feedbackFile("자세가 바르지 않아요.")
 
                                                     # 무릎을 더 높게 올려주세요
-                                                    if abs(rightKneeY) < abs(spineBaseY):
+                                                    if abs(rightKneeY - spineBaseY) > 0.2:
                                                         emoticonFile("cry")
                                                         print("무릎을 더 높게 올려주세요")
                                                         fix = "Knee came too forward"
@@ -3066,6 +3089,7 @@ def my_link(name):
             self._kinect.close()
             pygame.quit()
 
+        # 전신운동2 - 니킥
         def run_kneekick(self):
             self.currPress = "KneeKick"
 
@@ -3077,6 +3101,7 @@ def my_link(name):
             global exCnt
             global endtime
             nextRoutine = True
+            squat_status = True
             right_handCnt.clear()
             left_handCnt.clear()
 
@@ -3220,7 +3245,7 @@ def my_link(name):
 
                                         else :
                                             print("success 무릎 - 팔꿈치 : ", abs(rightKneeY - leftElbowY))
-                                            if (abs(rightKneeY - leftElbowY)) <= 0.3 :
+                                            if (abs(rightKneeY - leftElbowY)) <= 0.5 :
                                                 if squat_status == True:
                                                     goodCnt.append(1)
                                                 print("good cnt > ",len(goodCnt))
@@ -3277,7 +3302,7 @@ def my_link(name):
 
                                             else :
                                                 print("success 무릎 - 팔꿈치 : ", abs(leftKneeY - rightElbowY))
-                                                if (abs(leftKneeY - rightElbowY)) <= 0.3 :
+                                                if (abs(leftKneeY - rightElbowY)) <= 0.5 :
                                                     if squat_status == True:
                                                         goodCnt.append(1)
                                                     print("good cnt > ",len(goodCnt))
@@ -3335,6 +3360,7 @@ def my_link(name):
             self._kinect.close()
             pygame.quit()
 
+        # 전신운동3 - 와이드 스쿼트
         def run_squat(self):
             self.currPress = "WideSquat"
 
@@ -3578,6 +3604,7 @@ def my_link(name):
             self._kinect.close()
             pygame.quit()
 
+    # 요가운동
     class GameRuntime_yoga(object):
         def __init__(self):
             pygame.init()
@@ -3835,7 +3862,7 @@ def my_link(name):
 
             self.run_standside()
 
-        #1
+        # 요가1 - 스탠드 사이드
         def run_standside(self):
             left_YStandCnt = []
             right_YStandCnt = []
@@ -4112,7 +4139,7 @@ def my_link(name):
             self._kinect.close()
             pygame.quit()
 
-        #2
+        # 요가2 - 스탠드 요가
         def run_stand(self):
             self.currPress = "Yoga_Stand"
 
@@ -4414,7 +4441,7 @@ def my_link(name):
             self._kinect.close()
             pygame.quit()
 
-        #3
+        # 요가3 - 사이드 다운 요가
         def run_side(self):
             self.currPress = "Yoga_Side"
 
