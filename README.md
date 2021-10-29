@@ -55,7 +55,7 @@
 ![스마트미러 실제사진](https://user-images.githubusercontent.com/57987459/139213435-e129c327-698b-4d6a-a106-7e0e59e0bc26.png)
 
 ## 키넥트 관절 인식
-<img width="721" alt="키넥트_요가" src="https://user-images.githubusercontent.com/57987459/139360213-e8d9649f-4f0e-4972-b2e4-4a5cf7f659b9.png">
+<img width="721" alt="키넥트_요가" src="https://user-images.githubusercontent.com/57987459/139360213-e8d9649f-4f0e-4972-b2e4-4a5cf7f659b9.png"><br>
 - 키넥트 설치 참고 자료 : https://github.com/Kinect/PyKinect2 <br>
 - 키넥트 인식 참고 자료 : https://github.com/dondongwon/kinect-exercise-detection
 
