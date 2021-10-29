@@ -61,7 +61,7 @@
 - 키넥트 인식 참고 자료 : https://github.com/dondongwon/kinect-exercise-detection
 
 ## 키넥트 각도 계산
-<img width="721" alt="키넥트_요가" src="https://user-images.githubusercontent.com/57987459/139360213-e8d9649f-4f0e-4972-b2e4-4a5cf7f659b9.png"><br>
+<img width="333" alt="각도 계산 코드" src="https://user-images.githubusercontent.com/57987459/139363176-34220852-b89e-4324-8f72-0bdd707491ab.PNG"><br>
 
 ## api
 - 미세먼지 http://openapi.seoul.go.kr:8088/ (개인 인증키) /json/RealtimeCityAir/1/99
