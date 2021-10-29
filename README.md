@@ -62,7 +62,20 @@
 
 ## 키넥트 각도 계산
 ![키넥트 각도 계산](https://user-images.githubusercontent.com/57987459/139363288-188440de-d3c3-4ff7-9739-0e454c62b60a.png)<br>
-<img width="333" alt="각도 계산 코드" src="https://user-images.githubusercontent.com/57987459/139363176-34220852-b89e-4324-8f72-0bdd707491ab.PNG">
+~~~
+def get_angle_v3(p1_1, p1_2, p2_1, p2_2, p3_1, p3_2):
+        a = math.sqrt(pow(p1_1-p3_1,2) + pow(p1_2-p3_2, 2))
+        b = math.sqrt(pow(p1_1-p2_1,2) + pow(p1_2-p2_2, 2))
+        c = math.sqrt(pow(p2_1-p3_1,2) + pow(p2_2-p3_2, 2))
+
+        temp = (pow(b,2) + pow(c,2) - pow(a,2))/(2*b*c)
+
+        Angle = np.arccos(temp)
+        Angle = Angle*(180 / math.pi)
+
+        return Angle + 180 if Angle > 180 else Angle
+~~~<br>
+- 
 
 
 ## api
