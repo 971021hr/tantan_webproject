@@ -17,7 +17,8 @@
 [7. 스마트미러 하드웨어 설계도](#스마트미러-하드웨어-설계도)<br>
 [8. 스마트미러 하드웨어](#스마트미러-하드웨어)<br>
 [9. 키넥트 관절 인식](#키넥트-관절-인식)<br>
-[10. api](#api)<br>
+[10. 키넥트 각도 계산](#키넥트-각도-계산)<br>
+[11. api](#api)<br>
 
 ## 소개
 - IoT 시스템 기반 스마트미러로 거울에 인공지능 서비스를 접목하여 음성인식으로 빠른 시간 안에 원하는 정보를 얻을 수 있습니다.
@@ -58,6 +59,9 @@
 <img width="721" alt="키넥트_요가" src="https://user-images.githubusercontent.com/57987459/139360213-e8d9649f-4f0e-4972-b2e4-4a5cf7f659b9.png"><br>
 - 키넥트 설치 참고 자료 : https://github.com/Kinect/PyKinect2 <br>
 - 키넥트 인식 참고 자료 : https://github.com/dondongwon/kinect-exercise-detection
+
+## 키넥트 각도 계산
+<img width="721" alt="키넥트_요가" src="https://user-images.githubusercontent.com/57987459/139360213-e8d9649f-4f0e-4972-b2e4-4a5cf7f659b9.png"><br>
 
 ## api
 - 미세먼지 http://openapi.seoul.go.kr:8088/ (개인 인증키) /json/RealtimeCityAir/1/99
