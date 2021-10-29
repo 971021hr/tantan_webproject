@@ -73,7 +73,7 @@ def get_angle_v3(p1_1, p1_2, p2_1, p2_2, p3_1, p3_2):
         Angle = np.arccos(temp)
         Angle = Angle*(180 / math.pi)
 
-        return Angle + 180 if Angle > 180 else Angle
+        return Angle
 ~~~
 - 
 
