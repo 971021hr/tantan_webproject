@@ -62,7 +62,7 @@
 
 ## 키넥트 각도 계산
 ![키넥트 각도 계산](https://user-images.githubusercontent.com/57987459/139363288-188440de-d3c3-4ff7-9739-0e454c62b60a.png)<br>
-~~~
+``` python
 def get_angle_v3(p1_1, p1_2, p2_1, p2_2, p3_1, p3_2):
         a = math.sqrt(pow(p1_1-p3_1,2) + pow(p1_2-p3_2, 2))
         b = math.sqrt(pow(p1_1-p2_1,2) + pow(p1_2-p2_2, 2))
@@ -74,7 +74,7 @@ def get_angle_v3(p1_1, p1_2, p2_1, p2_2, p3_1, p3_2):
         Angle = Angle*(180 / math.pi)
 
         return Angle
-~~~
+```
 - 
 
 
