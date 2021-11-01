@@ -50,7 +50,7 @@
 > https://github.com/971021hr/dandan_app_final
 
 ## 스마트미러 하드웨어 설계도
-![스마트미러 설계도](https://user-images.githubusercontent.com/57987459/139213043-55874919-cc77-48f1-8fbc-73927d299621.png)
+<img width="721" alt="키넥트_요가" src="https://user-images.githubusercontent.com/57987459/139213043-55874919-cc77-48f1-8fbc-73927d299621.png"><br>
 
 ## 스마트미러 하드웨어
 ![스마트미러 실제사진](https://user-images.githubusercontent.com/57987459/139213435-e129c327-698b-4d6a-a106-7e0e59e0bc26.png)
@@ -62,7 +62,7 @@
 
 ## 키넥트 각도 계산
 ![키넥트 각도 계산](https://user-images.githubusercontent.com/57987459/139363288-188440de-d3c3-4ff7-9739-0e454c62b60a.png)<br>
-~~~
+``` python
 def get_angle_v3(p1_1, p1_2, p2_1, p2_2, p3_1, p3_2):
         a = math.sqrt(pow(p1_1-p3_1,2) + pow(p1_2-p3_2, 2))
         b = math.sqrt(pow(p1_1-p2_1,2) + pow(p1_2-p2_2, 2))
@@ -74,8 +74,8 @@ def get_angle_v3(p1_1, p1_2, p2_1, p2_2, p3_1, p3_2):
         Angle = Angle*(180 / math.pi)
 
         return Angle
-~~~
-- 
+```
+- 관절의 좌표값을 가져와 코싸인과 역코싸인을 통해 각도를 계산하였다. 
 
 
 ## api
