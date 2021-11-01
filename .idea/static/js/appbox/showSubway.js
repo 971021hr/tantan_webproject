@@ -1,5 +1,5 @@
 
-const SUBWAY_KEY = '6441514e666872393130375077635a49';
+const SUBWAY_KEY = 'SUBWAY_KEY';
 const TYPE = 'json';
 const SERVICE = 'realtimeStationArrival';
 const START_INDEX = 0;

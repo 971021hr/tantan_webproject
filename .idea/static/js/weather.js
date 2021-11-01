@@ -1,5 +1,5 @@
 // 전역 변수 - api키 발급받아서 사용하기
-const WEATHER_KEY = '2b158b5fc703abf1e0b455e7d5100f13';
+const WEATHER_KEY = 'WEATHER_KEY';
 // 변수
 const
     //weatherIcon = document.querySelector('#weatherIcon'),

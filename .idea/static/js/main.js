@@ -131,17 +131,17 @@ $(document).ready(function (){
         }else if (string.endsWith('달력')){
             showCalendar();
         }
-        else if (string.endsWith('connect') || string.endsWith('연동')) {
+        else if (string.endsWith('연결') || string.endsWith('연동')) {
             showConnect();
         }
-        else if (string.endsWith('단단')) {
+        else if (string.endsWith('단단') || string.endsWith('운동')) {
             showDandanList();
         }
         else if (string.endsWith('하체') || string.endsWith('합체')) {
             showDandan();
         }else if (string.endsWith('상체') || string.endsWith('상태')){
             showDandanUp();
-        }else if (string.endsWith('그만') || string.endsWith('구만')){
+        }else if (string.endsWith('그만') || string.endsWith('종료')){
             showDandanQuit();
         }else if (string.endsWith('전신')){
             showDandanWhole();

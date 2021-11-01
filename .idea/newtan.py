@@ -46,24 +46,24 @@ sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding = 'utf-8')
 
 app = Flask(__name__)
 
-new_pw_len = 6
-new_pw = ""
-userEmail = ""
-userName = ""
-sec = 200
-variable = 000000
-ex_result = ["", 0, 0, "", 0, "True", "True"]
-ex_total_time = ""
-good_score=[]
-bad_score=[]
+new_pw_len = 6 # new_pw (랜덤숫자) 길이
+new_pw = "" # new_pw (랜덤숫자) 전역변수
+userEmail = "" # userEmail 전역변수
+userName = "" # userName 전역변수
+sec = 0 # sec 전역변수
+variable = 000000 # 연결에 사용될 랜덤 숫자 6자리
+good_score=[] # 좋아요 점수
+bad_score=[] # 피드백 점수
+ex_result = ["", 0, 0, "", 0, "True", "True"] # 운동이름, 운동시간_분, 운동시간_초, 운동단계, 운동점수, 연결화면_유무, 운동목록화면_유무
 
-#mysql 연동
-host = "database-1.cj61bbiht7nz.us-east-2.rds.amazonaws.com"
+# mysql 연동
+host = "aws-url"
 port = 3306
-username = "tantan_db"
-database = "tantanDB"
-password = "tantan21!"
+username = "username"
+database = "dbname"
+password = "password"
 
+# DB 연결
 def connect_RDS(host,port,username,password,database):
     try:
         conn = pymysql.connect(host=host,user=username,passwd = password,db=database, port=port,use_unicode=True,charset ='utf8')
@@ -75,7 +75,7 @@ def connect_RDS(host,port,username,password,database):
 
     return conn,curcor
 
-#login=============================
+# DB에서 userEmail 가져오기
 def login(variable):
     if variable != "":
         conn, cursor = connect_RDS(host,port,username,password,database)
@@ -94,6 +94,7 @@ def login(variable):
         conn.commit()
         conn.close()
 
+# 메인화면
 @app.route('/')
 def index():
     conn, cursor = connect_RDS(host,port,username,password,database)
@@ -104,7 +105,7 @@ def index():
     ex_result[6] = "True"
 
     if(new_pw != ""):
-        sql = "SELECT userEmail FROM tantanDB.connectTB WHERE randomNum = " + new_pw # 실행할 SQL문
+        sql = "SELECT userEmail FROM tantanDB.connectTB WHERE randomNum = " + new_pw
         cursor.execute(sql)
         result = cursor.fetchone()
         userEmail = result[0]
@@ -121,6 +122,7 @@ def index():
 
     return render_template('index.html', variable=variable, ex_result=ex_result, userEmail=userEmail, userName=userName)
 
+# 운동목록화면
 @app.route('/list')
 def list():
 
@@ -130,6 +132,7 @@ def list():
 
     return render_template('index.html', variable=variable, ex_result=ex_result, userEmail=userEmail, userName=userName)
 
+# 연결화면
 @app.route('/connect')
 def connect():
     conn, cursor = connect_RDS(host,port,username,password,database)
@@ -169,6 +172,7 @@ def connect():
 
     return render_template('index.html', variable=new_pw, ex_result=ex_result, userEmail=userEmail, userName=userName)
 
+# 로그아웃시 연결화면
 @app.route('/logout')
 def logout():
     conn, cursor = connect_RDS(host,port,username,password,database)
@@ -196,14 +200,10 @@ def logout():
 
     return render_template('index.html', variable=new_pw, ex_result=ex_result, userEmail=userEmail, userName=userName)
 
+# 운동화면
 @app.route('/my-link/<name>')
 def my_link(name):
 
-    #==================================
-    #BodyGame from GitHub draws skeletons (https://github.com/Kinect/PyKinect2/blob/master/examples/PyKinectBodyGame.py)
-    # -*- coding:UTF-8 -*-
-
-    #==================================
     pose_list = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32]
     action_status = True
     action_count = [0,0,0]
@@ -247,7 +247,7 @@ def my_link(name):
                         pygame.color.THECOLORS["yellow"],
                         pygame.color.THECOLORS["violet"]]
 
-    #add_run===========================
+    # 운동데이터 DB 입력
     def addrun(variable):
         runTime_m, runTime_s =  time_calculate()
         ex_result[1] = runTime_m
@@ -268,7 +268,7 @@ def my_link(name):
             conn.commit()
             conn.close()
 
-    #==================================
+    # 관절 각도 계산
     def get_angle_v3(p1_1, p1_2, p2_1, p2_2, p3_1, p3_2):
         a = math.sqrt(pow(p1_1-p3_1,2) + pow(p1_2-p3_2, 2))
         b = math.sqrt(pow(p1_1-p2_1,2) + pow(p1_2-p2_2, 2))
@@ -315,6 +315,7 @@ def my_link(name):
         with open(path, "wt") as f:
             f.write(contents)
 
+    # 운동횟수 입력
     def cntsavedFile(contents):
         with open("static/cnt_saved.txt", "wt", encoding="UTF-8") as f:
             if (ex_result[0] == "요가운동"):
@@ -324,21 +325,25 @@ def my_link(name):
                 f.write(contents + "/10회")
                 f.close()
 
+    # 운동 피드백 입력
     def feedbackFile(contents):
         with open("static/feedback.txt", "wt", encoding="UTF-8") as f:
             f.write(contents)
             f.close()
 
+    # 운동단계 입력
     def exercisestepFile(contents):
         with open("static/exercise_step.txt", "wt", encoding="UTF-8") as f:
             f.write(contents)
             f.close()
 
+    # 운동 피드백 이모티콘 입력
     def emoticonFile(contents):
         with open("static/emoticon.txt", "wt") as f:
             f.write(contents)
             f.close()
 
+    # 운동시간 계산
     def time_calculate():
         # print(f"{endtime - starttime:.0f} sec")
         sec = endtime - starttime
@@ -601,6 +606,7 @@ def my_link(name):
             except:
                 pass
 
+        # 운동루틴 시작 전 사용법 화면
         def run_info(self):
             f = open("static/video_name.txt", 'w')
             f.write("info")
@@ -716,20 +722,22 @@ def my_link(name):
                                 self.curY = (leftWristY, leftFootX)
 
                                 # if you put your hands above your head, start hip abduction function.
-
                                 if (abs(leftHandX-rightHandX)<=0.1) and (abs(leftHandY-rightHandY)<=0.1) and (abs(leftHandY-headY)<=0.25) and (abs(leftHandX-headX)<=0.1) and (nextRoutine == True) :
                                     print("start run_hip")
                                     txtCnt = "1st>> " + str(len(squatCnt)) + " / "
                                     exCnt += txtCnt
                                     self.run_hip()
 
+                                # 10회 완료 3초 후 다음 운동 시작
                                 if len(squatCnt) == 10 :
                                     time.sleep(3)
                                     self.run_hip()
 
+                                # 1회 이상 실행 후 다음 운동 실행 가능
                                 if len(squatCnt) > 0 :
                                     nextRoutine = True
 
+                                # 팔이 명치 위로 올라가면 운동 시작으로 인식
                                 if (abs(leftWristY -spineBaseY) >= 0.3):
                                     self.moveDetected = True
                                     if  abs(leftWristX - rightWristX) < 0.1:
@@ -758,7 +766,7 @@ def my_link(name):
                                         emoticonFile("cry")
 
                                     else :
-
+                                        # 올바른 자세일시 goodCnt 증가
                                         if (abs(self.feetList[0] - self.maxKneeX)) <= 0.8 and 70.0 < Left_Knee_angle < 140.0 and 70.0 < Left_Hip_angle:
                                             if squat_status == True:
                                                 goodCnt.append(1)
@@ -781,6 +789,7 @@ def my_link(name):
                                                 cntsavedFile(str(len(squatCnt)))
                                                 squat_status = False
 
+                                        # 잘못된 자세일시 피드백 제공
                                         else:
                                             goodCnt = []
                                             squat_status = True
@@ -832,6 +841,7 @@ def my_link(name):
 
                 self.draw_display()
 
+                # 운동점수 계산
                 if (len(good_score) + len(bad_score) > 0):
                     score = round(((len(good_score)/(len(good_score)+len(bad_score)))*100)*2)
                     if(score >= 100) :
@@ -4727,24 +4737,6 @@ def my_link(name):
             self._kinect.close()
             pygame.quit()
 
-    print("\n ======================================")
-    print("  운동에 해당하는 숫자를 입력해주세요. ")
-    print(" --------------------------------------")
-    print("  1. 하체루틴 실행")
-    print("  ▶ 스쿼트 > 힙 어브덕션 > 런지")
-    print(" --------------------------------------")
-    print("  2. 상체루틴 실행")
-    print("  ▶ 렛풀다운 > 킥백 > 사이드레터럴레이즈")
-    print(" --------------------------------------")
-    print("  3. 전신루틴 실행")
-    print("  ▶ 사이드 밤 > 니 킥 > 와이드 스쿼트")
-    print(" --------------------------------------")
-    print("  4. 요가루틴 실행")
-    print("  ▶ stand side > stand > side")
-    print(" ======================================")
-
-    # selectNum = int(input(">>  "))
-
     if name == "하체" :
         print("하체루틴을 실행합니다.")
         game = GameRuntime_leg_routine()
@@ -4776,6 +4768,4 @@ def my_link(name):
     return render_template('index.html', variable=variable, ex_result = ex_result, userEmail=userEmail, userName=userName)
 
 if __name__ == '__main__':
-    # server = Server(app.wsgi_app)
-    # server.serve()
     app.run(debug=True)

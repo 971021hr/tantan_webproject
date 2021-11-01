@@ -6,7 +6,7 @@ var DUST_INFO3 = '';
 //ajax코드 적기
 $.ajax({
     type: "GET",
-    url: "http://openapi.seoul.go.kr:8088/76615a454a68723937344c71555368/json/RealtimeCityAir/1/99",
+    url: "http://openapi.seoul.go.kr:8088/개인키번호/json/RealtimeCityAir/1/99",
     data: {},
     success: function(response){
         // 도봉구의 미세먼지 값만 가져와보기

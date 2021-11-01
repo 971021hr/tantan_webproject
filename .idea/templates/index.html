@@ -49,6 +49,7 @@
             <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
             <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/locale/ko.js"></script>-->
             <script>
+                // 시간
                 setInterval(function(){
                     var date = new Date();
                     $('.dateview1').html(moment(date).format('LT'));
@@ -58,6 +59,7 @@
                 },1000);
 
                 $(document).ready(function() {
+                    // 운동단계, 운동이름
                     var refreshId2 = setInterval(function() {
                         $("#step").load("static/exercise_step.txt");
                         $("#name").load("static/video_name.txt", function(response) {
@@ -71,11 +73,13 @@
                         });
                     }, 3000);
 
+                    // 운동횟수, 운동피드백
                     var refreshId = setInterval(function() {
                         $("#data").load("static/cnt_saved.txt");
                         $("#feedback").load("static/feedback.txt");
                     }, 1000);
 
+                    // 운동 피드백 이모티콘
                     var refreshId3 = setInterval(function() {
                         $("#emoticon").load("static/emoticon.txt", function(response) {
                             var emoticon_name = response
@@ -83,6 +87,7 @@
                         });
                     }, 1000);
 
+                    // 요가이미지 출력
                     var refreshId4 = setInterval(function() {
                         $("#yoga").load("static/yoga_name.txt", function(response) {
                             var yoga_name = response
@@ -138,17 +143,6 @@
             <button onclick="showSubway()" id="btn_subway" class="btn_left"><i class="fas fa-subway fa-2x"></i></button>
             <button onclick="showConnect()" id="btn_calendar" class="btn_left"><i class="fas fa-calendar-alt fa-2x"></i></button>
             <button onclick="showDandanList()" id="btn_dandan" class="btn_left"><i class="fas fa-running fa-2x"></i></button>
-            <!--<button onclick="showDandanSquat()" id="btn_dandan_squat" class="btn_left"><i class="fas fa-dumbbell fa-2x"></i></button>-->
-
-
-            <!--
-            21.04.15 speech test start
-            나중에 이 버튼을 사람이 앞에 보이면 마이크 on/off로 변경할 것
-            -->
-            <!--<button onclick="initialize()" id="btn_speech" class="btn_left">speech</button>-->
-
-            <!--21.04.15 speech test end-->
-
         </div>
 
         <span id="userEmail" style="display: none">{{ userEmail }}</span>
@@ -156,6 +150,7 @@
             <span id="userName">{{ userName }}</span>님 환영합니다.
         </p>
         <script>
+            // userName이 들어왔을 경우 welcome 문구 띄우기
             var x = document.getElementById("welcome");
             var y = document.getElementById("userName").innerText;
             if (y == "") {
@@ -215,6 +210,7 @@
         </div>
         <span id="list_tf" style="display: none;">{{ ex_result[6] }}</span>
         <script>
+            // 운동목록요소 display 유무
             var x = document.getElementById("exerciselist");
             var y = document.getElementById("list_tf").innerText;
             if (y == "True") {
@@ -259,15 +255,16 @@
             </div>
             <span id="logout_tf" style="display: none;">{{ ex_result[5] }}</span>
             <script>
+                // 메인화면과 운동목록화면에서 연결화면 관련요소를 띄우지 않기 위한 작업
                 var x1 = document.getElementById("logoutask");
                 var x2 = document.getElementById("connect");
                 var y1 = document.getElementById("userEmail").innerText;
                 var y2 = document.getElementById("logout_tf").innerText;
-                if (y2 == "False") {
-                    if (y1 == "") {
+                if (y2 == "False") { // 연결화면 관련요소가 필요한 경우
+                    if (y1 == "") { // userEmail을 받아오지 않은 경우
                         x1.style.display = 'none';
                         x2.style.display = 'inline';
-                    } else {
+                    } else { // userEmail을 받아온 경우
                         x1.style.display = 'inline';
                         x2.style.display = 'none';
                     }
@@ -294,12 +291,13 @@
             <script>
                 var x = document.getElementById("showEndPage");
                 var y = document.getElementById("v0").innerText;
-                if (y == 0) {
+                if (y == 0) { // 점수가 0이면 운동종료화면 none
                     x.style.display = 'none';
-                } else {
+                } else { // 점수가 0이 아니면 운동종료화면 inline
                     x.style.display = 'inline';
                 }
 
+                // 운동점수 원형프로그래스바
                 $('#m_secore').circleProgress({
                     value: y/100,
                     size: 141.0,
@@ -322,20 +320,8 @@
                     <span class="final" id="final_span"></span>
                     <span class="interim" id="interim_span"></span>
                 </div>
-                <!--마이크 on/off 버튼-->
-                <!--<button id="btn-mic" class="off">마이크 <span></span></button>-->
-                <!--입력된 문자열 읽기-->
+
                 <button id="btn-tts">Text to speech</button>
-                <!-- <audio id="audio" src="audio/ending.mp3"></audio>-->
-                <!--
-                음악 재생 주석처리
-                    <div>
-                      <button onclick="document.getElementById('audio').play()">Play the Audio</button>
-                      <button onclick="document.getElementById('audio').pause()">Pause the Audio</button>
-                      <button onclick="document.getElementById('audio').volume+=0.2">Increase Volume</button>
-                      <button onclick="document.getElementById('audio').volume-=0.2">Decrease Volume</button>
-                    </div>
-                    -->
                 <br /><br />
 
                 <h3>예약어 (마이크를 켠 상태에서 아래 문자를 읽어보세요)</h3>
@@ -373,7 +359,6 @@
                     element.text = listUpcomingEvents();
                 },360000);
             </script>
-
 
         </div>
     </div>
