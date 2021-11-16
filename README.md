@@ -84,3 +84,5 @@ def get_angle_v3(p1_1, p1_2, p2_1, p2_2, p3_1, p3_2):
 - 구글 캘린더 
 - 음성인식 웹스피치API
 - 날씨 https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${WEATHER_KEY}&units=metric
+
+[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2F971021hr%2Ftantan_webproject&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
